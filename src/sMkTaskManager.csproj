@@ -27,17 +27,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Controls\" />
+    <Folder Include="Classes\" />
 
     <None Include="..\README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
 
-</ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controls\" />
-    <Folder Include="Classes\" />
   </ItemGroup>
 
 </Project>

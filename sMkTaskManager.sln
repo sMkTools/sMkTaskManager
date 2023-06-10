@@ -3,9 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33712.159
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sMkTaskManager", "src\sMkTaskManager.csproj", "{C21DACC1-9EAE-458A-9C21-EDC5592CB553}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "sMkTaskManager", "src\sMkTaskManager.csproj", "{C21DACC1-9EAE-458A-9C21-EDC5592CB553}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BE242D5A-2BD6-42B3-AB05-1A49C30563C0}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		.filenesting.json = .filenesting.json
 	EndProjectSection
 EndProject
 Global
