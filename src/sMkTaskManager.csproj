@@ -23,17 +23,21 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateSerializationAssemblies>off</GenerateSerializationAssemblies>
     <BuildProjectReferences>true</BuildProjectReferences>
-    <UseCommonOutputDirectory>true</UseCommonOutputDirectory>
+    <UseCommonOutputDirectory>false</UseCommonOutputDirectory>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Classes\" />
 
     <None Include="..\README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
 
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="7.0.1" />
   </ItemGroup>
 
 </Project>
