@@ -1,0 +1,1209 @@
+﻿using System.ComponentModel;
+using System.Runtime.Versioning;
+using sMkTaskManager.Controls;
+namespace sMkTaskManager.Forms;
+
+[SupportedOSPlatform("windows")]
+public partial class tabPerformance : UserControl {
+
+    public tabPerformance() {
+        //TODO: Handle the resize events to hide graphs and details
+        //TODO: Set Double Buffer
+        //TODO: I/O Graph is showing trash
+        //TODO: Implement ETW
+        InitializeComponent();
+        InitializeSettings();
+    }
+
+    private IContainer? components = null;
+
+    protected override void Dispose(bool disposing) {
+        if (disposing && (components != null)) { components.Dispose(); }
+        base.Dispose(disposing);
+    }
+
+    private void InitializeComponent() {
+        components = new Container();
+        tlpMain = new TableLayoutPanel();
+        lblCpuMeter = new Label();
+        lblCpuChart = new Label();
+        meterCpu = new sMkPerfMeter();
+        chartCpu = new sMkPerfChart();
+        lblMemMeter = new Label();
+        lblMemChart = new Label();
+        meterMem = new sMkPerfMeter();
+        chartMem = new sMkPerfChart();
+        lblIOMeter = new Label();
+        lblIOChart = new Label();
+        meterIO = new sMkPerfMeter();
+        chartIO = new sMkPerfChart();
+        lblDiskMeter = new Label();
+        lblDiskChart = new Label();
+        meterDisk = new sMkPerfMeter();
+        chartDisk = new sMkPerfChart();
+        lblNetMeter = new Label();
+        lblNetChart = new Label();
+        meterNet = new sMkPerfMeter();
+        chartNet = new sMkPerfChart();
+        tlpDetails = new TableLayoutPanel();
+        gbSystem = new GroupBox();
+        gbSystem_Label6 = new Label();
+        gbSystem_Label5 = new Label();
+        gbSystem_Label4 = new Label();
+        gbSystem_Label3 = new Label();
+        gbSystem_Label2 = new Label();
+        gbSystem_Label1 = new Label();
+        gbSystem_UpTime = new Label();
+        gbSystem_Devices = new Label();
+        gbSystem_Services = new Label();
+        gbSystem_Processes = new Label();
+        gbSystem_Threads = new Label();
+        gbSystem_Handles = new Label();
+        gbIOtranf = new GroupBox();
+        gbIOtranf_Label3 = new Label();
+        gbIOtranf_Others = new Label();
+        gbIOtranf_Labe2 = new Label();
+        gbIOtranf_Labe1 = new Label();
+        gbIOtranf_Writes = new Label();
+        gbIOtranf_Reads = new Label();
+        gbCommit = new GroupBox();
+        gbCommit_Label3 = new Label();
+        gbCommit_Peak = new Label();
+        gbCommit_Label2 = new Label();
+        gbCommit_Label1 = new Label();
+        gbCommit_Current = new Label();
+        gbCommit_Limit = new Label();
+        gbPagefile = new GroupBox();
+        gbPagefile_Label3 = new Label();
+        gbPagefile_Peak = new Label();
+        gbPagefile_Label2 = new Label();
+        gbPagefile_Label1 = new Label();
+        gbPagefile_Current = new Label();
+        gbPagefile_Limit = new Label();
+        gbKernel = new GroupBox();
+        gbKernel_Label3 = new Label();
+        gbKernel_NonPaged = new Label();
+        gbKernel_Label2 = new Label();
+        gbKernel_Label1 = new Label();
+        gbKernel_Paged = new Label();
+        gbKernel_Total = new Label();
+        gbIOops = new GroupBox();
+        gbIOops_Label3 = new Label();
+        gbIOops_Others = new Label();
+        gbIOops_Label2 = new Label();
+        gbIOops_Label1 = new Label();
+        gbIOops_Writes = new Label();
+        gbIOops_Reads = new Label();
+        gbMemory = new GroupBox();
+        gbMemory_Label3 = new Label();
+        gbMemory_Cached = new Label();
+        gbMemory_Label2 = new Label();
+        gbMemory_Label1 = new Label();
+        gbMemory_Avail = new Label();
+        gbMemory_Total = new Label();
+        tlpMain.SuspendLayout();
+        tlpDetails.SuspendLayout();
+        gbSystem.SuspendLayout();
+        gbIOtranf.SuspendLayout();
+        gbCommit.SuspendLayout();
+        gbPagefile.SuspendLayout();
+        gbKernel.SuspendLayout();
+        gbIOops.SuspendLayout();
+        gbMemory.SuspendLayout();
+        SuspendLayout();
+        // 
+        // tlpMain
+        // 
+        tlpMain.ColumnCount = 2;
+        tlpMain.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80F));
+        tlpMain.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+        tlpMain.Controls.Add(lblCpuMeter, 0, 0);
+        tlpMain.Controls.Add(lblCpuChart, 1, 0);
+        tlpMain.Controls.Add(meterCpu, 0, 1);
+        tlpMain.Controls.Add(chartCpu, 1, 1);
+        tlpMain.Controls.Add(lblMemMeter, 0, 2);
+        tlpMain.Controls.Add(lblMemChart, 1, 2);
+        tlpMain.Controls.Add(meterMem, 0, 3);
+        tlpMain.Controls.Add(chartMem, 1, 3);
+        tlpMain.Controls.Add(lblIOMeter, 0, 4);
+        tlpMain.Controls.Add(lblIOChart, 1, 4);
+        tlpMain.Controls.Add(meterIO, 0, 5);
+        tlpMain.Controls.Add(chartIO, 1, 5);
+        tlpMain.Controls.Add(lblDiskMeter, 0, 6);
+        tlpMain.Controls.Add(lblDiskChart, 1, 6);
+        tlpMain.Controls.Add(meterDisk, 0, 7);
+        tlpMain.Controls.Add(chartDisk, 1, 7);
+        tlpMain.Controls.Add(lblNetMeter, 0, 8);
+        tlpMain.Controls.Add(lblNetChart, 1, 8);
+        tlpMain.Controls.Add(meterNet, 0, 9);
+        tlpMain.Controls.Add(chartNet, 1, 9);
+        tlpMain.Controls.Add(tlpDetails, 0, 10);
+        tlpMain.Dock = DockStyle.Fill;
+        tlpMain.Location = new Point(0, 0);
+        tlpMain.Name = "tlpMain";
+        tlpMain.RowCount = 11;
+        tlpMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 16F));
+        tlpMain.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+        tlpMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 16F));
+        tlpMain.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+        tlpMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 16F));
+        tlpMain.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+        tlpMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 16F));
+        tlpMain.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+        tlpMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 16F));
+        tlpMain.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
+        tlpMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 150F));
+        tlpMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+        tlpMain.Size = new Size(600, 600);
+        tlpMain.TabIndex = 0;
+        // 
+        // lblCpuMeter
+        // 
+        lblCpuMeter.Dock = DockStyle.Fill;
+        lblCpuMeter.Location = new Point(7, 1);
+        lblCpuMeter.Margin = new Padding(7, 1, 3, 0);
+        lblCpuMeter.Name = "lblCpuMeter";
+        lblCpuMeter.Size = new Size(70, 15);
+        lblCpuMeter.TabIndex = 1;
+        lblCpuMeter.Text = "CPU Usage";
+        lblCpuMeter.TextAlign = ContentAlignment.BottomCenter;
+        // 
+        // lblCpuChart
+        // 
+        lblCpuChart.Dock = DockStyle.Fill;
+        lblCpuChart.Location = new Point(83, 1);
+        lblCpuChart.Margin = new Padding(3, 1, 3, 0);
+        lblCpuChart.Name = "lblCpuChart";
+        lblCpuChart.Size = new Size(514, 15);
+        lblCpuChart.TabIndex = 2;
+        lblCpuChart.Text = "CPU Usage History";
+        lblCpuChart.TextAlign = ContentAlignment.BottomLeft;
+        // 
+        // meterCpu
+        // 
+        meterCpu.BackColor = Color.Black;
+        meterCpu.BarBackColor = Color.DarkGreen;
+        meterCpu.BarForeColor = Color.Lime;
+        meterCpu.BorderStyle = Border3DStyle.Sunken;
+        meterCpu.Dock = DockStyle.Fill;
+        meterCpu.HistoryValues = 10;
+        meterCpu.LightColors = false;
+        meterCpu.Location = new Point(7, 18);
+        meterCpu.Margin = new Padding(7, 2, 3, 2);
+        meterCpu.Name = "meterCpu";
+        meterCpu.ScaleMode = sMkPerfMeter.ScaleModes.Absolute;
+        meterCpu.Size = new Size(70, 70);
+        meterCpu.TabIndex = 3;
+        meterCpu.TabStop = false;
+        // 
+        // chartCpu
+        // 
+        chartCpu.AntiAliasing = false;
+        chartCpu.BackColor = Color.Black;
+        chartCpu.BackColorShade = Color.FromArgb(0, 0, 0);
+        chartCpu.BackSolid = false;
+        chartCpu.BorderStyle = Border3DStyle.Sunken;
+        chartCpu.DetailsOnHover = false;
+        chartCpu.DisplayAverage = false;
+        chartCpu.DisplayIndexes = false;
+        chartCpu.DisplayLegends = false;
+        chartCpu.Dock = DockStyle.Fill;
+        chartCpu.GridSpacing = 10;
+        chartCpu.LegendSpacing = 35;
+        chartCpu.LightColors = false;
+        chartCpu.Location = new Point(83, 18);
+        chartCpu.Margin = new Padding(3, 2, 5, 2);
+        chartCpu.MaxValue = new decimal(new int[] { 0, 0, 0, 524288 });
+        chartCpu.Name = "chartCpu";
+        chartCpu.ScaleMode = sMkPerfChart.ScaleModes.Absolute;
+        chartCpu.ShadeBackground = true;
+        chartCpu.Size = new Size(512, 70);
+        chartCpu.TabIndex = 4;
+        chartCpu.TabStop = false;
+        chartCpu.UseTwoValues = false;
+        chartCpu.ValueSpacing = 2;
+        chartCpu.ValuesSuffix = "";
+        // 
+        // lblMemMeter
+        // 
+        lblMemMeter.Dock = DockStyle.Fill;
+        lblMemMeter.Location = new Point(7, 91);
+        lblMemMeter.Margin = new Padding(7, 1, 3, 0);
+        lblMemMeter.Name = "lblMemMeter";
+        lblMemMeter.Size = new Size(70, 15);
+        lblMemMeter.TabIndex = 5;
+        lblMemMeter.Text = "Mem Usage";
+        lblMemMeter.TextAlign = ContentAlignment.BottomCenter;
+        // 
+        // lblMemChart
+        // 
+        lblMemChart.Dock = DockStyle.Fill;
+        lblMemChart.Location = new Point(83, 91);
+        lblMemChart.Margin = new Padding(3, 1, 3, 0);
+        lblMemChart.Name = "lblMemChart";
+        lblMemChart.Size = new Size(514, 15);
+        lblMemChart.TabIndex = 6;
+        lblMemChart.Text = "Memory Usage History";
+        lblMemChart.TextAlign = ContentAlignment.BottomLeft;
+        // 
+        // meterMem
+        // 
+        meterMem.BackColor = Color.Black;
+        meterMem.BarBackColor = Color.FromArgb(64, 64, 0);
+        meterMem.BarForeColor = Color.Yellow;
+        meterMem.BorderStyle = Border3DStyle.Sunken;
+        meterMem.Dock = DockStyle.Fill;
+        meterMem.HistoryValues = 10;
+        meterMem.LightColors = false;
+        meterMem.Location = new Point(7, 108);
+        meterMem.Margin = new Padding(7, 2, 3, 2);
+        meterMem.Name = "meterMem";
+        meterMem.ScaleMode = sMkPerfMeter.ScaleModes.Absolute;
+        meterMem.Size = new Size(70, 70);
+        meterMem.TabIndex = 7;
+        meterMem.TabStop = false;
+        // 
+        // chartMem
+        // 
+        chartMem.AntiAliasing = false;
+        chartMem.BackColor = Color.Black;
+        chartMem.BackColorShade = Color.FromArgb(0, 0, 0);
+        chartMem.BackSolid = false;
+        chartMem.BorderStyle = Border3DStyle.Sunken;
+        chartMem.DetailsOnHover = false;
+        chartMem.DisplayAverage = false;
+        chartMem.DisplayIndexes = false;
+        chartMem.DisplayLegends = false;
+        chartMem.Dock = DockStyle.Fill;
+        chartMem.GridSpacing = 10;
+        chartMem.LegendSpacing = 35;
+        chartMem.LightColors = false;
+        chartMem.Location = new Point(83, 108);
+        chartMem.Margin = new Padding(3, 2, 5, 2);
+        chartMem.MaxValue = new decimal(new int[] { 0, 0, 0, 589824 });
+        chartMem.Name = "chartMem";
+        chartMem.ScaleMode = sMkPerfChart.ScaleModes.Absolute;
+        chartMem.ShadeBackground = true;
+        chartMem.Size = new Size(512, 70);
+        chartMem.TabIndex = 8;
+        chartMem.TabStop = false;
+        chartMem.UseTwoValues = false;
+        chartMem.ValueSpacing = 2;
+        chartMem.ValuesSuffix = "";
+        // 
+        // lblIOMeter
+        // 
+        lblIOMeter.Dock = DockStyle.Fill;
+        lblIOMeter.Location = new Point(7, 181);
+        lblIOMeter.Margin = new Padding(7, 1, 3, 0);
+        lblIOMeter.Name = "lblIOMeter";
+        lblIOMeter.Size = new Size(70, 15);
+        lblIOMeter.TabIndex = 9;
+        lblIOMeter.Text = "I/O Usage";
+        lblIOMeter.TextAlign = ContentAlignment.BottomCenter;
+        // 
+        // lblIOChart
+        // 
+        lblIOChart.Dock = DockStyle.Fill;
+        lblIOChart.Location = new Point(83, 181);
+        lblIOChart.Margin = new Padding(3, 1, 3, 0);
+        lblIOChart.Name = "lblIOChart";
+        lblIOChart.Size = new Size(514, 15);
+        lblIOChart.TabIndex = 10;
+        lblIOChart.Text = "I/O Transfer History";
+        lblIOChart.TextAlign = ContentAlignment.BottomLeft;
+        // 
+        // meterIO
+        // 
+        meterIO.BackColor = Color.Black;
+        meterIO.BarBackColor = Color.MidnightBlue;
+        meterIO.BarForeColor = Color.DodgerBlue;
+        meterIO.BorderStyle = Border3DStyle.Sunken;
+        meterIO.Dock = DockStyle.Fill;
+        meterIO.HistoryValues = 10;
+        meterIO.LightColors = false;
+        meterIO.Location = new Point(7, 198);
+        meterIO.Margin = new Padding(7, 2, 3, 2);
+        meterIO.Name = "meterIO";
+        meterIO.ScaleMode = sMkPerfMeter.ScaleModes.Absolute;
+        meterIO.Size = new Size(70, 70);
+        meterIO.TabIndex = 11;
+        meterIO.TabStop = false;
+        // 
+        // chartIO
+        // 
+        chartIO.AntiAliasing = false;
+        chartIO.BackColor = Color.Black;
+        chartIO.BackColorShade = Color.FromArgb(0, 0, 0);
+        chartIO.BackSolid = false;
+        chartIO.BorderStyle = Border3DStyle.Sunken;
+        chartIO.DetailsOnHover = false;
+        chartIO.DisplayAverage = false;
+        chartIO.DisplayIndexes = false;
+        chartIO.DisplayLegends = false;
+        chartIO.Dock = DockStyle.Fill;
+        chartIO.GridSpacing = 10;
+        chartIO.LegendSpacing = 35;
+        chartIO.LightColors = false;
+        chartIO.Location = new Point(83, 198);
+        chartIO.Margin = new Padding(3, 2, 5, 2);
+        chartIO.MaxValue = new decimal(new int[] { 0, 0, 0, 655360 });
+        chartIO.Name = "chartIO";
+        chartIO.ScaleMode = sMkPerfChart.ScaleModes.Absolute;
+        chartIO.ShadeBackground = true;
+        chartIO.Size = new Size(512, 70);
+        chartIO.TabIndex = 12;
+        chartIO.TabStop = false;
+        chartIO.UseTwoValues = false;
+        chartIO.ValueSpacing = 2;
+        chartIO.ValuesSuffix = "";
+        // 
+        // lblDiskMeter
+        // 
+        lblDiskMeter.Dock = DockStyle.Fill;
+        lblDiskMeter.Location = new Point(7, 271);
+        lblDiskMeter.Margin = new Padding(7, 1, 3, 0);
+        lblDiskMeter.Name = "lblDiskMeter";
+        lblDiskMeter.Size = new Size(70, 15);
+        lblDiskMeter.TabIndex = 13;
+        lblDiskMeter.Text = "Disk Usage";
+        lblDiskMeter.TextAlign = ContentAlignment.BottomCenter;
+        // 
+        // lblDiskChart
+        // 
+        lblDiskChart.Dock = DockStyle.Fill;
+        lblDiskChart.Location = new Point(83, 271);
+        lblDiskChart.Margin = new Padding(3, 1, 3, 0);
+        lblDiskChart.Name = "lblDiskChart";
+        lblDiskChart.Size = new Size(514, 15);
+        lblDiskChart.TabIndex = 14;
+        lblDiskChart.Text = "Disk Transfer History";
+        lblDiskChart.TextAlign = ContentAlignment.BottomLeft;
+        // 
+        // meterDisk
+        // 
+        meterDisk.BackColor = Color.Black;
+        meterDisk.BarBackColor = Color.Sienna;
+        meterDisk.BarForeColor = Color.SandyBrown;
+        meterDisk.BorderStyle = Border3DStyle.Sunken;
+        meterDisk.Dock = DockStyle.Fill;
+        meterDisk.HistoryValues = 10;
+        meterDisk.LightColors = false;
+        meterDisk.Location = new Point(7, 288);
+        meterDisk.Margin = new Padding(7, 2, 3, 2);
+        meterDisk.Name = "meterDisk";
+        meterDisk.ScaleMode = sMkPerfMeter.ScaleModes.Absolute;
+        meterDisk.Size = new Size(70, 70);
+        meterDisk.TabIndex = 15;
+        meterDisk.TabStop = false;
+        // 
+        // chartDisk
+        // 
+        chartDisk.AntiAliasing = false;
+        chartDisk.BackColor = Color.Black;
+        chartDisk.BackColorShade = Color.FromArgb(0, 0, 0);
+        chartDisk.BackSolid = false;
+        chartDisk.BorderStyle = Border3DStyle.Sunken;
+        chartDisk.DetailsOnHover = false;
+        chartDisk.DisplayAverage = false;
+        chartDisk.DisplayIndexes = false;
+        chartDisk.DisplayLegends = false;
+        chartDisk.Dock = DockStyle.Fill;
+        chartDisk.GridSpacing = 10;
+        chartDisk.LegendSpacing = 35;
+        chartDisk.LightColors = false;
+        chartDisk.Location = new Point(83, 288);
+        chartDisk.Margin = new Padding(3, 2, 5, 2);
+        chartDisk.MaxValue = new decimal(new int[] { 0, 0, 0, 720896 });
+        chartDisk.Name = "chartDisk";
+        chartDisk.ScaleMode = sMkPerfChart.ScaleModes.Absolute;
+        chartDisk.ShadeBackground = true;
+        chartDisk.Size = new Size(512, 70);
+        chartDisk.TabIndex = 16;
+        chartDisk.TabStop = false;
+        chartDisk.UseTwoValues = false;
+        chartDisk.ValueSpacing = 2;
+        chartDisk.ValuesSuffix = "";
+        // 
+        // lblNetMeter
+        // 
+        lblNetMeter.Dock = DockStyle.Fill;
+        lblNetMeter.Location = new Point(7, 361);
+        lblNetMeter.Margin = new Padding(7, 1, 3, 0);
+        lblNetMeter.Name = "lblNetMeter";
+        lblNetMeter.Size = new Size(70, 15);
+        lblNetMeter.TabIndex = 17;
+        lblNetMeter.Text = "Net Usage";
+        lblNetMeter.TextAlign = ContentAlignment.BottomCenter;
+        // 
+        // lblNetChart
+        // 
+        lblNetChart.Dock = DockStyle.Fill;
+        lblNetChart.Location = new Point(83, 361);
+        lblNetChart.Margin = new Padding(3, 1, 3, 0);
+        lblNetChart.Name = "lblNetChart";
+        lblNetChart.Size = new Size(514, 15);
+        lblNetChart.TabIndex = 18;
+        lblNetChart.Text = "Network Transfer History";
+        lblNetChart.TextAlign = ContentAlignment.BottomLeft;
+        // 
+        // meterNet
+        // 
+        meterNet.BackColor = Color.Black;
+        meterNet.BarBackColor = Color.Indigo;
+        meterNet.BarForeColor = Color.Violet;
+        meterNet.BorderStyle = Border3DStyle.Sunken;
+        meterNet.Dock = DockStyle.Fill;
+        meterNet.HistoryValues = 10;
+        meterNet.LightColors = false;
+        meterNet.Location = new Point(7, 378);
+        meterNet.Margin = new Padding(7, 2, 3, 2);
+        meterNet.Name = "meterNet";
+        meterNet.ScaleMode = sMkPerfMeter.ScaleModes.Absolute;
+        meterNet.Size = new Size(70, 70);
+        meterNet.TabIndex = 19;
+        meterNet.TabStop = false;
+        // 
+        // chartNet
+        // 
+        chartNet.AntiAliasing = false;
+        chartNet.BackColor = Color.Black;
+        chartNet.BackColorShade = Color.FromArgb(0, 0, 0);
+        chartNet.BackSolid = false;
+        chartNet.BorderStyle = Border3DStyle.Sunken;
+        chartNet.DetailsOnHover = false;
+        chartNet.DisplayAverage = false;
+        chartNet.DisplayIndexes = false;
+        chartNet.DisplayLegends = false;
+        chartNet.Dock = DockStyle.Fill;
+        chartNet.GridSpacing = 10;
+        chartNet.LegendSpacing = 35;
+        chartNet.LightColors = false;
+        chartNet.Location = new Point(83, 378);
+        chartNet.Margin = new Padding(3, 2, 5, 2);
+        chartNet.MaxValue = new decimal(new int[] { 0, 0, 0, 786432 });
+        chartNet.Name = "chartNet";
+        chartNet.ScaleMode = sMkPerfChart.ScaleModes.Absolute;
+        chartNet.ShadeBackground = true;
+        chartNet.Size = new Size(512, 70);
+        chartNet.TabIndex = 20;
+        chartNet.TabStop = false;
+        chartNet.UseTwoValues = false;
+        chartNet.ValueSpacing = 2;
+        chartNet.ValuesSuffix = "";
+        // 
+        // tlpDetails
+        // 
+        tlpDetails.ColumnCount = 4;
+        tlpMain.SetColumnSpan(tlpDetails, 2);
+        tlpDetails.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+        tlpDetails.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+        tlpDetails.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+        tlpDetails.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+        tlpDetails.Controls.Add(gbSystem, 3, 0);
+        tlpDetails.Controls.Add(gbIOtranf, 2, 1);
+        tlpDetails.Controls.Add(gbCommit, 0, 1);
+        tlpDetails.Controls.Add(gbPagefile, 1, 1);
+        tlpDetails.Controls.Add(gbKernel, 1, 0);
+        tlpDetails.Controls.Add(gbIOops, 2, 0);
+        tlpDetails.Controls.Add(gbMemory, 0, 0);
+        tlpDetails.Dock = DockStyle.Fill;
+        tlpDetails.Location = new Point(0, 450);
+        tlpDetails.Margin = new Padding(0);
+        tlpDetails.Name = "tlpDetails";
+        tlpDetails.RowCount = 2;
+        tlpDetails.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+        tlpDetails.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+        tlpDetails.Size = new Size(600, 150);
+        tlpDetails.TabIndex = 20;
+        // 
+        // gbSystem
+        // 
+        gbSystem.Controls.Add(gbSystem_Label6);
+        gbSystem.Controls.Add(gbSystem_Label5);
+        gbSystem.Controls.Add(gbSystem_Label4);
+        gbSystem.Controls.Add(gbSystem_Label3);
+        gbSystem.Controls.Add(gbSystem_Label2);
+        gbSystem.Controls.Add(gbSystem_Label1);
+        gbSystem.Controls.Add(gbSystem_UpTime);
+        gbSystem.Controls.Add(gbSystem_Devices);
+        gbSystem.Controls.Add(gbSystem_Services);
+        gbSystem.Controls.Add(gbSystem_Processes);
+        gbSystem.Controls.Add(gbSystem_Threads);
+        gbSystem.Controls.Add(gbSystem_Handles);
+        gbSystem.Dock = DockStyle.Top;
+        gbSystem.ForeColor = SystemColors.HotTrack;
+        gbSystem.Location = new Point(453, 3);
+        gbSystem.Name = "gbSystem";
+        gbSystem.Padding = new Padding(6, 2, 1, 3);
+        tlpDetails.SetRowSpan(gbSystem, 2);
+        gbSystem.Size = new Size(144, 120);
+        gbSystem.TabStop = false;
+        gbSystem.Text = "System Totals";
+        // 
+        // gbSystem_Label6
+        // 
+        gbSystem_Label6.ForeColor = SystemColors.ControlText;
+        gbSystem_Label6.Location = new Point(9, 93);
+        gbSystem_Label6.Name = "gbSystem_Label6";
+        gbSystem_Label6.Size = new Size(60, 15);
+        gbSystem_Label6.Text = "Up Time:";
+        // 
+        // gbSystem_Label5
+        // 
+        gbSystem_Label5.ForeColor = SystemColors.ControlText;
+        gbSystem_Label5.Location = new Point(9, 78);
+        gbSystem_Label5.Name = "gbSystem_Label5";
+        gbSystem_Label5.Size = new Size(60, 15);
+        gbSystem_Label5.Text = "Devices:";
+        // 
+        // gbSystem_Label4
+        // 
+        gbSystem_Label4.ForeColor = SystemColors.ControlText;
+        gbSystem_Label4.Location = new Point(9, 63);
+        gbSystem_Label4.Name = "gbSystem_Label4";
+        gbSystem_Label4.Size = new Size(60, 15);
+        gbSystem_Label4.Text = "Services:";
+        // 
+        // gbSystem_Label3
+        // 
+        gbSystem_Label3.ForeColor = SystemColors.ControlText;
+        gbSystem_Label3.Location = new Point(9, 48);
+        gbSystem_Label3.Name = "gbSystem_Label3";
+        gbSystem_Label3.Size = new Size(65, 15);
+        gbSystem_Label3.Text = "Processes:";
+        // 
+        // gbSystem_Label2
+        // 
+        gbSystem_Label2.ForeColor = SystemColors.ControlText;
+        gbSystem_Label2.Location = new Point(9, 33);
+        gbSystem_Label2.Name = "gbSystem_Label2";
+        gbSystem_Label2.Size = new Size(60, 15);
+        gbSystem_Label2.Text = "Threads:";
+        // 
+        // gbSystem_Label1
+        // 
+        gbSystem_Label1.ForeColor = SystemColors.ControlText;
+        gbSystem_Label1.Location = new Point(9, 18);
+        gbSystem_Label1.Name = "gbSystem_Label1";
+        gbSystem_Label1.Size = new Size(60, 15);
+        gbSystem_Label1.Text = "Handles:";
+        // 
+        // gbSystem_UpTime
+        // 
+        gbSystem_UpTime.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        gbSystem_UpTime.ForeColor = SystemColors.ControlText;
+        gbSystem_UpTime.Location = new Point(65, 93);
+        gbSystem_UpTime.Name = "gbSystem_UpTime";
+        gbSystem_UpTime.Size = new Size(75, 15);
+        gbSystem_UpTime.Text = "0";
+        gbSystem_UpTime.TextAlign = ContentAlignment.TopRight;
+        // 
+        // gbSystem_Devices
+        // 
+        gbSystem_Devices.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        gbSystem_Devices.ForeColor = SystemColors.ControlText;
+        gbSystem_Devices.Location = new Point(65, 78);
+        gbSystem_Devices.Name = "gbSystem_Devices";
+        gbSystem_Devices.Size = new Size(75, 15);
+        gbSystem_Devices.Text = "0";
+        gbSystem_Devices.TextAlign = ContentAlignment.TopRight;
+        // 
+        // gbSystem_Services
+        // 
+        gbSystem_Services.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        gbSystem_Services.ForeColor = SystemColors.ControlText;
+        gbSystem_Services.Location = new Point(65, 63);
+        gbSystem_Services.Name = "gbSystem_Services";
+        gbSystem_Services.Size = new Size(75, 15);
+        gbSystem_Services.Text = "0";
+        gbSystem_Services.TextAlign = ContentAlignment.TopRight;
+        // 
+        // gbSystem_Processes
+        // 
+        gbSystem_Processes.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        gbSystem_Processes.ForeColor = SystemColors.ControlText;
+        gbSystem_Processes.Location = new Point(70, 48);
+        gbSystem_Processes.Name = "gbSystem_Processes";
+        gbSystem_Processes.Size = new Size(70, 15);
+        gbSystem_Processes.Text = "0";
+        gbSystem_Processes.TextAlign = ContentAlignment.TopRight;
+        // 
+        // gbSystem_Threads
+        // 
+        gbSystem_Threads.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        gbSystem_Threads.ForeColor = SystemColors.ControlText;
+        gbSystem_Threads.Location = new Point(65, 33);
+        gbSystem_Threads.Name = "gbSystem_Threads";
+        gbSystem_Threads.Size = new Size(75, 15);
+        gbSystem_Threads.Text = "0";
+        gbSystem_Threads.TextAlign = ContentAlignment.TopRight;
+        // 
+        // gbSystem_Handles
+        // 
+        gbSystem_Handles.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        gbSystem_Handles.ForeColor = SystemColors.ControlText;
+        gbSystem_Handles.Location = new Point(65, 18);
+        gbSystem_Handles.Name = "gbSystem_Handles";
+        gbSystem_Handles.Size = new Size(75, 15);
+        gbSystem_Handles.Text = "0";
+        gbSystem_Handles.TextAlign = ContentAlignment.TopRight;
+        // 
+        // gbIOtranf
+        // 
+        gbIOtranf.Controls.Add(gbIOtranf_Label3);
+        gbIOtranf.Controls.Add(gbIOtranf_Others);
+        gbIOtranf.Controls.Add(gbIOtranf_Labe2);
+        gbIOtranf.Controls.Add(gbIOtranf_Labe1);
+        gbIOtranf.Controls.Add(gbIOtranf_Writes);
+        gbIOtranf.Controls.Add(gbIOtranf_Reads);
+        gbIOtranf.Dock = DockStyle.Fill;
+        gbIOtranf.ForeColor = SystemColors.HotTrack;
+        gbIOtranf.Location = new Point(303, 78);
+        gbIOtranf.Name = "gbIOtranf";
+        gbIOtranf.Padding = new Padding(6, 2, 1, 3);
+        gbIOtranf.Size = new Size(144, 69);
+        gbIOtranf.TabStop = false;
+        gbIOtranf.Text = "I/O Transfer Delta";
+        // 
+        // gbIOtranf_Label3
+        // 
+        gbIOtranf_Label3.ForeColor = SystemColors.ControlText;
+        gbIOtranf_Label3.Location = new Point(9, 48);
+        gbIOtranf_Label3.Name = "gbIOtranf_Label3";
+        gbIOtranf_Label3.Size = new Size(60, 15);
+        gbIOtranf_Label3.Text = "Others:";
+        // 
+        // gbIOtranf_Others
+        // 
+        gbIOtranf_Others.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        gbIOtranf_Others.ForeColor = SystemColors.ControlText;
+        gbIOtranf_Others.Location = new Point(65, 48);
+        gbIOtranf_Others.Name = "gbIOtranf_Others";
+        gbIOtranf_Others.Size = new Size(75, 15);
+        gbIOtranf_Others.Text = "0 Kb.";
+        gbIOtranf_Others.TextAlign = ContentAlignment.TopRight;
+        // 
+        // gbIOtranf_Labe2
+        // 
+        gbIOtranf_Labe2.ForeColor = SystemColors.ControlText;
+        gbIOtranf_Labe2.Location = new Point(9, 33);
+        gbIOtranf_Labe2.Name = "gbIOtranf_Labe2";
+        gbIOtranf_Labe2.Size = new Size(60, 15);
+        gbIOtranf_Labe2.Text = "Writes:";
+        // 
+        // gbIOtranf_Labe1
+        // 
+        gbIOtranf_Labe1.ForeColor = SystemColors.ControlText;
+        gbIOtranf_Labe1.Location = new Point(9, 18);
+        gbIOtranf_Labe1.Name = "gbIOtranf_Labe1";
+        gbIOtranf_Labe1.Size = new Size(60, 15);
+        gbIOtranf_Labe1.Text = "Reads:";
+        // 
+        // gbIOtranf_Writes
+        // 
+        gbIOtranf_Writes.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        gbIOtranf_Writes.ForeColor = SystemColors.ControlText;
+        gbIOtranf_Writes.Location = new Point(65, 33);
+        gbIOtranf_Writes.Name = "gbIOtranf_Writes";
+        gbIOtranf_Writes.Size = new Size(75, 15);
+        gbIOtranf_Writes.Text = "0 Kb.";
+        gbIOtranf_Writes.TextAlign = ContentAlignment.TopRight;
+        // 
+        // gbIOtranf_Reads
+        // 
+        gbIOtranf_Reads.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        gbIOtranf_Reads.ForeColor = SystemColors.ControlText;
+        gbIOtranf_Reads.Location = new Point(65, 18);
+        gbIOtranf_Reads.Name = "gbIOtranf_Reads";
+        gbIOtranf_Reads.Size = new Size(75, 15);
+        gbIOtranf_Reads.Text = "0 Kb.";
+        gbIOtranf_Reads.TextAlign = ContentAlignment.TopRight;
+        // 
+        // gbCommit
+        // 
+        gbCommit.Controls.Add(gbCommit_Label3);
+        gbCommit.Controls.Add(gbCommit_Peak);
+        gbCommit.Controls.Add(gbCommit_Label2);
+        gbCommit.Controls.Add(gbCommit_Label1);
+        gbCommit.Controls.Add(gbCommit_Current);
+        gbCommit.Controls.Add(gbCommit_Limit);
+        gbCommit.Dock = DockStyle.Fill;
+        gbCommit.ForeColor = SystemColors.HotTrack;
+        gbCommit.Location = new Point(3, 78);
+        gbCommit.Name = "gbCommit";
+        gbCommit.Padding = new Padding(6, 2, 1, 3);
+        gbCommit.Size = new Size(144, 69);
+        gbCommit.TabStop = false;
+        gbCommit.Text = "Commit Charge";
+        // 
+        // gbCommit_Label3
+        // 
+        gbCommit_Label3.ForeColor = SystemColors.ControlText;
+        gbCommit_Label3.Location = new Point(9, 48);
+        gbCommit_Label3.Name = "gbCommit_Label3";
+        gbCommit_Label3.Size = new Size(55, 15);
+        gbCommit_Label3.Text = "Peak:";
+        // 
+        // gbCommit_Peak
+        // 
+        gbCommit_Peak.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        gbCommit_Peak.ForeColor = SystemColors.ControlText;
+        gbCommit_Peak.Location = new Point(65, 48);
+        gbCommit_Peak.Name = "gbCommit_Peak";
+        gbCommit_Peak.Size = new Size(75, 15);
+        gbCommit_Peak.Text = "0 Kb.";
+        gbCommit_Peak.TextAlign = ContentAlignment.TopRight;
+        // 
+        // gbCommit_Label2
+        // 
+        gbCommit_Label2.ForeColor = SystemColors.ControlText;
+        gbCommit_Label2.Location = new Point(9, 33);
+        gbCommit_Label2.Name = "gbCommit_Label2";
+        gbCommit_Label2.Size = new Size(55, 15);
+        gbCommit_Label2.Text = "Current:";
+        // 
+        // gbCommit_Label1
+        // 
+        gbCommit_Label1.ForeColor = SystemColors.ControlText;
+        gbCommit_Label1.Location = new Point(9, 18);
+        gbCommit_Label1.Name = "gbCommit_Label1";
+        gbCommit_Label1.Size = new Size(55, 15);
+        gbCommit_Label1.Text = "Limit:";
+        // 
+        // gbCommit_Current
+        // 
+        gbCommit_Current.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        gbCommit_Current.ForeColor = SystemColors.ControlText;
+        gbCommit_Current.Location = new Point(65, 33);
+        gbCommit_Current.Name = "gbCommit_Current";
+        gbCommit_Current.Size = new Size(75, 15);
+        gbCommit_Current.Text = "0 Kb.";
+        gbCommit_Current.TextAlign = ContentAlignment.TopRight;
+        // 
+        // gbCommit_Limit
+        // 
+        gbCommit_Limit.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        gbCommit_Limit.ForeColor = SystemColors.ControlText;
+        gbCommit_Limit.Location = new Point(65, 18);
+        gbCommit_Limit.Name = "gbCommit_Limit";
+        gbCommit_Limit.Size = new Size(75, 15);
+        gbCommit_Limit.Text = "0 Kb.";
+        gbCommit_Limit.TextAlign = ContentAlignment.TopRight;
+        // 
+        // gbPagefile
+        // 
+        gbPagefile.Controls.Add(gbPagefile_Label3);
+        gbPagefile.Controls.Add(gbPagefile_Peak);
+        gbPagefile.Controls.Add(gbPagefile_Label2);
+        gbPagefile.Controls.Add(gbPagefile_Label1);
+        gbPagefile.Controls.Add(gbPagefile_Current);
+        gbPagefile.Controls.Add(gbPagefile_Limit);
+        gbPagefile.Dock = DockStyle.Fill;
+        gbPagefile.ForeColor = SystemColors.HotTrack;
+        gbPagefile.Location = new Point(153, 78);
+        gbPagefile.Name = "gbPagefile";
+        gbPagefile.Padding = new Padding(6, 2, 1, 3);
+        gbPagefile.Size = new Size(144, 69);
+        gbPagefile.TabStop = false;
+        gbPagefile.Text = "Pagefile Usage";
+        // 
+        // gbPagefile_Label3
+        // 
+        gbPagefile_Label3.ForeColor = SystemColors.ControlText;
+        gbPagefile_Label3.Location = new Point(9, 48);
+        gbPagefile_Label3.Name = "gbPagefile_Label3";
+        gbPagefile_Label3.Size = new Size(60, 15);
+        gbPagefile_Label3.Text = "Peak:";
+        // 
+        // gbPagefile_Peak
+        // 
+        gbPagefile_Peak.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        gbPagefile_Peak.ForeColor = SystemColors.ControlText;
+        gbPagefile_Peak.Location = new Point(65, 48);
+        gbPagefile_Peak.Name = "gbPagefile_Peak";
+        gbPagefile_Peak.Size = new Size(75, 15);
+        gbPagefile_Peak.Text = "0 Kb.";
+        gbPagefile_Peak.TextAlign = ContentAlignment.TopRight;
+        // 
+        // gbPagefile_Label2
+        // 
+        gbPagefile_Label2.ForeColor = SystemColors.ControlText;
+        gbPagefile_Label2.Location = new Point(9, 33);
+        gbPagefile_Label2.Name = "gbPagefile_Label2";
+        gbPagefile_Label2.Size = new Size(60, 15);
+        gbPagefile_Label2.Text = "Current:";
+        // 
+        // gbPagefile_Label1
+        // 
+        gbPagefile_Label1.ForeColor = SystemColors.ControlText;
+        gbPagefile_Label1.Location = new Point(9, 18);
+        gbPagefile_Label1.Name = "gbPagefile_Label1";
+        gbPagefile_Label1.Size = new Size(60, 15);
+        gbPagefile_Label1.Text = "Limit:";
+        // 
+        // gbPagefile_Current
+        // 
+        gbPagefile_Current.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        gbPagefile_Current.ForeColor = SystemColors.ControlText;
+        gbPagefile_Current.Location = new Point(65, 33);
+        gbPagefile_Current.Name = "gbPagefile_Current";
+        gbPagefile_Current.Size = new Size(75, 15);
+        gbPagefile_Current.Text = "0 Kb.";
+        gbPagefile_Current.TextAlign = ContentAlignment.TopRight;
+        // 
+        // gbPagefile_Limit
+        // 
+        gbPagefile_Limit.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        gbPagefile_Limit.ForeColor = SystemColors.ControlText;
+        gbPagefile_Limit.Location = new Point(65, 18);
+        gbPagefile_Limit.Name = "gbPagefile_Limit";
+        gbPagefile_Limit.Size = new Size(75, 15);
+        gbPagefile_Limit.Text = "0 Kb.";
+        gbPagefile_Limit.TextAlign = ContentAlignment.TopRight;
+        // 
+        // gbKernel
+        // 
+        gbKernel.Controls.Add(gbKernel_Label3);
+        gbKernel.Controls.Add(gbKernel_NonPaged);
+        gbKernel.Controls.Add(gbKernel_Label2);
+        gbKernel.Controls.Add(gbKernel_Label1);
+        gbKernel.Controls.Add(gbKernel_Paged);
+        gbKernel.Controls.Add(gbKernel_Total);
+        gbKernel.Dock = DockStyle.Fill;
+        gbKernel.ForeColor = SystemColors.HotTrack;
+        gbKernel.Location = new Point(153, 3);
+        gbKernel.Name = "gbKernel";
+        gbKernel.Padding = new Padding(6, 2, 1, 3);
+        gbKernel.Size = new Size(144, 69);
+        gbKernel.TabStop = false;
+        gbKernel.Text = "Kernel Memory";
+        // 
+        // gbKernel_Label3
+        // 
+        gbKernel_Label3.ForeColor = SystemColors.ControlText;
+        gbKernel_Label3.Location = new Point(9, 48);
+        gbKernel_Label3.Name = "gbKernel_Label3";
+        gbKernel_Label3.Size = new Size(70, 15);
+        gbKernel_Label3.Text = "NonPaged:";
+        // 
+        // gbKernel_NonPaged
+        // 
+        gbKernel_NonPaged.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        gbKernel_NonPaged.ForeColor = SystemColors.ControlText;
+        gbKernel_NonPaged.Location = new Point(65, 48);
+        gbKernel_NonPaged.Name = "gbKernel_NonPaged";
+        gbKernel_NonPaged.Size = new Size(75, 15);
+        gbKernel_NonPaged.Text = "0 Kb.";
+        gbKernel_NonPaged.TextAlign = ContentAlignment.TopRight;
+        // 
+        // gbKernel_Label2
+        // 
+        gbKernel_Label2.ForeColor = SystemColors.ControlText;
+        gbKernel_Label2.Location = new Point(9, 33);
+        gbKernel_Label2.Name = "gbKernel_Label2";
+        gbKernel_Label2.Size = new Size(60, 15);
+        gbKernel_Label2.Text = "Paged:";
+        // 
+        // gbKernel_Label1
+        // 
+        gbKernel_Label1.ForeColor = SystemColors.ControlText;
+        gbKernel_Label1.Location = new Point(9, 18);
+        gbKernel_Label1.Name = "gbKernel_Label1";
+        gbKernel_Label1.Size = new Size(60, 15);
+        gbKernel_Label1.Text = "Total:";
+        // 
+        // gbKernel_Paged
+        // 
+        gbKernel_Paged.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        gbKernel_Paged.ForeColor = SystemColors.ControlText;
+        gbKernel_Paged.Location = new Point(65, 33);
+        gbKernel_Paged.Name = "gbKernel_Paged";
+        gbKernel_Paged.Size = new Size(75, 15);
+        gbKernel_Paged.Text = "0 Kb.";
+        gbKernel_Paged.TextAlign = ContentAlignment.TopRight;
+        // 
+        // gbKernel_Total
+        // 
+        gbKernel_Total.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        gbKernel_Total.ForeColor = SystemColors.ControlText;
+        gbKernel_Total.Location = new Point(65, 18);
+        gbKernel_Total.Name = "gbKernel_Total";
+        gbKernel_Total.Size = new Size(75, 15);
+        gbKernel_Total.Text = "0 Kb.";
+        gbKernel_Total.TextAlign = ContentAlignment.TopRight;
+        // 
+        // gbIOops
+        // 
+        gbIOops.Controls.Add(gbIOops_Label3);
+        gbIOops.Controls.Add(gbIOops_Others);
+        gbIOops.Controls.Add(gbIOops_Label2);
+        gbIOops.Controls.Add(gbIOops_Label1);
+        gbIOops.Controls.Add(gbIOops_Writes);
+        gbIOops.Controls.Add(gbIOops_Reads);
+        gbIOops.Dock = DockStyle.Fill;
+        gbIOops.ForeColor = SystemColors.HotTrack;
+        gbIOops.Location = new Point(303, 3);
+        gbIOops.Name = "gbIOops";
+        gbIOops.Padding = new Padding(6, 2, 1, 3);
+        gbIOops.Size = new Size(144, 69);
+        gbIOops.TabStop = false;
+        gbIOops.Text = "I/O Operations Delta";
+        // 
+        // gbIOops_Label3
+        // 
+        gbIOops_Label3.ForeColor = SystemColors.ControlText;
+        gbIOops_Label3.Location = new Point(9, 48);
+        gbIOops_Label3.Name = "gbIOops_Label3";
+        gbIOops_Label3.Size = new Size(60, 15);
+        gbIOops_Label3.Text = "Others:";
+        // 
+        // gbIOops_Others
+        // 
+        gbIOops_Others.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        gbIOops_Others.ForeColor = SystemColors.ControlText;
+        gbIOops_Others.Location = new Point(65, 48);
+        gbIOops_Others.Name = "gbIOops_Others";
+        gbIOops_Others.Size = new Size(75, 15);
+        gbIOops_Others.Text = "0";
+        gbIOops_Others.TextAlign = ContentAlignment.TopRight;
+        // 
+        // gbIOops_Label2
+        // 
+        gbIOops_Label2.ForeColor = SystemColors.ControlText;
+        gbIOops_Label2.Location = new Point(9, 33);
+        gbIOops_Label2.Name = "gbIOops_Label2";
+        gbIOops_Label2.Size = new Size(60, 15);
+        gbIOops_Label2.Text = "Writes:";
+        // 
+        // gbIOops_Label1
+        // 
+        gbIOops_Label1.ForeColor = SystemColors.ControlText;
+        gbIOops_Label1.Location = new Point(9, 18);
+        gbIOops_Label1.Name = "gbIOops_Label1";
+        gbIOops_Label1.Size = new Size(60, 15);
+        gbIOops_Label1.Text = "Reads:";
+        // 
+        // gbIOops_Writes
+        // 
+        gbIOops_Writes.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        gbIOops_Writes.ForeColor = SystemColors.ControlText;
+        gbIOops_Writes.Location = new Point(65, 33);
+        gbIOops_Writes.Name = "gbIOops_Writes";
+        gbIOops_Writes.Size = new Size(75, 15);
+        gbIOops_Writes.Text = "0";
+        gbIOops_Writes.TextAlign = ContentAlignment.TopRight;
+        // 
+        // gbIOops_Reads
+        // 
+        gbIOops_Reads.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        gbIOops_Reads.ForeColor = SystemColors.ControlText;
+        gbIOops_Reads.Location = new Point(65, 18);
+        gbIOops_Reads.Name = "gbIOops_Reads";
+        gbIOops_Reads.Size = new Size(75, 15);
+        gbIOops_Reads.TabIndex = 3;
+        gbIOops_Reads.TextAlign = ContentAlignment.TopRight;
+        // 
+        // gbMemory
+        // 
+        gbMemory.Controls.Add(gbMemory_Label3);
+        gbMemory.Controls.Add(gbMemory_Cached);
+        gbMemory.Controls.Add(gbMemory_Label2);
+        gbMemory.Controls.Add(gbMemory_Label1);
+        gbMemory.Controls.Add(gbMemory_Avail);
+        gbMemory.Controls.Add(gbMemory_Total);
+        gbMemory.Dock = DockStyle.Fill;
+        gbMemory.ForeColor = SystemColors.HotTrack;
+        gbMemory.Location = new Point(3, 3);
+        gbMemory.Name = "gbMemory";
+        gbMemory.Padding = new Padding(6, 2, 1, 3);
+        gbMemory.Size = new Size(144, 69);
+        gbMemory.TabStop = false;
+        gbMemory.Text = "Physical Memory";
+        // 
+        // gbMemory_Label3
+        // 
+        gbMemory_Label3.ForeColor = SystemColors.ControlText;
+        gbMemory_Label3.Location = new Point(9, 48);
+        gbMemory_Label3.Name = "gbMemory_Label3";
+        gbMemory_Label3.Size = new Size(55, 15);
+        gbMemory_Label3.Text = "Cached:";
+        // 
+        // gbMemory_Cached
+        // 
+        gbMemory_Cached.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        gbMemory_Cached.ForeColor = SystemColors.ControlText;
+        gbMemory_Cached.Location = new Point(65, 48);
+        gbMemory_Cached.Name = "gbMemory_Cached";
+        gbMemory_Cached.Size = new Size(75, 15);
+        gbMemory_Cached.Text = "0 Kb.";
+        gbMemory_Cached.TextAlign = ContentAlignment.TopRight;
+        // 
+        // gbMemory_Label2
+        // 
+        gbMemory_Label2.ForeColor = SystemColors.ControlText;
+        gbMemory_Label2.Location = new Point(9, 33);
+        gbMemory_Label2.Name = "gbMemory_Label2";
+        gbMemory_Label2.Size = new Size(60, 15);
+        gbMemory_Label2.Text = "Available:";
+        // 
+        // gbMemory_Label1
+        // 
+        gbMemory_Label1.ForeColor = SystemColors.ControlText;
+        gbMemory_Label1.Location = new Point(9, 18);
+        gbMemory_Label1.Name = "gbMemory_Label1";
+        gbMemory_Label1.Size = new Size(60, 15);
+        gbMemory_Label1.Text = "Total:";
+        // 
+        // gbMemory_Avail
+        // 
+        gbMemory_Avail.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        gbMemory_Avail.ForeColor = SystemColors.ControlText;
+        gbMemory_Avail.Location = new Point(65, 33);
+        gbMemory_Avail.Name = "gbMemory_Avail";
+        gbMemory_Avail.Size = new Size(75, 15);
+        gbMemory_Avail.Text = "0 Kb.";
+        gbMemory_Avail.TextAlign = ContentAlignment.TopRight;
+        // 
+        // gbMemory_Total
+        // 
+        gbMemory_Total.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        gbMemory_Total.ForeColor = SystemColors.ControlText;
+        gbMemory_Total.Location = new Point(65, 18);
+        gbMemory_Total.Name = "gbMemory_Total";
+        gbMemory_Total.Size = new Size(75, 15);
+        gbMemory_Total.Text = "0 Kb.";
+        gbMemory_Total.TextAlign = ContentAlignment.TopRight;
+        // 
+        // tabPerformance
+        // 
+        Controls.Add(tlpMain);
+        Name = "tabPerformance";
+        Size = new Size(600, 600);
+        tlpMain.ResumeLayout(false);
+        tlpDetails.ResumeLayout(false);
+        gbSystem.ResumeLayout(false);
+        gbIOtranf.ResumeLayout(false);
+        gbCommit.ResumeLayout(false);
+        gbPagefile.ResumeLayout(false);
+        gbKernel.ResumeLayout(false);
+        gbIOops.ResumeLayout(false);
+        gbMemory.ResumeLayout(false);
+        ResumeLayout(false);
+    }
+
+    private void InitializeSettings() {
+
+        chartCpu.SetIndexes("Total", "Kernel");
+        chartCpu.BackColorShade = Color.FromArgb(0, 50, 0);
+        chartCpu.PenGraph.Color = Color.Lime;
+        chartCpu.ScaleMode = sMkPerfChart.ScaleModes.Absolute;
+
+        chartMem.BackColorShade = Color.FromArgb(50, 50, 0);
+        chartMem.PenGraph.Color = Color.Yellow;
+        chartMem.ScaleMode = sMkPerfChart.ScaleModes.Absolute;
+
+        chartIO.SetIndexes("R+O", "W");
+        chartIO.BackColorShade = Color.FromArgb(0, 0, 64);
+        chartIO.PenGraph.Color = Color.DodgerBlue;
+        chartIO.PenSecondGraph.Color = Color.Red;
+        chartIO.ScaleMode = sMkPerfChart.ScaleModes.Relative;
+        chartIO.UseTwoValues = true;
+        chartIO.ValuesSuffix = " K";
+
+        chartDisk.SetIndexes("Read", "Write");
+        chartDisk.BackColorShade = Color.FromArgb(60, 30, 30);
+        chartDisk.PenGraph.Color = Color.Tan;
+        chartDisk.PenSecondGraph.Color = Color.OrangeRed;
+        chartDisk.ScaleMode = sMkPerfChart.ScaleModes.Relative;
+        chartDisk.UseTwoValues = true;
+        chartDisk.ValuesSuffix = " K";
+
+        chartNet.SetIndexes("Receive", "Sent");
+        chartNet.BackColorShade = Color.FromArgb(50, 0, 50);
+        chartNet.PenGraph.Color = Color.Cyan;
+        chartNet.PenSecondGraph.Color = Color.Fuchsia;
+        chartNet.ScaleMode = sMkPerfChart.ScaleModes.Relative;
+        chartNet.UseTwoValues = true;
+        chartNet.ValuesSuffix = " K";
+
+    }
+
+    internal TableLayoutPanel tlpMain;
+    internal Label lblCpuMeter;
+    internal Label lblCpuChart;
+    internal Label lblMemMeter;
+    internal Label lblMemChart;
+    internal Label lblIOMeter;
+    internal Label lblIOChart;
+    internal Label lblDiskMeter;
+    internal Label lblDiskChart;
+    internal Label lblNetMeter;
+    internal Label lblNetChart;
+    internal sMkPerfMeter meterCpu;
+    internal sMkPerfChart chartCpu;
+    internal sMkPerfMeter meterMem;
+    internal sMkPerfChart chartMem;
+    internal sMkPerfMeter meterIO;
+    internal sMkPerfChart chartIO;
+    internal sMkPerfMeter meterDisk;
+    internal sMkPerfChart chartDisk;
+    internal sMkPerfMeter meterNet;
+    internal sMkPerfChart chartNet;
+    private TableLayoutPanel tlpDetails;
+    private GroupBox gbMemory;
+    private Label gbMemory_Label1;
+    internal Label gbMemory_Avail;
+    internal Label gbMemory_Total;
+    private Label gbMemory_Label3;
+    private Label gbMemory_Label2;
+    internal Label gbMemory_Cached;
+    private GroupBox gbIOops;
+    private Label gbIOops_Label3;
+    internal Label gbIOops_Others;
+    private Label gbIOops_Label2;
+    private Label gbIOops_Label1;
+    internal Label gbIOops_Writes;
+    internal Label gbIOops_Reads;
+    private GroupBox gbIOtranf;
+    private Label gbIOtranf_Label3;
+    internal Label gbIOtranf_Others;
+    private Label gbIOtranf_Labe2;
+    private Label gbIOtranf_Labe1;
+    internal Label gbIOtranf_Writes;
+    internal Label gbIOtranf_Reads;
+    private GroupBox gbCommit;
+    private Label gbCommit_Label3;
+    internal Label gbCommit_Peak;
+    private Label gbCommit_Label2;
+    private Label gbCommit_Label1;
+    internal Label gbCommit_Current;
+    internal Label gbCommit_Limit;
+    private GroupBox gbPagefile;
+    private Label gbPagefile_Label3;
+    internal Label gbPagefile_Peak;
+    private Label gbPagefile_Label2;
+    private Label gbPagefile_Label1;
+    internal Label gbPagefile_Current;
+    internal Label gbPagefile_Limit;
+    private GroupBox gbKernel;
+    private Label gbKernel_Label3;
+    internal Label gbKernel_NonPaged;
+    private Label gbKernel_Label2;
+    private Label gbKernel_Label1;
+    internal Label gbKernel_Paged;
+    internal Label gbKernel_Total;
+    private GroupBox gbSystem;
+    private Label gbSystem_Label3;
+    internal Label gbSystem_Processes;
+    private Label gbSystem_Label2;
+    private Label gbSystem_Label1;
+    internal Label gbSystem_Threads;
+    internal Label gbSystem_Handles;
+    private Label gbSystem_Label6;
+    private Label gbSystem_Label5;
+    private Label gbSystem_Label4;
+    internal Label gbSystem_UpTime;
+    internal Label gbSystem_Devices;
+    internal Label gbSystem_Services;
+}

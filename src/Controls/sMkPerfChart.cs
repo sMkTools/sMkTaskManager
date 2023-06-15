@@ -3,7 +3,7 @@ using System.Drawing.Drawing2D;
 using System.Runtime.Versioning;
 namespace sMkTaskManager.Controls;
 
-[DesignerCategory(""), SupportedOSPlatform("windows")]
+[DesignerCategory("Component"), SupportedOSPlatform("windows")]
 public class sMkPerfChart : UserControl {
     private readonly ContextMenuStrip mnuStyle = new();
     private readonly ContextMenuStrip mnuGrid = new();
@@ -150,8 +150,15 @@ public class sMkPerfChart : UserControl {
         _MaxValue = 0;
         _Values.Clear();
         _ValuesSecond.Clear();
-        AddValue(0, 0);
+        AddValue(0m, 0m);
     }
+    public void AddValue(Int128 Value1) {
+        AddValue((decimal)Value1);
+    }
+    public void AddValue(Int128 Value1, Int128 Value2) {
+        AddValue((decimal)Value1, (decimal)Value2);
+    }
+
     public void AddValue(decimal Value1, decimal Value2 = 0M) {
         // Ensure that values are not larger than 100 in Absolute Scale
         if (ScaleMode == ScaleModes.Absolute && Value1 > 100) Value1 = 100;

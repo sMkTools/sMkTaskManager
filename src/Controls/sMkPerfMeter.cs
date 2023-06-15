@@ -4,7 +4,7 @@ using System.Runtime.Versioning;
 
 namespace sMkTaskManager.Controls;
 
-[DesignerCategory(""), SupportedOSPlatform("windows")]
+[DesignerCategory("Component"), SupportedOSPlatform("windows")]
 public class sMkPerfMeter : UserControl {
     private string _strValue = "";
     private int _curValue = 0;
@@ -47,13 +47,13 @@ public class sMkPerfMeter : UserControl {
     }
     public int LastValue { get; private set; }
 
-    public void SetValue(long Value, string strValue = "") {
+    public void SetValue(Int128 Value, string strValue = "") {
         if (ScaleMode == ScaleModes.Absolute && Value > 100) Value = 100;
         if (ScaleMode == ScaleModes.Absolute && Value < 0) Value = 0;
         if (ScaleMode == ScaleModes.Relative) {
             while (_HistoryValues.Count > HistoryValues) { _HistoryValues.RemoveAt(0); }
             _HistoryValues.Add(Value);
-            if (Value > 0) { Value = Convert.ToInt32(100 * Value / (double)GetMaxValue()); }
+            if (Value > 0) { Value = Convert.ToInt32(100 * Value / GetMaxValue()); }
         }
         if (string.IsNullOrEmpty(strValue)) {
             strValue = Value.ToString() + ((ScaleMode == ScaleModes.Relative) ? "" : "%");
@@ -70,9 +70,9 @@ public class sMkPerfMeter : UserControl {
         SetValue((long)Value, strValue);
     }
 
-    private long GetMaxValue() {
-        long maxValue = 0;
-        foreach (long i in _HistoryValues) {
+    private Int128 GetMaxValue() {
+        Int128 maxValue = 0;
+        foreach (Int128 i in _HistoryValues) {
             if (i > maxValue) maxValue = i;
         }
         return maxValue;

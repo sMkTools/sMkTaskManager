@@ -23,6 +23,7 @@
         ///  the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             mnu = new MenuStrip();
             mnuFile = new ToolStripMenuItem();
@@ -36,8 +37,15 @@
             ssCpuLoad = new ToolStripStatusLabel();
             ssBtnState = new ToolStripSplitButton();
             ssBusyTime = new ToolStripStatusLabel();
+            timer1 = new System.Windows.Forms.Timer(components);
+            tc = new TabControl();
+            tabPage1 = new TabPage();
+            tpPerformance = new TabPage();
+            tabPerformance = new Forms.tabPerformance();
             mnu.SuspendLayout();
             ss.SuspendLayout();
+            tc.SuspendLayout();
+            tpPerformance.SuspendLayout();
             SuspendLayout();
             // 
             // mnu
@@ -45,7 +53,7 @@
             mnu.Items.AddRange(new ToolStripItem[] { mnuFile, mnuOptions, mnuView, mnuHelp });
             mnu.Location = new Point(0, 0);
             mnu.Name = "mnu";
-            mnu.Size = new Size(600, 24);
+            mnu.Size = new Size(584, 24);
             mnu.TabIndex = 0;
             mnu.Text = "menuStrip1";
             // 
@@ -77,9 +85,9 @@
             // ss
             // 
             ss.Items.AddRange(new ToolStripItem[] { ssText, ssProcesses, ssServices, ssCpuLoad, ssBtnState, ssBusyTime });
-            ss.Location = new Point(0, 476);
+            ss.Location = new Point(0, 537);
             ss.Name = "ss";
-            ss.Size = new Size(600, 24);
+            ss.Size = new Size(584, 24);
             ss.TabIndex = 1;
             ss.Text = "statusStrip1";
             // 
@@ -88,7 +96,7 @@
             ssText.BorderSides = ToolStripStatusLabelBorderSides.Right;
             ssText.BorderStyle = Border3DStyle.Etched;
             ssText.Name = "ssText";
-            ssText.Size = new Size(170, 19);
+            ssText.Size = new Size(154, 19);
             ssText.Spring = true;
             ssText.Text = "sMk Task Manager";
             ssText.TextAlign = ContentAlignment.MiddleLeft;
@@ -143,9 +151,57 @@
             ssBusyTime.Size = new Size(50, 19);
             ssBusyTime.Text = "20ms";
             // 
+            // timer1
+            // 
+            timer1.Enabled = true;
+            timer1.Tick += timer1_Tick;
+            // 
+            // tc
+            // 
+            tc.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tc.Controls.Add(tabPage1);
+            tc.Controls.Add(tpPerformance);
+            tc.ItemSize = new Size(69, 20);
+            tc.Location = new Point(3, 27);
+            tc.Margin = new Padding(0, 3, 0, 3);
+            tc.Name = "tc";
+            tc.Padding = new Point(6, 4);
+            tc.SelectedIndex = 0;
+            tc.Size = new Size(577, 508);
+            tc.TabIndex = 1;
+            // 
+            // tabPage1
+            // 
+            tabPage1.BackColor = SystemColors.Control;
+            tabPage1.Location = new Point(4, 24);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Size = new Size(569, 480);
+            tabPage1.TabIndex = 0;
+            tabPage1.Text = "tabPage1";
+            // 
+            // tpPerformance
+            // 
+            tpPerformance.BackColor = SystemColors.Control;
+            tpPerformance.Controls.Add(tabPerformance);
+            tpPerformance.Location = new Point(4, 24);
+            tpPerformance.Name = "tpPerformance";
+            tpPerformance.Padding = new Padding(0, 2, 0, 0);
+            tpPerformance.Size = new Size(569, 480);
+            tpPerformance.TabIndex = 1;
+            tpPerformance.Text = "Performance";
+            // 
+            // tabPerformance
+            // 
+            tabPerformance.Dock = DockStyle.Fill;
+            tabPerformance.Location = new Point(0, 2);
+            tabPerformance.Name = "tabPerformance";
+            tabPerformance.Size = new Size(569, 478);
+            tabPerformance.TabIndex = 0;
+            // 
             // frmMain
             // 
-            ClientSize = new Size(600, 500);
+            ClientSize = new Size(584, 561);
+            Controls.Add(tc);
             Controls.Add(ss);
             Controls.Add(mnu);
             MainMenuStrip = mnu;
@@ -153,10 +209,13 @@
             MinimumSize = new Size(480, 400);
             Name = "frmMain";
             Text = "sMk Task Manager - Next Gen";
+            Load += frmMain_Load;
             mnu.ResumeLayout(false);
             mnu.PerformLayout();
             ss.ResumeLayout(false);
             ss.PerformLayout();
+            tc.ResumeLayout(false);
+            tpPerformance.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -175,5 +234,10 @@
         private ToolStripStatusLabel ssCpuLoad;
         private ToolStripSplitButton ssBtnState;
         private ToolStripStatusLabel ssBusyTime;
+        private System.Windows.Forms.Timer timer1;
+        private TabControl tc;
+        private TabPage tabPage1;
+        private TabPage tpPerformance;
+        private Forms.tabPerformance tabPerformance;
     }
 }
