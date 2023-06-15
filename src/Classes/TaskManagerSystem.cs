@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.ServiceProcess;
@@ -51,6 +52,12 @@ internal class TaskManagerSystem : TaskManagerValuesBase {
             KernelTotal.SetValue(_PI.KernelTotal * Multiplier);
             KernelPaged.SetValue(_PI.KernelPaged * Multiplier);
             KernelNonPaged.SetValue(_PI.KernelNonPaged * Multiplier);
+            CommitTotal.SetValue(_PI.CommitTotal * Multiplier);
+            CommitLimit.SetValue(_PI.CommitLimit * Multiplier);
+            CommitPeak.SetValue(_PI.CommitPeak * Multiplier);
+            PhysicalTotal.SetValue(_PI.PhysicalTotal * Multiplier);
+            PhysicalAvail.SetValue(_PI.PhysicalAvailable * Multiplier);
+
         } else { /* TODO: Improve */ Debug.WriteLine(Marshal.GetLastPInvokeErrorMessage()); }
 
         // Compute PageFile Data
@@ -88,6 +95,25 @@ internal class TaskManagerSystem : TaskManagerValuesBase {
     }
 
     public string UpTime => string.Format("{0}d {1,2:D2}:{2,2:D2}:{3,2:D2}", _UpTime.Days, _UpTime.Hours, _UpTime.Minutes, _UpTime.Seconds);
+    public int MemoryUsage {
+        get {
+            if (PhysicalTotal.Value - PhysicalAvail.Value <= 0) {
+                return 100;
+            } else {
+                return (int)(100 - ((100 * PhysicalAvail.Value) / PhysicalTotal.Value));
+            }
+        }
+    }
+    public string MemoryUsageString {
+        get {
+            if (PhysicalTotal.Value - PhysicalAvail.Value == 0) { return "Full"; }
+            if (((PhysicalTotal.Value - PhysicalAvail.Value) / 1024 / 1024) < 2000) { // Less than 2Gb
+                return string.Format("{0:#} Mb.", (double)(PhysicalTotal.Value - PhysicalAvail.Value) / 1024 / 1024);
+            } else {
+                return string.Format("{0:#.00} Gb.", (double)(PhysicalTotal.Value - PhysicalAvail.Value) / 1024 / 1024 / 1024);
+            }
+        }
+    }
 
     // Disk Stats
     public Metric DiskRead { get; private set; } = new("DiskRead", MetricFormats.Kb);
