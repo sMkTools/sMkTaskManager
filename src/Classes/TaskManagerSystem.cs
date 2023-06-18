@@ -77,6 +77,14 @@ internal class TaskManagerSystem : TaskManagerValuesBase {
         CpuUsageUser.SetValue(_Cpu.UserUsage);
         CpuUsageKernel.SetValue(_Cpu.KernelUsage);
 
+        // Compute ETW Usages
+        if (ETW.Running) {
+            ETW.Flush();
+            DiskRead.SetValue(ETW.Stats(0).DiskReaded);
+            DiskWrite.SetValue(ETW.Stats(0).DiskWroted);
+            NetSent.SetValue(ETW.Stats(0).NetSent);
+            NetReceived.SetValue(ETW.Stats(0).NetReceived);
+        }
 
         LastUpdate = DateTime.Now.Ticks;
         CancellingEvents = false;
@@ -111,6 +119,34 @@ internal class TaskManagerSystem : TaskManagerValuesBase {
                 return string.Format("{0:#} Mb.", (double)(PhysicalTotal.Value - PhysicalAvail.Value) / 1024 / 1024);
             } else {
                 return string.Format("{0:#.00} Gb.", (double)(PhysicalTotal.Value - PhysicalAvail.Value) / 1024 / 1024 / 1024);
+            }
+        }
+    }
+    public Int128 DiskUsage => DiskRead.Delta + DiskWrite.Delta;
+    public string DiskUsageString {
+        get {
+            if (DiskUsage == 0) {
+                return "Idle";
+            } else if (DiskUsage < 2048) {
+                return string.Format("{0:#,0} b.", DiskUsage);
+            } else if (DiskUsage < (1024 * 1024)) {
+                return string.Format("{0:#,0} Kb.", DiskUsage / 1024);
+            } else {
+                return string.Format("{0:#,0} Mb.", DiskUsage / 1024 / 1024);
+            }
+        }
+    }
+    public Int128 NetworkUsage => NetSent.Delta + NetReceived.Delta;
+    public string NetworkUsageString {
+        get {
+            if (NetworkUsage == 0) {
+                return "Idle";
+            } else if (NetworkUsage < 2048) {
+                return string.Format("{0:#,0} b.", NetworkUsage);
+            } else if (NetworkUsage < (1024 * 1024)) {
+                return string.Format("{0:#,0} Kb.", NetworkUsage / 1024);
+            } else {
+                return string.Format("{0:#,0} Mb.", NetworkUsage / 1024 / 1024);
             }
         }
     }
