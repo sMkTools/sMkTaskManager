@@ -13,6 +13,7 @@ public partial class tabPerformance : UserControl {
         //TODO: Implement ETW
         InitializeComponent();
         InitializeSettings();
+        Extensions.CascadingDoubleBuffer(this);
     }
 
     private IContainer? components = null;
@@ -325,7 +326,7 @@ public partial class tabPerformance : UserControl {
         meterIO.Location = new Point(7, 198);
         meterIO.Margin = new Padding(7, 2, 3, 2);
         meterIO.Name = "meterIO";
-        meterIO.ScaleMode = sMkPerfMeter.ScaleModes.Absolute;
+        meterIO.ScaleMode = sMkPerfMeter.ScaleModes.Relative;
         meterIO.Size = new Size(70, 70);
         meterIO.TabIndex = 11;
         meterIO.TabStop = false;
@@ -392,7 +393,7 @@ public partial class tabPerformance : UserControl {
         meterDisk.Location = new Point(7, 288);
         meterDisk.Margin = new Padding(7, 2, 3, 2);
         meterDisk.Name = "meterDisk";
-        meterDisk.ScaleMode = sMkPerfMeter.ScaleModes.Absolute;
+        meterDisk.ScaleMode = sMkPerfMeter.ScaleModes.Relative;
         meterDisk.Size = new Size(70, 70);
         meterDisk.TabIndex = 15;
         meterDisk.TabStop = false;
@@ -459,7 +460,7 @@ public partial class tabPerformance : UserControl {
         meterNet.Location = new Point(7, 378);
         meterNet.Margin = new Padding(7, 2, 3, 2);
         meterNet.Name = "meterNet";
-        meterNet.ScaleMode = sMkPerfMeter.ScaleModes.Absolute;
+        meterNet.ScaleMode = sMkPerfMeter.ScaleModes.Relative;
         meterNet.Size = new Size(70, 70);
         meterNet.TabIndex = 19;
         meterNet.TabStop = false;

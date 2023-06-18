@@ -8,7 +8,6 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>sMKTaskManager</AssemblyName>
-    <NoWin32Manifest>true</NoWin32Manifest>
     <IsPublishable>False</IsPublishable>
     <Authors>Smoke</Authors>
     <Company>sMkDesigns</Company>
@@ -25,7 +24,16 @@
     <BuildProjectReferences>true</BuildProjectReferences>
     <UseCommonOutputDirectory>false</UseCommonOutputDirectory>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Copyright>Copyright © sMk Designs</Copyright>
+    <AssemblyVersion>3.0.0.0</AssemblyVersion>
+    <FileVersion>3.0.0.0</FileVersion>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>sMkTaskManager.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="sMkTaskManager.ico" />
+  </ItemGroup>
 
   <ItemGroup>
 

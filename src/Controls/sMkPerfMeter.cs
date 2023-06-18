@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.Versioning;
 
 namespace sMkTaskManager.Controls;
@@ -7,10 +8,10 @@ namespace sMkTaskManager.Controls;
 [DesignerCategory("Component"), SupportedOSPlatform("windows")]
 public class sMkPerfMeter : UserControl {
     private string _strValue = "";
-    private int _curValue = 0;
+    private Int128 _curValue = 0;
     private readonly int _gridOffset = 10;
     private readonly int _barReserved = 32;
-    private readonly StringFormat sf = new StringFormat();
+    private readonly StringFormat sf = new();
     private readonly ArrayList _HistoryValues = new();
 
     public sMkPerfMeter() {
@@ -45,7 +46,7 @@ public class sMkPerfMeter : UserControl {
             BorderStyle = (value ? Border3DStyle.Flat : Border3DStyle.Sunken);
         }
     }
-    public int LastValue { get; private set; }
+    public Int128 LastValue { get; private set; }
 
     public void SetValue(Int128 Value, string strValue = "") {
         if (ScaleMode == ScaleModes.Absolute && Value > 100) Value = 100;
@@ -53,15 +54,15 @@ public class sMkPerfMeter : UserControl {
         if (ScaleMode == ScaleModes.Relative) {
             while (_HistoryValues.Count > HistoryValues) { _HistoryValues.RemoveAt(0); }
             _HistoryValues.Add(Value);
-            if (Value > 0) { Value = Convert.ToInt32(100 * Value / GetMaxValue()); }
+            if (Value != 0) { Value = (100 * Value / GetMaxValue()); }
         }
         if (string.IsNullOrEmpty(strValue)) {
             strValue = Value.ToString() + ((ScaleMode == ScaleModes.Relative) ? "" : "%");
         }
         if (Value != _curValue || strValue != _strValue) {
             _strValue = strValue;
-            _curValue = (int)Value;
-            LastValue = (int)Value;
+            _curValue = Value;
+            LastValue = Value;
             Invalidate();
         }
     }
@@ -93,7 +94,7 @@ public class sMkPerfMeter : UserControl {
         // Calculate and draw Unused grid
         int posH = _gridOffset;
         using (Pen thisPen = new(LightColors ? Color.Gray : BarBackColor, 2)) {
-            for (int i = 1; i <= Math.Round(rows * (100 - _curValue) / 100.0, 0); i++) {
+            for (int i = 1; i <= Math.Min(rows, (int)(rows * (100 - _curValue) / 100)); i++) {
                 g.DrawLine(thisPen, _gridOffset, posH, (Width - _gridOffset), posH);
                 posH += 3;
             }
