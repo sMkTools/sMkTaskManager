@@ -41,8 +41,6 @@ internal class TaskManagerSystem : TaskManagerValuesBase {
             SystemCached.SetValue(_SPI.ResidentSystemCachePage * Multiplier);
             ioTotalCount.SetValue(ioReadCount.Value + ioWriteCount.Value + ioOtherCount.Value);
             ioTotalBytes.SetValue(ioReadBytes.Value + ioWriteBytes.Value + ioOtherBytes.Value);
-            ioUsageCount.SetValue(ioReadCount.Delta + ioWriteCount.Delta + ioOtherCount.Delta);
-            ioUsageBytes.SetValue(ioReadBytes.Delta + ioWriteBytes.Delta + ioOtherBytes.Delta);
 
         } else { /* TODO: Improve */ Debug.WriteLine(Marshal.GetLastPInvokeErrorMessage()); }
         if (API.GetPerformanceInfo(ref _PI, _PI.cb)) {
@@ -112,6 +110,15 @@ internal class TaskManagerSystem : TaskManagerValuesBase {
             }
         }
     }
+    public int SwapUsage {
+        get {
+            if (PageFileUsed.Value >= PageFileTotal.Value) {
+                return 100;
+            } else {
+                return (int)(100 * PageFileUsed.Value / PageFileTotal.Value);
+            }
+        }
+    }
     public string MemoryUsageString {
         get {
             if (PhysicalTotal.Value - PhysicalAvail.Value == 0) { return "Full"; }
@@ -122,6 +129,21 @@ internal class TaskManagerSystem : TaskManagerValuesBase {
             }
         }
     }
+    public Int128 ioDataUsage => ioReadBytes.Delta + ioWriteBytes.Delta + ioOtherBytes.Delta;
+    public string ioDataUsageString {
+        get {
+            if (ioDataUsage == 0) {
+                return "Idle";
+            } else if (ioDataUsage < 2048) {
+                return string.Format("{0:#,0} b.", ioDataUsage);
+            } else if (ioDataUsage < (1024 * 1024)) {
+                return string.Format("{0:#,0} Kb.", (double)(ioDataUsage / 1024));
+            } else {
+                return string.Format("{0:#.0} Mb.", (double)ioDataUsage / 1024 / 1024);
+            }
+        }
+    }
+
     public Int128 DiskUsage => DiskRead.Delta + DiskWrite.Delta;
     public string DiskUsageString {
         get {
@@ -130,9 +152,9 @@ internal class TaskManagerSystem : TaskManagerValuesBase {
             } else if (DiskUsage < 2048) {
                 return string.Format("{0:#,0} b.", DiskUsage);
             } else if (DiskUsage < (1024 * 1024)) {
-                return string.Format("{0:#,0} Kb.", DiskUsage / 1024);
+                return string.Format("{0:#,0} Kb.", (double)DiskUsage / 1024);
             } else {
-                return string.Format("{0:#,0} Mb.", DiskUsage / 1024 / 1024);
+                return string.Format("{0:#.0} Mb.", (double)DiskUsage / 1024 / 1024);
             }
         }
     }
@@ -144,9 +166,9 @@ internal class TaskManagerSystem : TaskManagerValuesBase {
             } else if (NetworkUsage < 2048) {
                 return string.Format("{0:#,0} b.", NetworkUsage);
             } else if (NetworkUsage < (1024 * 1024)) {
-                return string.Format("{0:#,0} Kb.", NetworkUsage / 1024);
+                return string.Format("{0:#,0} Kb.", (double)NetworkUsage / 1024);
             } else {
-                return string.Format("{0:#,0} Mb.", NetworkUsage / 1024 / 1024);
+                return string.Format("{0:#.0} Mb.", (double)NetworkUsage / 1024 / 1024);
             }
         }
     }

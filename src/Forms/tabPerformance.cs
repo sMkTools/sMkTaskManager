@@ -214,14 +214,12 @@ public partial class tabPerformance : UserControl {
         chartCpu.LightColors = false;
         chartCpu.Location = new Point(83, 18);
         chartCpu.Margin = new Padding(3, 2, 5, 2);
-        chartCpu.MaxValue = new decimal(new int[] { 0, 0, 0, 524288 });
         chartCpu.Name = "chartCpu";
         chartCpu.ScaleMode = sMkPerfChart.ScaleModes.Absolute;
         chartCpu.ShadeBackground = true;
         chartCpu.Size = new Size(512, 70);
         chartCpu.TabIndex = 4;
         chartCpu.TabStop = false;
-        chartCpu.UseTwoValues = false;
         chartCpu.ValueSpacing = 2;
         chartCpu.ValuesSuffix = "";
         // 
@@ -281,14 +279,12 @@ public partial class tabPerformance : UserControl {
         chartMem.LightColors = false;
         chartMem.Location = new Point(83, 108);
         chartMem.Margin = new Padding(3, 2, 5, 2);
-        chartMem.MaxValue = new decimal(new int[] { 0, 0, 0, 589824 });
         chartMem.Name = "chartMem";
         chartMem.ScaleMode = sMkPerfChart.ScaleModes.Absolute;
         chartMem.ShadeBackground = true;
         chartMem.Size = new Size(512, 70);
         chartMem.TabIndex = 8;
         chartMem.TabStop = false;
-        chartMem.UseTwoValues = false;
         chartMem.ValueSpacing = 2;
         chartMem.ValuesSuffix = "";
         // 
@@ -348,14 +344,12 @@ public partial class tabPerformance : UserControl {
         chartIO.LightColors = false;
         chartIO.Location = new Point(83, 198);
         chartIO.Margin = new Padding(3, 2, 5, 2);
-        chartIO.MaxValue = new decimal(new int[] { 0, 0, 0, 655360 });
         chartIO.Name = "chartIO";
         chartIO.ScaleMode = sMkPerfChart.ScaleModes.Absolute;
         chartIO.ShadeBackground = true;
         chartIO.Size = new Size(512, 70);
         chartIO.TabIndex = 12;
         chartIO.TabStop = false;
-        chartIO.UseTwoValues = false;
         chartIO.ValueSpacing = 2;
         chartIO.ValuesSuffix = "";
         // 
@@ -415,14 +409,12 @@ public partial class tabPerformance : UserControl {
         chartDisk.LightColors = false;
         chartDisk.Location = new Point(83, 288);
         chartDisk.Margin = new Padding(3, 2, 5, 2);
-        chartDisk.MaxValue = new decimal(new int[] { 0, 0, 0, 720896 });
         chartDisk.Name = "chartDisk";
         chartDisk.ScaleMode = sMkPerfChart.ScaleModes.Absolute;
         chartDisk.ShadeBackground = true;
         chartDisk.Size = new Size(512, 70);
         chartDisk.TabIndex = 16;
         chartDisk.TabStop = false;
-        chartDisk.UseTwoValues = false;
         chartDisk.ValueSpacing = 2;
         chartDisk.ValuesSuffix = "";
         // 
@@ -482,14 +474,11 @@ public partial class tabPerformance : UserControl {
         chartNet.LightColors = false;
         chartNet.Location = new Point(83, 378);
         chartNet.Margin = new Padding(3, 2, 5, 2);
-        chartNet.MaxValue = new decimal(new int[] { 0, 0, 0, 786432 });
         chartNet.Name = "chartNet";
-        chartNet.ScaleMode = sMkPerfChart.ScaleModes.Absolute;
         chartNet.ShadeBackground = true;
         chartNet.Size = new Size(512, 70);
         chartNet.TabIndex = 20;
         chartNet.TabStop = false;
-        chartNet.UseTwoValues = false;
         chartNet.ValueSpacing = 2;
         chartNet.ValuesSuffix = "";
         // 
@@ -1097,36 +1086,36 @@ public partial class tabPerformance : UserControl {
 
         chartCpu.SetIndexes("Total", "Kernel");
         chartCpu.BackColorShade = Color.FromArgb(0, 50, 0);
-        chartCpu.PenGraph.Color = Color.Lime;
+        chartCpu.PenGraph1.Color = Color.Lime;
         chartCpu.ScaleMode = sMkPerfChart.ScaleModes.Absolute;
 
+        chartMem.SetIndexes("Memory","PageFile");
         chartMem.BackColorShade = Color.FromArgb(50, 50, 0);
-        chartMem.PenGraph.Color = Color.Yellow;
+        chartMem.PenGraph1.Color = Color.Yellow;
+        chartMem.PenGraph2.Color = Color.DarkCyan;
         chartMem.ScaleMode = sMkPerfChart.ScaleModes.Absolute;
 
-        chartIO.SetIndexes("R+O", "W");
+        chartIO.SetIndexes("Others", "Reads", "Writes");
         chartIO.BackColorShade = Color.FromArgb(0, 0, 64);
-        chartIO.PenGraph.Color = Color.DodgerBlue;
-        chartIO.PenSecondGraph.Color = Color.Red;
+        chartIO.PenGraph1.Color = Color.DodgerBlue;
+        chartIO.PenGraph3.Color = Color.DarkSeaGreen;
+        chartIO.PenGraph2.Color = Color.Salmon;
         chartIO.ScaleMode = sMkPerfChart.ScaleModes.Relative;
-        chartIO.UseTwoValues = true;
-        chartIO.ValuesSuffix = " K";
+        chartIO.ValuesSuffix = " Kb.";
 
         chartDisk.SetIndexes("Read", "Write");
         chartDisk.BackColorShade = Color.FromArgb(60, 30, 30);
-        chartDisk.PenGraph.Color = Color.Tan;
-        chartDisk.PenSecondGraph.Color = Color.OrangeRed;
+        chartDisk.PenGraph1.Color = Color.Tan;
+        chartDisk.PenGraph2.Color = Color.OrangeRed;
         chartDisk.ScaleMode = sMkPerfChart.ScaleModes.Relative;
-        chartDisk.UseTwoValues = true;
-        chartDisk.ValuesSuffix = " K";
+        chartDisk.ValuesSuffix = " Kb.";
 
         chartNet.SetIndexes("Receive", "Sent");
         chartNet.BackColorShade = Color.FromArgb(50, 0, 50);
-        chartNet.PenGraph.Color = Color.Cyan;
-        chartNet.PenSecondGraph.Color = Color.Fuchsia;
+        chartNet.PenGraph1.Color = Color.SkyBlue;
+        chartNet.PenGraph2.Color = Color.LightPink;
         chartNet.ScaleMode = sMkPerfChart.ScaleModes.Relative;
-        chartNet.UseTwoValues = true;
-        chartNet.ValuesSuffix = " K";
+        chartNet.ValuesSuffix = " Kb.";
 
     }
 

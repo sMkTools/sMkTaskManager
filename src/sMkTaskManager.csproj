@@ -48,4 +48,10 @@
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="7.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Controls\sMkPerfChartOld.cs">
+      <SubType>Component</SubType>
+    </Compile>
+  </ItemGroup>
+
 </Project>

@@ -5,43 +5,41 @@ using System.Runtime.Versioning;
 namespace sMkTaskManager.Controls;
 
 [DesignerCategory("Component"), SupportedOSPlatform("windows")]
-public class sMkPerfChart : UserControl {
+public class sMkPerfChartOld : UserControl {
     private readonly ContextMenuStrip mnuStyle = new();
     private readonly ContextMenuStrip mnuGrid = new();
     private readonly ColorDialog cd = new();
 
     private const int MAX_VALUE_COUNT = 1024;// Keep only a maximum MAX_VALUE_COUNT amount of values
     private int _GridScrollOffset = 0;       // Offset value for the scrolling grid
-    private double _MaxVisibleValue = 0;     // The highest displayed value, required for Relative Scale Mode
+    private double _MaxValue = 0;            // The highest displayed value, required for Relative Scale Mode
     private double _MaxStrictValue = 0;      // The highest displayed value, required for Strict Scale Mode
+    private double _AverageValue1 = 0;       // The average value for first index
+    private double _AverageValue2 = 0;       // The average value for second index
     private int _VisibleValues = 0;          // Amount of visible values (calculated from control width and value spacing)
+    private string _FirstIndex = "";
+    private string _SecondIndex = "";
     private double _MaxLegendValue;
     private string _LegendSuffix = "";
     private StringFormat _LegendStringFormat = new();
     private Font _LegendStringFont = new(DefaultFont.FontFamily, 7);
-    private Dictionary<short, List<double>> _Values = new();
-    private Dictionary<short, double> _LastValue = new();
-    private Dictionary<short, double> _AvgValue = new();
-    private Dictionary<short, double> _MaxValue = new();
-    private Dictionary<short, string> _Indexes = new();
-    private Dictionary<short, Pen> _PenGraphs = new();
+    private List<double> _Values = new(MAX_VALUE_COUNT);
+    private List<double> _ValuesSecond = new(MAX_VALUE_COUNT);
 
-    public sMkPerfChart() {
+    public sMkPerfChartOld() {
         InitializeComponents();
+
         // Set Optimized Double Buffer to reduce flickering
         SetStyle(ControlStyles.UserPaint, true);
         SetStyle(ControlStyles.AllPaintingInWmPaint, true);
         SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
         // Redraw when resized
         SetStyle(ControlStyles.ResizeRedraw, true);
-        // Initialize Values and Pens
+        // Initialize some more values
         _LegendStringFormat.Alignment = StringAlignment.Far;
         _LegendStringFormat.LineAlignment = StringAlignment.Center;
-        _PenGraphs.Add(1, new Pen(Color.Lime, 1) { DashStyle = DashStyle.Solid });
-        _PenGraphs.Add(2, new Pen(Color.Red, 1) { DashStyle = DashStyle.Solid });
-        _PenGraphs.Add(3, new Pen(Color.Cyan, 1) { DashStyle = DashStyle.Solid });
-        _PenGraphs.Add(4, new Pen(Color.Yellow, 1) { DashStyle = DashStyle.Solid });
-        _PenGraphs.Add(5, new Pen(Color.Blue, 1) { DashStyle = DashStyle.Solid });
+        PenGraph.DashStyle = DashStyle.Solid;
+        PenSecondGraph.DashStyle = DashStyle.Solid;
         PenAverage.DashStyle = DashStyle.Solid;
         PenGridVertical.DashStyle = DashStyle.Dash;
         PenGridHorizontal.DashStyle = DashStyle.Dash;
@@ -112,8 +110,9 @@ public class sMkPerfChart : UserControl {
         Relative,
         Strict
     }
-    public double? LastValue(short idx) => _LastValue[idx];
-    public string? Indexes(short idx) => _Indexes[idx];
+    public double LastValue { get; private set; } = 0;
+    public double LastSecondValue { get; private set; } = 0;
+    public bool UseTwoValues { get; set; } = false;
     public double MaxValue {
         get { return _MaxStrictValue; }
         set { _MaxStrictValue = (value * 1.1); }
@@ -131,11 +130,8 @@ public class sMkPerfChart : UserControl {
     public int ValueSpacing { get; set; } = 2;
     public bool AntiAliasing { get; set; } = true;
     public int GridSpacing { get; set; } = 10;
-    public Pen PenGraph1 { get { return _PenGraphs[1]; } set { _PenGraphs[1] = value; } }
-    public Pen PenGraph2 { get { return _PenGraphs[2]; } set { _PenGraphs[2] = value; } }
-    public Pen PenGraph3 { get { return _PenGraphs[3]; } set { _PenGraphs[3] = value; } }
-    public Pen PenGraph4 { get { return _PenGraphs[4]; } set { _PenGraphs[4] = value; } }
-    public Pen PenGraph5 { get { return _PenGraphs[5]; } set { _PenGraphs[5] = value; } }
+    public Pen PenGraph { get; set; } = new Pen(Color.Lime, 1);
+    public Pen PenSecondGraph { get; set; } = new Pen(Color.Red, 1);
     public Pen PenAverage { get; set; } = new Pen(Color.Orange, 1);
     public Pen PenLegend { get; set; } = new Pen(Color.Yellow, 1);
     public Pen PenGridVertical { get; set; } = new Pen(Color.Green, 1);
@@ -152,37 +148,38 @@ public class sMkPerfChart : UserControl {
     }
 
     public void Clear() {
-        _MaxVisibleValue = 0;
-        for (short i = 1; i <= 5; i++) {
-            if (!_Values.ContainsKey(i)) continue;
-            _Values[i].Clear(); _AvgValue[i] = 0; _MaxValue[i] = 0;
-        }
-        AddValue(0d, 0d, 0d, 0d, 0d);
+        _MaxValue = 0;
+        _Values.Clear();
+        _ValuesSecond.Clear();
+        AddValue(0d, 0d);
     }
-    public void AddValue(Int128 idx1Value, Int128? idx2Value = null, Int128? idx3Value = null, Int128? idx4Value = null, Int128? idx5Value = null) {
-        AddValue((double)idx1Value, (double?)idx2Value, (double?)idx3Value, (double?)idx4Value, (double?)idx5Value);
+    public void AddValue(Int128 Value1) {
+        AddValue((double)Value1);
+    }
+    public void AddValue(Int128 Value1, Int128 Value2) {
+        AddValue((double)Value1, (double)Value2);
     }
 
-    public void AddValue(double idx1Value, double? idx2Value = null, double? idx3Value = null, double? idx4Value = null, double? idx5Value = null) {
-        var vals = new List<double?>() { 0, idx1Value, idx2Value, idx3Value, idx4Value, idx5Value };
-
-        for (short i = 1; i <= 5; i++) {
-            // We will avoid all the checks if the Index doesnt exist.
-            if (!_Values.ContainsKey(i)) continue;
-            // We wont support negative values for now
-            if (vals[i].HasValue && vals[i] < 0) vals[i] = 0;
-            // Ensure that values are not between 0 and 100 in Absolute Scale
-            if (ScaleMode == ScaleModes.Absolute) {
-                if (vals[i].HasValue && vals[i] > 100) vals[i] = 100;
-            } else if (ScaleMode == ScaleModes.Strict) {
-                if (vals[i].HasValue && vals[i] > _MaxStrictValue) vals[i] = _MaxStrictValue;
-            }
-            // Sanity check, if index exist we need the value!
-            if (_Values.ContainsKey(i) && !vals[i].HasValue) vals[i] = 0;
-            // Store as LastValue and add to Values at first position
-            if (_Values.ContainsKey(i)) { _LastValue[i] = (double)vals[i]!; _Values[i].Insert(0, (double)vals[i]!); }
-            // Remove last item if maximum value count is reached
-            if (_Values.ContainsKey(i) && _Values[i].Count > MAX_VALUE_COUNT) _Values[i].RemoveAt(MAX_VALUE_COUNT);
+    public void AddValue(double Value1, double Value2 = 0) {
+        // Ensure that values are not larger than 100 in Absolute Scale
+        if (ScaleMode == ScaleModes.Absolute && Value1 > 100) Value1 = 100;
+        if (ScaleMode == ScaleModes.Absolute && Value2 > 100) Value1 = 100;
+        // Check if new value is the current max value
+        if (ScaleMode == ScaleModes.Strict && Value1 > _MaxStrictValue) Value1 = _MaxStrictValue;
+        if (Value1 > _MaxValue) _MaxValue = Value1;
+        // Compute last Value
+        LastValue = Value1;
+        // Add new value always to first position
+        _Values.Insert(0, Math.Max(Value1, 0));
+        // Remove last item if maximum value count is reached
+        if (_Values.Count > MAX_VALUE_COUNT) _Values.RemoveAt(MAX_VALUE_COUNT);
+        // Do the same but for the second value, if enabled
+        if (UseTwoValues) {
+            if (ScaleMode == ScaleModes.Strict && Value2 > _MaxStrictValue) Value2 = _MaxStrictValue;
+            LastSecondValue = Value2;
+            _ValuesSecond.Insert(0, Math.Max(Value2, 0));
+            if (Value2 > _MaxValue) _MaxValue = Value2;
+            if (_ValuesSecond.Count > MAX_VALUE_COUNT) _ValuesSecond.RemoveAt(MAX_VALUE_COUNT);
         }
         // Calculate horizontal grid offset for scrolling effect
         _GridScrollOffset += ValueSpacing;
@@ -190,17 +187,11 @@ public class sMkPerfChart : UserControl {
         // Invalidate for redraw.
         Invalidate();
     }
-    public void SetIndexes(string idx1Name, string? idx2Name = null, string? idx3Name = null, string? idx4Name = null, string? idx5Name = null) {
-        _Indexes.Clear(); _Values.Clear(); _AvgValue.Clear(); _MaxValue.Clear();
-        _Indexes.Add(1, idx1Name);
-        _Values.Add(1, new(MAX_VALUE_COUNT));
-        _AvgValue.Add(1, 0); _MaxValue.Add(1, 0);
-        if (!string.IsNullOrEmpty(idx2Name)) { _Indexes.Add(2, idx2Name); _Values.Add(2, new(MAX_VALUE_COUNT)); _AvgValue.Add(2, 0); _MaxValue.Add(2, 0); }
-        if (!string.IsNullOrEmpty(idx3Name)) { _Indexes.Add(3, idx3Name); _Values.Add(3, new(MAX_VALUE_COUNT)); _AvgValue.Add(3, 0); _MaxValue.Add(3, 0); }
-        if (!string.IsNullOrEmpty(idx4Name)) { _Indexes.Add(4, idx4Name); _Values.Add(4, new(MAX_VALUE_COUNT)); _AvgValue.Add(4, 0); _MaxValue.Add(4, 0); }
-        if (!string.IsNullOrEmpty(idx5Name)) { _Indexes.Add(5, idx5Name); _Values.Add(5, new(MAX_VALUE_COUNT)); _AvgValue.Add(5, 0); _MaxValue.Add(5, 0); }
+    public void SetIndexes(string First, string Second = "") {
+        _FirstIndex = string.IsNullOrEmpty(First) ? "" : First + ": ";
+        _SecondIndex = string.IsNullOrEmpty(Second) ? "" : Second + ": ";
     }
-    public void CopySettings(sMkPerfChart OtherChart, bool IncludeEverything = false) {
+    public void CopySettings(sMkPerfChartOld OtherChart, bool IncludeEverything = false) {
         BorderStyle = OtherChart.BorderStyle;
         BackSolid = OtherChart.BackSolid;
         ShadeBackground = OtherChart.ShadeBackground;
@@ -222,13 +213,11 @@ public class sMkPerfChart : UserControl {
         if (IncludeEverything) {
             BackColor = OtherChart.BackColor;
             BackColorShade = OtherChart.BackColorShade;
-            PenGraph1 = OtherChart.PenGraph1;
-            PenGraph2 = OtherChart.PenGraph2;
-            PenGraph3 = OtherChart.PenGraph3;
-            PenGraph4 = OtherChart.PenGraph4;
-            PenGraph5 = OtherChart.PenGraph5;
-            SetIndexes(OtherChart.Indexes(1)!, OtherChart.Indexes(2), OtherChart.Indexes(3), OtherChart.Indexes(4), OtherChart.Indexes(5));
+            PenGraph.Color = OtherChart.PenGraph.Color;
+            PenSecondGraph.Color = OtherChart.PenSecondGraph.Color;
+            SetIndexes(OtherChart._FirstIndex, OtherChart._SecondIndex);
             ValuesSuffix = OtherChart.ValuesSuffix;
+            UseTwoValues = OtherChart.UseTwoValues;
             ScaleMode = OtherChart.ScaleMode;
         }
     }
@@ -279,27 +268,41 @@ public class sMkPerfChart : UserControl {
     }
     private void DrawChartValues(Graphics g) {
         // Calculate Visible Values
-        if (!_Values.ContainsKey(1)) return;
-        _VisibleValues = Math.Min(((DisplayLegends ? Width - LegendSpacing : Width) / ValueSpacing) + 1, _Values[1].Count);
-        if (_VisibleValues < 1) return;
-        _MaxVisibleValue = 0;
-        for (short i = 1; i <= 5; i++) {
-            if (!_Values.ContainsKey(i)) continue;
-            var vvs = _Values[i].GetRange(0, _VisibleValues); // Take out only the visible values
-            if (vvs.Count < 1) continue;
-            // Calculate Max Visible Value & Average, only if needed
-            if (ScaleMode != ScaleModes.Absolute) _MaxVisibleValue = Math.Max(_MaxVisibleValue, vvs.Max());
-            if (DisplayAverage) { _AvgValue[i] = vvs.Average(); _MaxValue[i] = vvs.Max(); }
-            // Dirty little "trick": initialize the first previous Point outside the bounds
-            Point currPoint = new();
-            Point prevPoint = new(Width + ValueSpacing, Height);
-            foreach (double v in vvs) {
-                // Connect all visible values with lines
+        _VisibleValues = Math.Min(((DisplayLegends ? Width - LegendSpacing : Width) / ValueSpacing) + 1, _Values.Count);
+        // Calculate Max Value, if needed
+        if (ScaleMode != ScaleModes.Absolute && _MaxValue != LastValue) CalcHighestValue();
+        // Dirty little "trick": initialize the first previous Point outside the bounds
+        Point currPoint = new();
+        Point prevPoint = new(Width + ValueSpacing, Height);
+        // Connect all visible values with lines
+        for (int i = 0; i < _VisibleValues; i++) {
+            currPoint.X = prevPoint.X - ValueSpacing;
+            currPoint.Y = CalcVerticalPosition(_Values[i]);
+            // If we need to solidify the area, do it now.
+            if (BackSolid) {
+                using SolidBrush thisBrush = new(Color.FromArgb((LightColors ? 150 : 100), PenGraph.Color.R, PenGraph.Color.G, PenGraph.Color.B));
+                Point[] PolyPoints = {
+                    new Point(prevPoint.X, Height),
+                    new Point(prevPoint.X, prevPoint.Y),
+                    new Point(currPoint.X, currPoint.Y),
+                    new Point(currPoint.X, Height)
+                };
+                g.FillPolygon(thisBrush, PolyPoints);
+            }
+            // And now draw the line in top of it.
+            g.DrawLine(PenGraph, prevPoint, currPoint);
+            prevPoint = currPoint;
+        }
+        // Now draw second values, if wanted.
+        if (UseTwoValues) {
+            currPoint = new Point();
+            prevPoint = new Point(Width + ValueSpacing, Height);
+            for (int i = 0; i < _VisibleValues; i++) {
                 currPoint.X = prevPoint.X - ValueSpacing;
-                currPoint.Y = CalcVerticalPosition(v);
+                currPoint.Y = CalcVerticalPosition(_ValuesSecond[i]);
                 // If we need to solidify the area, do it now.
                 if (BackSolid) {
-                    using SolidBrush thisBrush = new(Color.FromArgb((LightColors ? 150 : 100), _PenGraphs[i].Color.R, _PenGraphs[i].Color.G, _PenGraphs[i].Color.B));
+                    using SolidBrush thisBrush = new(Color.FromArgb((LightColors ? 200 : 150), PenSecondGraph.Color.R, PenSecondGraph.Color.G, PenSecondGraph.Color.B));
                     Point[] PolyPoints = {
                         new Point(prevPoint.X, Height),
                         new Point(prevPoint.X, prevPoint.Y),
@@ -308,8 +311,8 @@ public class sMkPerfChart : UserControl {
                     };
                     g.FillPolygon(thisBrush, PolyPoints);
                 }
-                // And now draw the line on top of it.
-                g.DrawLine(_PenGraphs[i], prevPoint, currPoint);
+                // And now draw the line in top of it.
+                g.DrawLine(PenSecondGraph, prevPoint, currPoint);
                 prevPoint = currPoint;
             }
         }
@@ -323,36 +326,41 @@ public class sMkPerfChart : UserControl {
                 Cursor = Cursors.Help;
             }
         }
-        var posX = (DisplayLegends & DisplayIndexes) ? LegendSpacing + 115 : (DisplayLegends ? LegendSpacing + 5 : (DisplayIndexes ? 115 : 4));
-        var posY = 2;
-        for (short i = 1; i <= 5; i++) {
-            if (!_Values.ContainsKey(i)) continue;
-            // Only draw average line when possible (visibleValues) and needed (style setting)
-            if (_VisibleValues > 1 && PenAverage.DashStyle != DashStyle.Custom) {
-                g.DrawLine(PenAverage, 2, CalcVerticalPosition(_AvgValue[i]), Width - 3, CalcVerticalPosition(_AvgValue[i]));
-            }
-            // Draw Average Values
-            if (_VisibleValues > 1 && DisplayAverage) {
-                using Brush sb = new SolidBrush(PenLegend.Color);
-                g.DrawString("Avg: " + Math.Round(_AvgValue[i]) + ((ScaleMode == ScaleModes.Absolute) ? "%" : ValuesSuffix), Font, sb, posX, posY);
-                g.DrawString("Max: " + Math.Round(_MaxValue[i]) + ((ScaleMode == ScaleModes.Absolute) ? "%" : ValuesSuffix), Font, sb, posX + 115, posY);
-            }
-            // Offset by +13 for the next
-            posY += 13;
 
+        // Only calc the average value if we are going to use it.
+        if (PenAverage.DashStyle != DashStyle.Custom || DisplayAverage) {
+            if (_Values.Count >= 2) _AverageValue1 = _Values.GetRange(1, Math.Max(_VisibleValues - 2, 1)).Average();
+            if (UseTwoValues && _ValuesSecond.Count > 2) _AverageValue2 = _ValuesSecond.GetRange(1, Math.Max(_VisibleValues - 2, 1)).Average();
+        }
+        // Only draw average line when possible (visibleValues) and needed (style setting)
+        if (_VisibleValues > 1 && PenAverage.DashStyle != DashStyle.Custom) {
+            g.DrawLine(PenAverage, 2, CalcVerticalPosition(_AverageValue1), Width - 3, CalcVerticalPosition(_AverageValue1));
+            if (UseTwoValues) {
+                g.DrawLine(PenAverage, 2, CalcVerticalPosition(_AverageValue2), Width - 3, CalcVerticalPosition(_AverageValue2));
+            }
+        }
+        // Draw Average Values
+        if (_VisibleValues > 1 && DisplayAverage) {
+            using Brush sb = new SolidBrush(PenLegend.Color);
+            if (UseTwoValues) {
+                g.DrawString("Avg: " + Math.Round(_AverageValue1) + ((ScaleMode == ScaleModes.Absolute) ? "%" : ValuesSuffix), Font, sb, ((DisplayLegends & DisplayIndexes) ? LegendSpacing + 115 : (DisplayLegends ? LegendSpacing + 5 : (DisplayIndexes ? 115 : 4.0F))), 2.0F);
+                g.DrawString("Avg: " + Math.Round(_AverageValue2) + ((ScaleMode == ScaleModes.Absolute) ? "%" : ValuesSuffix), Font, sb, ((DisplayLegends & DisplayIndexes) ? LegendSpacing + 115 : (DisplayLegends ? LegendSpacing + 5 : (DisplayIndexes ? 115 : 4.0F))), 15.0F);
+            } else {
+                g.DrawString("Avg:   " + Math.Round(_AverageValue1) + ((ScaleMode == ScaleModes.Absolute) ? "%" : ValuesSuffix), Font, sb, ((DisplayLegends & DisplayIndexes) ? LegendSpacing + 115 : (DisplayLegends ? LegendSpacing + 5 : (DisplayIndexes ? 115 : 4.0F))), 2.0F);
+                g.DrawString("Peak: " + Math.Round(_MaxValue, 1) + ((ScaleMode == ScaleModes.Absolute) ? "%" : ValuesSuffix), Font, sb, ((DisplayLegends & DisplayIndexes) ? LegendSpacing + 115 : (DisplayLegends ? LegendSpacing + 5 : (DisplayIndexes ? 115 : 4.0F))), 15.0F);
+            }
         }
     }
     private void DrawIndexes(Graphics g) {
         if (DetailsOnHover && !ClientRectangle.Contains(PointToClient(Cursor.Position))) return;
-        if (_VisibleValues < 1 || !DisplayIndexes) return;
         // Draw Indexes Values
-        var posX = (DisplayLegends ? LegendSpacing + 5 : 4);
-        var posY = 2;
-        for (short i = 1; i <= 5; i++) {
-            if (!_Values.ContainsKey(i)) continue;
-            using Brush sb = new SolidBrush(_PenGraphs[i].Color);
-            g.DrawString(_Indexes[i] + ": " + Math.Round(_LastValue[i], 1) + ((ScaleMode == ScaleModes.Absolute) ? "%" : ValuesSuffix), Font, sb, posX, posY);
-            posY += 13;
+        if (_VisibleValues > 0 && DisplayIndexes) {
+            using Brush sb = new SolidBrush(PenGraph.Color);
+            g.DrawString(_FirstIndex + Math.Round(LastValue, 1).ToString() + ((ScaleMode == ScaleModes.Absolute) ? "%" : ValuesSuffix), Font, sb, (DisplayLegends ? LegendSpacing + 5 : 4.0F), 2.0F);
+            if (UseTwoValues) {
+                using Brush sb2 = new SolidBrush(PenSecondGraph.Color);
+                g.DrawString(_SecondIndex + Math.Round(LastSecondValue, 1).ToString() + ((ScaleMode == ScaleModes.Absolute) ? "%" : ValuesSuffix), Font, sb2, (DisplayLegends ? LegendSpacing + 5 : 4.0F), 15.0F);
+            }
         }
     }
     private void DrawLegends(Graphics g) {
@@ -373,13 +381,13 @@ public class sMkPerfChart : UserControl {
         g.DrawString(Math.Round(_MaxLegendValue, ((_MaxLegendValue > 5) ? 0 : 1)).ToString() + _LegendSuffix, _LegendStringFont, sb, LegendSpacing - 1, 8, _LegendStringFormat);
     }
 
-    private double CalcHighestVisibleValue() {
-        _MaxVisibleValue = 0;
-        for (short i = 0; i <= 5; i++) {
-            if (!_Values.ContainsKey(i)) continue;
-            _MaxVisibleValue = Math.Max(_MaxVisibleValue, _Values[i].GetRange(0, _VisibleValues).Max());
+    private double CalcHighestValue() {
+        _MaxValue = 0;
+        for (int i = 0; i < _VisibleValues; i++) {
+            if (_Values[i] > _MaxValue) _MaxValue = _Values[i];
+            if (UseTwoValues && _ValuesSecond[i] > _MaxValue) _MaxValue = _ValuesSecond[i];
         }
-        return _MaxVisibleValue;
+        return _MaxValue;
     }
     private int CalcVerticalPosition(double value) {
         double result = 0;
@@ -387,7 +395,7 @@ public class sMkPerfChart : UserControl {
         if (ScaleMode == ScaleModes.Absolute) {
             result = value * (Height - 4) / 100;
         } else if (ScaleMode == ScaleModes.Relative) {
-            result = (_MaxVisibleValue > 0) ? (value * (Height - 4) / _MaxVisibleValue) : 0;
+            result = (_MaxValue > 0) ? (value * (Height - 4) / _MaxValue) : 0;
         } else if (ScaleMode == ScaleModes.Strict) {
             result = (_MaxStrictValue > 0) ? (value * (Height - 4) / _MaxStrictValue) : 0;
         }
@@ -398,13 +406,13 @@ public class sMkPerfChart : UserControl {
     }
     private double CalcMaxLegendValue() {
         if (ScaleMode == ScaleModes.Strict) return _MaxStrictValue;
-        if (ScaleMode == ScaleModes.Relative) return (_MaxVisibleValue > 1024) ? _MaxVisibleValue / 1024 : _MaxVisibleValue;
+        if (ScaleMode == ScaleModes.Relative) return (_MaxValue > 999) ? _MaxValue / 1024 : _MaxValue;
         return 100;
     }
     private string CalcLegendSuffix() {
         if (ScaleMode == ScaleModes.Absolute) return "%";
-        if (ScaleMode == ScaleModes.Strict) return ValuesSuffix;
-        if (ScaleMode == ScaleModes.Relative) return (_MaxVisibleValue > 1024) ? ValuesSuffix.Replace("K", "M") : ValuesSuffix;
+        if (ScaleMode == ScaleModes.Strict) return ValuesSuffix.Trim();
+        if (ScaleMode == ScaleModes.Relative) return (_MaxValue > 999) ? ValuesSuffix.Trim().Replace("K", "M") : ValuesSuffix.Trim();
         return "";
     }
 
@@ -478,5 +486,6 @@ public class sMkPerfChart : UserControl {
         Invalidate();
 
     }
+
 
 }

@@ -85,20 +85,25 @@ public partial class frmMain : Form {
 
     private void timer1_Tick(object sender, EventArgs e) {
         _System.Refresh();
-        tabPerformance.chartCpu.AddValue(_System.CpuUsage.Value, _System.CpuUsageKernel.Value);
-        tabPerformance.chartMem.AddValue(_System.MemoryUsage);
-        tabPerformance.chartIO.AddValue(_System.ioReadBytes.Delta / 1024, _System.ioWriteBytes.Delta / 1024);
-        tabPerformance.chartDisk.AddValue(_System.DiskRead.Delta / 1024, _System.DiskWrite.Delta / 1024);
-        tabPerformance.chartNet.AddValue(_System.NetReceived.Delta / 1024, _System.NetSent.Delta / 1024);
         tabPerformance.meterCpu.SetValue(_System.CpuUsage.Value);
+        tabPerformance.chartCpu.AddValue(_System.CpuUsage.Value, _System.CpuUsageKernel.Value);
+
         tabPerformance.meterMem.SetValue(_System.MemoryUsage, _System.MemoryUsageString);
-        tabPerformance.meterIO.SetValue(_System.ioUsageBytes.Delta, _System.ioUsageBytes.DeltaFmt);
+        tabPerformance.chartMem.AddValue((double)_System.MemoryUsage, _System.SwapUsage);
+
+        tabPerformance.meterIO.SetValue(_System.ioDataUsage, _System.ioDataUsageString);
+        tabPerformance.chartIO.AddValue((double)_System.ioOtherBytes.Delta / 1024, (double)_System.ioWriteBytes.Delta / 1024, (double)_System.ioReadBytes.Delta / 1024);
+
         tabPerformance.meterDisk.SetValue(_System.DiskUsage, _System.DiskUsageString);
+        tabPerformance.chartDisk.AddValue((double)_System.DiskRead.Delta / 1024, (double)_System.DiskWrite.Delta / 1024);
+
         tabPerformance.meterNet.SetValue(_System.NetworkUsage, _System.NetworkUsageString);
+        tabPerformance.chartNet.AddValue((double)_System.NetReceived.Delta / 1024, (double)_System.NetSent.Delta / 1024);
     }
 
     private void Settings_Apply() {
         //Performance Graphs Settings
+        tabPerformance.chartCpu.SetIndexes("Total", Settings.Performance.ShowKernelTime ? "Kernel" : null);
         tabPerformance.chartCpu.BackSolid = Settings.Performance.Solid;
         tabPerformance.chartCpu.AntiAliasing = Settings.Performance.AntiAlias;
         tabPerformance.chartCpu.ShadeBackground = Settings.Performance.ShadeBackground;
@@ -106,7 +111,6 @@ public partial class frmMain : Form {
         tabPerformance.chartCpu.DisplayLegends = Settings.Performance.DisplayLegends;
         tabPerformance.chartCpu.DisplayIndexes = Settings.Performance.DisplayIndexes;
         tabPerformance.chartCpu.DetailsOnHover = Settings.Performance.DisplayOnHover;
-        tabPerformance.chartCpu.UseTwoValues = Settings.Performance.ShowKernelTime;
         tabPerformance.chartCpu.ValueSpacing = Settings.Performance.ValueSpacing;
         tabPerformance.chartCpu.GridSpacing = Settings.Performance.GridSize;
         tabPerformance.chartCpu.PenGridVertical.DashStyle = (System.Drawing.Drawing2D.DashStyle)Settings.Performance.VerticalGridStyle;
@@ -116,6 +120,12 @@ public partial class frmMain : Form {
         tabPerformance.chartCpu.PenAverage.DashStyle = (System.Drawing.Drawing2D.DashStyle)Settings.Performance.AverageLineStyle;
         tabPerformance.chartCpu.PenAverage.Color = Settings.Performance.AverageLineColor;
         tabPerformance.chartCpu.LightColors = Settings.Performance.LightColors;
+        // TODO: Force for now, remove later
+        tabPerformance.chartCpu.DisplayAverage = true;
+        tabPerformance.chartCpu.DisplayLegends = true;
+        tabPerformance.chartCpu.DisplayIndexes = true;
+
+
         tabPerformance.chartMem.CopySettings(tabPerformance.chartCpu);
         tabPerformance.chartIO.CopySettings(tabPerformance.chartCpu);
         tabPerformance.chartDisk.CopySettings(tabPerformance.chartCpu);
@@ -125,6 +135,8 @@ public partial class frmMain : Form {
         tabPerformance.meterIO.LightColors = tabPerformance.chartCpu.LightColors;
         tabPerformance.meterDisk.LightColors = tabPerformance.chartCpu.LightColors;
         tabPerformance.meterNet.LightColors = tabPerformance.chartCpu.LightColors;
+
+
 
     }
 }
