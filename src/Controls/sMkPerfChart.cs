@@ -234,8 +234,6 @@ public class sMkPerfChart : UserControl {
     }
 
     protected override void OnPaint(PaintEventArgs e) {
-        Stopwatch tmr = new();
-        Extensions.StartMeasure(tmr);
         // Base Paint
         base.OnPaint(e);
         // Enable AntiAliasing, if needed
@@ -248,7 +246,6 @@ public class sMkPerfChart : UserControl {
         DrawLegends(e.Graphics);
         // Draw Border At TOP of everything
         ControlPaint.DrawBorder3D(e.Graphics, 0, 0, Width, Height, BorderStyle);
-        Extensions.StopMeasure(tmr, Name);
     }
     private void DrawBackAndGrid(Graphics g) {
         // Draw the background gradient rectangle

@@ -47,7 +47,7 @@ internal static class Extensions {
     public static void StopMeasure(Stopwatch? tmr, [System.Runtime.CompilerServices.CallerMemberName] string methodName = "") {
         if (!Debugger.IsAttached) return;
         tmr?.Stop();
-        Debug.WriteLine($"- {methodName} Time: {tmr?.ElapsedTicks}ms.");
+        Debug.WriteLine($"- {methodName} Time: {tmr?.ElapsedMilliseconds}ms.");
     }
 
 
