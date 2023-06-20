@@ -21,6 +21,8 @@ public partial class frmMain : Form {
     private bool _InitComplete = false, _LoadComplete = false;
     private readonly Stopwatch _StopWatch1 = new(), _StopWatch2 = new(), _StopWatch3 = new();
     private readonly TaskManagerSystem _System = new();
+    private Size? _prevSize, _prevMinSize; Point? _prevLocation;
+    private Size? _fullScreenSize; Point? _fullScreenLocation;
 
     private void OnLoadEventHandler(object sender, EventArgs e) {
         Extensions.StartMeasure(_StopWatch1);
@@ -167,8 +169,6 @@ public partial class frmMain : Form {
     }
 
     public bool FullScreen {
-        // TODO: The Change in Position & Size when in FullScreen should not affect the main with returning
-        // TODO: The Minimum Size should not be enforced in FullScreen
         get { return Settings.inFullScreen; }
         set {
             if (value) { tc.SelectTab(tpPerformance); }
@@ -178,10 +178,35 @@ public partial class frmMain : Form {
             tc.Visible = !value;
             if (value) {
                 Controls.Add(tabPerformance);
-                //tabPerformance.MouseMove += perf_MouseMoveEventHandler;
+                if (WindowState == FormWindowState.Normal) {
+                    _prevLocation = Location;
+                    _prevMinSize = MinimumSize;
+                    _prevSize = Size;
+                }
+                FormBorderStyle = FormBorderStyle.SizableToolWindow;
+                MinimumSize = new(100, 300);
+                ControlBox = false;
+                TopMost = true;
+                if (WindowState == FormWindowState.Normal) {
+                    _fullScreenSize ??= Size;
+                    _fullScreenLocation ??= Location;
+                    Size = (Size)_fullScreenSize;
+                    Location = (Point)_fullScreenLocation;
+                }
             } else {
                 tpPerformance.Controls.Add(tabPerformance);
-                //tabPerformance.MouseMove -= perf_MouseMoveEventHandler;
+                if (WindowState == FormWindowState.Normal) {
+                    _fullScreenSize = Size;
+                    _fullScreenLocation = Location;
+                }
+                FormBorderStyle = FormBorderStyle.Sizable;
+                ControlBox = true;
+                TopMost = Settings.AlwaysOnTop;
+                if (WindowState == FormWindowState.Normal) {
+                    Size = (Size)_prevSize!;
+                    MinimumSize = (Size)_prevMinSize!;
+                    Location = (Point)_prevLocation!;
+                }
             }
             OnSizeChangedEventHandler(this, new EventArgs());
         }

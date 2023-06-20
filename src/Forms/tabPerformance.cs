@@ -1271,6 +1271,7 @@ public partial class tabPerformance : UserControl {
             tlpDetails.ColumnStyles[3].Width = 32;
         }
         // Accomodate the Graphs to be displayed
+        setMeterVisible(PerformanceMeters.CPU, tlpMain.Height > 270 | FullScreen);
         setMeterVisible(PerformanceMeters.Mem, tlpMain.Height > 270 | FullScreen);
         setMeterVisible(PerformanceMeters.IO, tlpMain.Height > 370 | FullScreen);
         setMeterVisible(PerformanceMeters.Disk, (tlpMain.Height > 470) & ETW.Running);
@@ -1329,44 +1330,45 @@ public partial class tabPerformance : UserControl {
         };
     }
     private void setMeterVisible(PerformanceMeters meter, bool visible) {
+        var minWidth = 110;
         switch (meter) {
             case PerformanceMeters.CPU:
                 lblCpuMeter.Visible = visible;
-                lblCpuChart.Visible = visible;
                 meterCpu.Visible = visible;
-                chartCpu.Visible = visible;
+                lblCpuChart.Visible = visible & Width > minWidth;
+                chartCpu.Visible = visible & Width > minWidth;
                 tlpMain.RowStyles[0].Height = visible ? 16 : 0;
                 tlpMain.RowStyles[1].Height = visible ? 20 : 0;
                 break;
             case PerformanceMeters.Mem:
                 lblMemMeter.Visible = visible;
-                lblMemChart.Visible = visible;
                 meterMem.Visible = visible;
-                chartMem.Visible = visible;
+                lblMemChart.Visible = visible & Width > minWidth;
+                chartMem.Visible = visible & Width > minWidth;
                 tlpMain.RowStyles[2].Height = visible ? 16 : 0;
                 tlpMain.RowStyles[3].Height = visible ? 20 : 0;
                 break;
             case PerformanceMeters.IO:
                 lblIOMeter.Visible = visible;
-                lblIOChart.Visible = visible;
                 meterIO.Visible = visible;
-                chartIO.Visible = visible;
+                lblIOChart.Visible = visible &Width > minWidth;
+                chartIO.Visible = visible & Width > minWidth;
                 tlpMain.RowStyles[4].Height = visible ? 16 : 0;
                 tlpMain.RowStyles[5].Height = visible ? 20 : 0;
                 break;
             case PerformanceMeters.Disk:
                 lblDiskMeter.Visible = visible;
-                lblDiskChart.Visible = visible;
                 meterDisk.Visible = visible;
-                chartDisk.Visible = visible;
+                lblDiskChart.Visible = visible & Width > minWidth;
+                chartDisk.Visible = visible & Width > minWidth;
                 tlpMain.RowStyles[6].Height = visible ? 16 : 0;
                 tlpMain.RowStyles[7].Height = visible ? 20 : 0;
                 break;
             case PerformanceMeters.Net:
                 lblNetMeter.Visible = visible;
-                lblNetChart.Visible = visible;
                 meterNet.Visible = visible;
-                chartNet.Visible = visible;
+                lblNetChart.Visible = visible & Width > minWidth;
+                chartNet.Visible = visible & Width > minWidth;
                 tlpMain.RowStyles[8].Height = visible ? 16 : 0;
                 tlpMain.RowStyles[9].Height = visible ? 20 : 0;
                 break;
