@@ -20,7 +20,8 @@ internal class TaskManagerSystem : TaskManagerValuesBase {
     }
 
     public void Refresh(bool cancellingEvents = false) {
-        if (LastUpdate == 0) { LastUpdate = DateTime.Now.Ticks - 10000000; }
+        CancellingEvents = cancellingEvents;
+        if (LastUpdate == 0) { LastUpdate = DateTime.Now.Ticks - 10; }
 
         // Compute System Uptime
         if (Environment.TickCount > 0) {
@@ -30,7 +31,6 @@ internal class TaskManagerSystem : TaskManagerValuesBase {
         }
 
         // Compute Functions Invokes
-        CancellingEvents = cancellingEvents;
         if (API.NtQuerySystemInformation(API.SYSTEM_INFORMATION_CLASS.SystemPerformanceInformation, ref _SPI, Marshal.SizeOf(_SPI), out _) == 0) {
             ioReadCount.SetValue(_SPI.IoReadOperationCount);
             ioWriteCount.SetValue(_SPI.IoWriteOperationCount);

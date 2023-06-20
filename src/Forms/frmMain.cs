@@ -2,6 +2,8 @@ using System.Diagnostics;
 using System.Runtime.Versioning;
 using System.Timers;
 using sMkTaskManager.Classes;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+
 namespace sMkTaskManager;
 
 [SupportedOSPlatform("windows")]
@@ -20,12 +22,12 @@ public partial class frmMain : Form {
     private readonly Stopwatch _StopWatch1 = new(), _StopWatch2 = new(), _StopWatch3 = new();
     private readonly TaskManagerSystem _System = new();
 
-    private void frmMain_Load(object sender, EventArgs e) {
+    private void OnLoadEventHandler(object sender, EventArgs e) {
         Extensions.StartMeasure(_StopWatch1);
-        timer1.Interval = 1000;
-        timer1.Start();
         Settings.LoadAll();
-        frmMain_LoadSettings();
+        OnLoadLoadSettings();
+        frmAddHandlers();
+        Settings_Apply();
         // Parallel Init by using a Timer
         _ParallelTimer = new() { Interval = 1, AutoReset = false };
         _ParallelTimer.Elapsed += ParallelInit;
@@ -35,9 +37,11 @@ public partial class frmMain : Form {
 
         _LoadComplete = true;
         Extensions.StopMeasure(_StopWatch1);
+        timer1.Interval = 1000;
+        timer1.Start();
 
     }
-    private void frmMain_LoadSettings() {
+    private void OnLoadLoadSettings() {
         // Load Window Size & Position
         Settings.LoadMainWindow();
         if (Settings.RememberPositions) {
@@ -59,47 +63,130 @@ public partial class frmMain : Form {
             if (Settings.ToTrayWhenMinimized) Hide();
         }
     }
+    private void OnSizeChangedEventHandler(object sender, EventArgs e) {
+        if (!_LoadComplete) return;
+        ToolStripMenuItem mnuItm = (ToolStripMenuItem)mnuOptions.DropDownItems["mnuOptions_HideMinimize"];
+
+        if (WindowState == FormWindowState.Minimized && mnuItm.Checked) {
+            WindowState = FormWindowState.Minimized;
+            Hide();
+        }
+        if (WindowState != FormWindowState.Minimized) {
+            Settings.MainWindow.Maximized = (WindowState == FormWindowState.Maximized);
+        }
+        if ((WindowState == FormWindowState.Normal | WindowState == FormWindowState.Maximized) && !Visible) {
+            Visible = true;
+        }
+    }
+
 
     private void frmAddHandlers() {
         _System.MetricValueChanged += perf_MetricValueChangedEventHandler;
-        tabPerformance.MouseUp += perf_MouseUpEventHandler;
-        tabPerformance.MouseDown += perf_MouseDownEventHandler;
-        tabPerformance.MouseMove += perf_MouseMoveEventHandler;
+        //tabPerformance.MouseUp += perf_MouseUpEventHandler;
+        //tabPerformance.MouseDown += perf_MouseDownEventHandler;
+        //tabPerformance.MouseMove += perf_MouseMoveEventHandler;
+        tabPerformance.MouseDoubleClick += perf_MouseDoubleClickEventHandler;
     }
+
     private void ParallelInit(object? sender, ElapsedEventArgs e) {
         _ParallelTimer.Stop();
         Stopwatch sw = new();
         Extensions.StartMeasure(sw);
 
-        frmAddHandlers();
-        if (InvokeRequired) { BeginInvoke(Settings_Apply); } else { Settings_Apply(); }
+        // We should use this to initialize something that is not really critical?
 
         _InitComplete = true;
         Extensions.StopMeasure(sw);
     }
 
-    private void perf_MouseMoveEventHandler(object? sender, MouseEventArgs e) { }
-    private void perf_MouseDownEventHandler(object? sender, MouseEventArgs e) { }
-    private void perf_MouseUpEventHandler(object? sender, MouseEventArgs e) { }
-    private void perf_MetricValueChangedEventHandler(object sender, Metric metric, MetricChangedEventArgs e) { }
+    private void perf_MouseDoubleClickEventHandler(object? sender, MouseEventArgs e) {
+        if (e.Button == MouseButtons.Left && e.Clicks > 1) { FullScreen = !FullScreen; }
+    }
 
-    private void timer1_Tick(object sender, EventArgs e) {
-        _System.Refresh();
+    private void perf_MetricValueChangedEventHandler(object sender, Metric metric, MetricChangedEventArgs e) {
+        switch (e.MetricName) {
+            case "PhysicalTotal":
+                Debug.WriteLine("Entre");
+                tabPerformance.gbMemory_Total.Text = _System.PhysicalTotal.ValueFmt;
+                break;
+            case "PhysicalAvail": tabPerformance.gbMemory_Avail.Text = _System.PhysicalAvail.ValueFmt; break;
+            case "SystemCached": tabPerformance.gbMemory_Cached.Text = _System.SystemCached.ValueFmt; break;
+
+            case "CommitTotal": tabPerformance.gbCommit_Current.Text = _System.CommitTotal.ValueFmt; break;
+            case "CommitPeak": tabPerformance.gbCommit_Peak.Text = _System.CommitPeak.ValueFmt; break;
+            case "CommitLimit": tabPerformance.gbCommit_Limit.Text = _System.CommitLimit.ValueFmt; break;
+            case "KernelTotal": tabPerformance.gbKernel_Total.Text = _System.KernelTotal.ValueFmt; break;
+            case "KernelPaged": tabPerformance.gbKernel_Paged.Text = _System.KernelPaged.ValueFmt; break;
+            case "KernelNonPaged": tabPerformance.gbKernel_NonPaged.Text = _System.KernelNonPaged.ValueFmt; break;
+            case "PageFileTotal": tabPerformance.gbPagefile_Limit.Text = _System.PageFileTotal.ValueFmt; break;
+            case "PageFileUsed": tabPerformance.gbPagefile_Current.Text = _System.PageFileUsed.ValueFmt; break;
+            case "PageFilePeak": tabPerformance.gbPagefile_Peak.Text = _System.PageFilePeak.ValueFmt; break;
+
+            case "ioReadCount": tabPerformance.gbIOops_Reads.Text = _System.ioReadCount.ValueFmt; break;
+            case "ioReadBytes": tabPerformance.gbIOtranf_Reads.Text = _System.ioReadBytes.ValueFmt; break;
+            case "ioWriteCount": tabPerformance.gbIOops_Writes.Text = _System.ioWriteCount.ValueFmt; break;
+            case "ioWriteBytes": tabPerformance.gbIOtranf_Writes.Text = _System.ioWriteBytes.ValueFmt; break;
+            case "ioOtherCount": tabPerformance.gbIOops_Others.Text = _System.ioOtherCount.ValueFmt; break;
+            case "ioOtherBytes": tabPerformance.gbIOtranf_Others.Text = _System.ioOtherBytes.ValueFmt; break;
+
+            case "HandleCount": tabPerformance.gbSystem_Handles.Text = _System.HandleCount.ValueFmt; break;
+            case "ThreadCount": tabPerformance.gbSystem_Threads.Text = _System.ThreadCount.ValueFmt; break;
+            case "ProcessCount": tabPerformance.gbSystem_Processes.Text = _System.ProcessCount.ValueFmt; break;
+            case "DevicesCount": tabPerformance.gbSystem_Devices.Text = _System.DevicesCount.ValueFmt; break;
+            case "ServicesCount": tabPerformance.gbSystem_Services.Text = _System.ServicesCount.ValueFmt; break;
+
+
+        }
+    }
+
+    private void Refresh_Performance(bool firstTime = false) {
+        // Call the Refresher, and cancel events cascading if we are not visible. 
+        _System.Refresh(tc.SelectedTab != tpPerformance & !firstTime);
+        // Always set these values. regardless we are visible or not.
+        tabPerformance.gbSystem_UpTime.Text = _System.UpTime;
         tabPerformance.meterCpu.SetValue(_System.CpuUsage.Value);
         tabPerformance.chartCpu.AddValue(_System.CpuUsage.Value, _System.CpuUsageKernel.Value);
-
         tabPerformance.meterMem.SetValue(_System.MemoryUsage, _System.MemoryUsageString);
         tabPerformance.chartMem.AddValue((double)_System.MemoryUsage, _System.SwapUsage);
-
         tabPerformance.meterIO.SetValue(_System.ioDataUsage, _System.ioDataUsageString);
         tabPerformance.chartIO.AddValue((double)_System.ioOtherBytes.Delta / 1024, (double)_System.ioWriteBytes.Delta / 1024, (double)_System.ioReadBytes.Delta / 1024);
-
         tabPerformance.meterDisk.SetValue(_System.DiskUsage, _System.DiskUsageString);
         tabPerformance.chartDisk.AddValue((double)_System.DiskRead.Delta / 1024, (double)_System.DiskWrite.Delta / 1024);
-
         tabPerformance.meterNet.SetValue(_System.NetworkUsage, _System.NetworkUsageString);
         tabPerformance.chartNet.AddValue((double)_System.NetReceived.Delta / 1024, (double)_System.NetSent.Delta / 1024);
+        // Always set the status bar labels as well
+        ssProcesses.Text = "Processes: " + _System.ProcessCount.Value;
+        ssServices.Text = "Services: " + _System.ServicesCount.Value;
+        ssCpuLoad.Text = "CPU Load: " + _System.CpuUsage.Value + "%";
+        // Always flush the ETW, if its active.
+        ETW.Flush();
     }
+
+    private void timer1_Tick(object sender, EventArgs e) {
+        Refresh_Performance();
+    }
+
+    public bool FullScreen {
+        // TODO: The Change in Position & Size when in FullScreen should not affect the main with returning
+        // TODO: The Minimum Size should not be enforced in FullScreen
+        get { return Settings.inFullScreen; }
+        set {
+            if (value) { tc.SelectTab(tpPerformance); }
+            Settings.inFullScreen = value;
+            mnu.Visible = !value;
+            ss.Visible = !value;
+            tc.Visible = !value;
+            if (value) {
+                Controls.Add(tabPerformance);
+                //tabPerformance.MouseMove += perf_MouseMoveEventHandler;
+            } else {
+                tpPerformance.Controls.Add(tabPerformance);
+                //tabPerformance.MouseMove -= perf_MouseMoveEventHandler;
+            }
+            OnSizeChangedEventHandler(this, new EventArgs());
+        }
+    }
+
 
     private void Settings_Apply() {
         //Performance Graphs Settings

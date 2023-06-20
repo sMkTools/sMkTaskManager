@@ -1,28 +1,103 @@
 ﻿using System.ComponentModel;
 using System.Runtime.Versioning;
+using sMkTaskManager.Classes;
 using sMkTaskManager.Controls;
 namespace sMkTaskManager.Forms;
 
-[SupportedOSPlatform("windows")]
+[DesignerCategory("Component"), SupportedOSPlatform("windows")]
 public partial class tabPerformance : UserControl {
 
-    public tabPerformance() {
-        //TODO: Handle the resize events to hide graphs and details
-        //TODO: Set Double Buffer
-        //TODO: I/O Graph is showing trash
-        //TODO: Implement ETW
-        InitializeComponent();
-        InitializeSettings();
-        Extensions.CascadingDoubleBuffer(this);
-    }
+    internal TableLayoutPanel tlpMain;
+    internal Label lblCpuMeter;
+    internal Label lblCpuChart;
+    internal Label lblMemMeter;
+    internal Label lblMemChart;
+    internal Label lblIOMeter;
+    internal Label lblIOChart;
+    internal Label lblDiskMeter;
+    internal Label lblDiskChart;
+    internal Label lblNetMeter;
+    internal Label lblNetChart;
+    internal sMkPerfMeter meterCpu;
+    internal sMkPerfChart chartCpu;
+    internal sMkPerfMeter meterMem;
+    internal sMkPerfChart chartMem;
+    internal sMkPerfMeter meterIO;
+    internal sMkPerfChart chartIO;
+    internal sMkPerfMeter meterDisk;
+    internal sMkPerfChart chartDisk;
+    internal sMkPerfMeter meterNet;
+    internal sMkPerfChart chartNet;
+    private TableLayoutPanel tlpDetails;
+    private GroupBox gbMemory;
+    private Label gbMemory_Label1;
+    internal Label gbMemory_Avail;
+    internal Label gbMemory_Total;
+    private Label gbMemory_Label3;
+    private Label gbMemory_Label2;
+    internal Label gbMemory_Cached;
+    private GroupBox gbIOops;
+    private Label gbIOops_Label3;
+    internal Label gbIOops_Others;
+    private Label gbIOops_Label2;
+    private Label gbIOops_Label1;
+    internal Label gbIOops_Writes;
+    internal Label gbIOops_Reads;
+    private GroupBox gbIOtranf;
+    private Label gbIOtranf_Label3;
+    internal Label gbIOtranf_Others;
+    private Label gbIOtranf_Labe2;
+    private Label gbIOtranf_Labe1;
+    internal Label gbIOtranf_Writes;
+    internal Label gbIOtranf_Reads;
+    private GroupBox gbCommit;
+    private Label gbCommit_Label3;
+    internal Label gbCommit_Peak;
+    private Label gbCommit_Label2;
+    private Label gbCommit_Label1;
+    internal Label gbCommit_Current;
+    internal Label gbCommit_Limit;
+    private GroupBox gbPagefile;
+    private Label gbPagefile_Label3;
+    internal Label gbPagefile_Peak;
+    private Label gbPagefile_Label2;
+    private Label gbPagefile_Label1;
+    internal Label gbPagefile_Current;
+    internal Label gbPagefile_Limit;
+    private GroupBox gbKernel;
+    private Label gbKernel_Label3;
+    internal Label gbKernel_NonPaged;
+    private Label gbKernel_Label2;
+    private Label gbKernel_Label1;
+    internal Label gbKernel_Paged;
+    internal Label gbKernel_Total;
+    private GroupBox gbSystem;
+    private Label gbSystem_Label3;
+    internal Label gbSystem_Processes;
+    private Label gbSystem_Label2;
+    private Label gbSystem_Label1;
+    internal Label gbSystem_Threads;
+    internal Label gbSystem_Handles;
+    private Label gbSystem_Label6;
+    private Label gbSystem_Label5;
+    private Label gbSystem_Label4;
+    internal Label gbSystem_UpTime;
+    internal Label gbSystem_Devices;
+    internal Label gbSystem_Services;
 
     private IContainer? components = null;
-
     protected override void Dispose(bool disposing) {
         if (disposing && (components != null)) { components.Dispose(); }
         base.Dispose(disposing);
     }
 
+    public tabPerformance() {
+        InitializeComponent();
+        InitializeSettings();
+        Extensions.CascadingDoubleBuffer(this);
+        Resize += OnResizeEventHandler;
+        CascadeDoubleClickHandlers(this);
+    }
     private void InitializeComponent() {
         components = new Container();
         tlpMain = new TableLayoutPanel();
@@ -214,6 +289,7 @@ public partial class tabPerformance : UserControl {
         chartCpu.LightColors = false;
         chartCpu.Location = new Point(83, 18);
         chartCpu.Margin = new Padding(3, 2, 5, 2);
+        chartCpu.MaxValue = 0D;
         chartCpu.Name = "chartCpu";
         chartCpu.ScaleMode = sMkPerfChart.ScaleModes.Absolute;
         chartCpu.ShadeBackground = true;
@@ -279,6 +355,7 @@ public partial class tabPerformance : UserControl {
         chartMem.LightColors = false;
         chartMem.Location = new Point(83, 108);
         chartMem.Margin = new Padding(3, 2, 5, 2);
+        chartMem.MaxValue = 0D;
         chartMem.Name = "chartMem";
         chartMem.ScaleMode = sMkPerfChart.ScaleModes.Absolute;
         chartMem.ShadeBackground = true;
@@ -344,6 +421,7 @@ public partial class tabPerformance : UserControl {
         chartIO.LightColors = false;
         chartIO.Location = new Point(83, 198);
         chartIO.Margin = new Padding(3, 2, 5, 2);
+        chartIO.MaxValue = 0D;
         chartIO.Name = "chartIO";
         chartIO.ScaleMode = sMkPerfChart.ScaleModes.Absolute;
         chartIO.ShadeBackground = true;
@@ -409,6 +487,7 @@ public partial class tabPerformance : UserControl {
         chartDisk.LightColors = false;
         chartDisk.Location = new Point(83, 288);
         chartDisk.Margin = new Padding(3, 2, 5, 2);
+        chartDisk.MaxValue = 0D;
         chartDisk.Name = "chartDisk";
         chartDisk.ScaleMode = sMkPerfChart.ScaleModes.Absolute;
         chartDisk.ShadeBackground = true;
@@ -474,7 +553,9 @@ public partial class tabPerformance : UserControl {
         chartNet.LightColors = false;
         chartNet.Location = new Point(83, 378);
         chartNet.Margin = new Padding(3, 2, 5, 2);
+        chartNet.MaxValue = 0D;
         chartNet.Name = "chartNet";
+        chartNet.ScaleMode = sMkPerfChart.ScaleModes.Absolute;
         chartNet.ShadeBackground = true;
         chartNet.Size = new Size(512, 70);
         chartNet.TabIndex = 20;
@@ -528,6 +609,7 @@ public partial class tabPerformance : UserControl {
         gbSystem.Padding = new Padding(6, 2, 1, 3);
         tlpDetails.SetRowSpan(gbSystem, 2);
         gbSystem.Size = new Size(144, 120);
+        gbSystem.TabIndex = 0;
         gbSystem.TabStop = false;
         gbSystem.Text = "System Totals";
         // 
@@ -537,6 +619,7 @@ public partial class tabPerformance : UserControl {
         gbSystem_Label6.Location = new Point(9, 93);
         gbSystem_Label6.Name = "gbSystem_Label6";
         gbSystem_Label6.Size = new Size(60, 15);
+        gbSystem_Label6.TabIndex = 0;
         gbSystem_Label6.Text = "Up Time:";
         // 
         // gbSystem_Label5
@@ -545,6 +628,7 @@ public partial class tabPerformance : UserControl {
         gbSystem_Label5.Location = new Point(9, 78);
         gbSystem_Label5.Name = "gbSystem_Label5";
         gbSystem_Label5.Size = new Size(60, 15);
+        gbSystem_Label5.TabIndex = 1;
         gbSystem_Label5.Text = "Devices:";
         // 
         // gbSystem_Label4
@@ -553,6 +637,7 @@ public partial class tabPerformance : UserControl {
         gbSystem_Label4.Location = new Point(9, 63);
         gbSystem_Label4.Name = "gbSystem_Label4";
         gbSystem_Label4.Size = new Size(60, 15);
+        gbSystem_Label4.TabIndex = 2;
         gbSystem_Label4.Text = "Services:";
         // 
         // gbSystem_Label3
@@ -561,6 +646,7 @@ public partial class tabPerformance : UserControl {
         gbSystem_Label3.Location = new Point(9, 48);
         gbSystem_Label3.Name = "gbSystem_Label3";
         gbSystem_Label3.Size = new Size(65, 15);
+        gbSystem_Label3.TabIndex = 3;
         gbSystem_Label3.Text = "Processes:";
         // 
         // gbSystem_Label2
@@ -569,6 +655,7 @@ public partial class tabPerformance : UserControl {
         gbSystem_Label2.Location = new Point(9, 33);
         gbSystem_Label2.Name = "gbSystem_Label2";
         gbSystem_Label2.Size = new Size(60, 15);
+        gbSystem_Label2.TabIndex = 4;
         gbSystem_Label2.Text = "Threads:";
         // 
         // gbSystem_Label1
@@ -577,6 +664,7 @@ public partial class tabPerformance : UserControl {
         gbSystem_Label1.Location = new Point(9, 18);
         gbSystem_Label1.Name = "gbSystem_Label1";
         gbSystem_Label1.Size = new Size(60, 15);
+        gbSystem_Label1.TabIndex = 5;
         gbSystem_Label1.Text = "Handles:";
         // 
         // gbSystem_UpTime
@@ -586,6 +674,7 @@ public partial class tabPerformance : UserControl {
         gbSystem_UpTime.Location = new Point(65, 93);
         gbSystem_UpTime.Name = "gbSystem_UpTime";
         gbSystem_UpTime.Size = new Size(75, 15);
+        gbSystem_UpTime.TabIndex = 6;
         gbSystem_UpTime.Text = "0";
         gbSystem_UpTime.TextAlign = ContentAlignment.TopRight;
         // 
@@ -596,6 +685,7 @@ public partial class tabPerformance : UserControl {
         gbSystem_Devices.Location = new Point(65, 78);
         gbSystem_Devices.Name = "gbSystem_Devices";
         gbSystem_Devices.Size = new Size(75, 15);
+        gbSystem_Devices.TabIndex = 7;
         gbSystem_Devices.Text = "0";
         gbSystem_Devices.TextAlign = ContentAlignment.TopRight;
         // 
@@ -606,6 +696,7 @@ public partial class tabPerformance : UserControl {
         gbSystem_Services.Location = new Point(65, 63);
         gbSystem_Services.Name = "gbSystem_Services";
         gbSystem_Services.Size = new Size(75, 15);
+        gbSystem_Services.TabIndex = 8;
         gbSystem_Services.Text = "0";
         gbSystem_Services.TextAlign = ContentAlignment.TopRight;
         // 
@@ -616,6 +707,7 @@ public partial class tabPerformance : UserControl {
         gbSystem_Processes.Location = new Point(70, 48);
         gbSystem_Processes.Name = "gbSystem_Processes";
         gbSystem_Processes.Size = new Size(70, 15);
+        gbSystem_Processes.TabIndex = 9;
         gbSystem_Processes.Text = "0";
         gbSystem_Processes.TextAlign = ContentAlignment.TopRight;
         // 
@@ -626,6 +718,7 @@ public partial class tabPerformance : UserControl {
         gbSystem_Threads.Location = new Point(65, 33);
         gbSystem_Threads.Name = "gbSystem_Threads";
         gbSystem_Threads.Size = new Size(75, 15);
+        gbSystem_Threads.TabIndex = 10;
         gbSystem_Threads.Text = "0";
         gbSystem_Threads.TextAlign = ContentAlignment.TopRight;
         // 
@@ -636,6 +729,7 @@ public partial class tabPerformance : UserControl {
         gbSystem_Handles.Location = new Point(65, 18);
         gbSystem_Handles.Name = "gbSystem_Handles";
         gbSystem_Handles.Size = new Size(75, 15);
+        gbSystem_Handles.TabIndex = 11;
         gbSystem_Handles.Text = "0";
         gbSystem_Handles.TextAlign = ContentAlignment.TopRight;
         // 
@@ -653,6 +747,7 @@ public partial class tabPerformance : UserControl {
         gbIOtranf.Name = "gbIOtranf";
         gbIOtranf.Padding = new Padding(6, 2, 1, 3);
         gbIOtranf.Size = new Size(144, 69);
+        gbIOtranf.TabIndex = 1;
         gbIOtranf.TabStop = false;
         gbIOtranf.Text = "I/O Transfer Delta";
         // 
@@ -662,6 +757,7 @@ public partial class tabPerformance : UserControl {
         gbIOtranf_Label3.Location = new Point(9, 48);
         gbIOtranf_Label3.Name = "gbIOtranf_Label3";
         gbIOtranf_Label3.Size = new Size(60, 15);
+        gbIOtranf_Label3.TabIndex = 0;
         gbIOtranf_Label3.Text = "Others:";
         // 
         // gbIOtranf_Others
@@ -671,6 +767,7 @@ public partial class tabPerformance : UserControl {
         gbIOtranf_Others.Location = new Point(65, 48);
         gbIOtranf_Others.Name = "gbIOtranf_Others";
         gbIOtranf_Others.Size = new Size(75, 15);
+        gbIOtranf_Others.TabIndex = 1;
         gbIOtranf_Others.Text = "0 Kb.";
         gbIOtranf_Others.TextAlign = ContentAlignment.TopRight;
         // 
@@ -680,6 +777,7 @@ public partial class tabPerformance : UserControl {
         gbIOtranf_Labe2.Location = new Point(9, 33);
         gbIOtranf_Labe2.Name = "gbIOtranf_Labe2";
         gbIOtranf_Labe2.Size = new Size(60, 15);
+        gbIOtranf_Labe2.TabIndex = 2;
         gbIOtranf_Labe2.Text = "Writes:";
         // 
         // gbIOtranf_Labe1
@@ -688,6 +786,7 @@ public partial class tabPerformance : UserControl {
         gbIOtranf_Labe1.Location = new Point(9, 18);
         gbIOtranf_Labe1.Name = "gbIOtranf_Labe1";
         gbIOtranf_Labe1.Size = new Size(60, 15);
+        gbIOtranf_Labe1.TabIndex = 3;
         gbIOtranf_Labe1.Text = "Reads:";
         // 
         // gbIOtranf_Writes
@@ -697,6 +796,7 @@ public partial class tabPerformance : UserControl {
         gbIOtranf_Writes.Location = new Point(65, 33);
         gbIOtranf_Writes.Name = "gbIOtranf_Writes";
         gbIOtranf_Writes.Size = new Size(75, 15);
+        gbIOtranf_Writes.TabIndex = 4;
         gbIOtranf_Writes.Text = "0 Kb.";
         gbIOtranf_Writes.TextAlign = ContentAlignment.TopRight;
         // 
@@ -707,6 +807,7 @@ public partial class tabPerformance : UserControl {
         gbIOtranf_Reads.Location = new Point(65, 18);
         gbIOtranf_Reads.Name = "gbIOtranf_Reads";
         gbIOtranf_Reads.Size = new Size(75, 15);
+        gbIOtranf_Reads.TabIndex = 5;
         gbIOtranf_Reads.Text = "0 Kb.";
         gbIOtranf_Reads.TextAlign = ContentAlignment.TopRight;
         // 
@@ -724,6 +825,7 @@ public partial class tabPerformance : UserControl {
         gbCommit.Name = "gbCommit";
         gbCommit.Padding = new Padding(6, 2, 1, 3);
         gbCommit.Size = new Size(144, 69);
+        gbCommit.TabIndex = 2;
         gbCommit.TabStop = false;
         gbCommit.Text = "Commit Charge";
         // 
@@ -733,6 +835,7 @@ public partial class tabPerformance : UserControl {
         gbCommit_Label3.Location = new Point(9, 48);
         gbCommit_Label3.Name = "gbCommit_Label3";
         gbCommit_Label3.Size = new Size(55, 15);
+        gbCommit_Label3.TabIndex = 0;
         gbCommit_Label3.Text = "Peak:";
         // 
         // gbCommit_Peak
@@ -742,6 +845,7 @@ public partial class tabPerformance : UserControl {
         gbCommit_Peak.Location = new Point(65, 48);
         gbCommit_Peak.Name = "gbCommit_Peak";
         gbCommit_Peak.Size = new Size(75, 15);
+        gbCommit_Peak.TabIndex = 1;
         gbCommit_Peak.Text = "0 Kb.";
         gbCommit_Peak.TextAlign = ContentAlignment.TopRight;
         // 
@@ -751,6 +855,7 @@ public partial class tabPerformance : UserControl {
         gbCommit_Label2.Location = new Point(9, 33);
         gbCommit_Label2.Name = "gbCommit_Label2";
         gbCommit_Label2.Size = new Size(55, 15);
+        gbCommit_Label2.TabIndex = 2;
         gbCommit_Label2.Text = "Current:";
         // 
         // gbCommit_Label1
@@ -759,6 +864,7 @@ public partial class tabPerformance : UserControl {
         gbCommit_Label1.Location = new Point(9, 18);
         gbCommit_Label1.Name = "gbCommit_Label1";
         gbCommit_Label1.Size = new Size(55, 15);
+        gbCommit_Label1.TabIndex = 3;
         gbCommit_Label1.Text = "Limit:";
         // 
         // gbCommit_Current
@@ -768,6 +874,7 @@ public partial class tabPerformance : UserControl {
         gbCommit_Current.Location = new Point(65, 33);
         gbCommit_Current.Name = "gbCommit_Current";
         gbCommit_Current.Size = new Size(75, 15);
+        gbCommit_Current.TabIndex = 4;
         gbCommit_Current.Text = "0 Kb.";
         gbCommit_Current.TextAlign = ContentAlignment.TopRight;
         // 
@@ -778,6 +885,7 @@ public partial class tabPerformance : UserControl {
         gbCommit_Limit.Location = new Point(65, 18);
         gbCommit_Limit.Name = "gbCommit_Limit";
         gbCommit_Limit.Size = new Size(75, 15);
+        gbCommit_Limit.TabIndex = 5;
         gbCommit_Limit.Text = "0 Kb.";
         gbCommit_Limit.TextAlign = ContentAlignment.TopRight;
         // 
@@ -795,6 +903,7 @@ public partial class tabPerformance : UserControl {
         gbPagefile.Name = "gbPagefile";
         gbPagefile.Padding = new Padding(6, 2, 1, 3);
         gbPagefile.Size = new Size(144, 69);
+        gbPagefile.TabIndex = 3;
         gbPagefile.TabStop = false;
         gbPagefile.Text = "Pagefile Usage";
         // 
@@ -804,6 +913,7 @@ public partial class tabPerformance : UserControl {
         gbPagefile_Label3.Location = new Point(9, 48);
         gbPagefile_Label3.Name = "gbPagefile_Label3";
         gbPagefile_Label3.Size = new Size(60, 15);
+        gbPagefile_Label3.TabIndex = 0;
         gbPagefile_Label3.Text = "Peak:";
         // 
         // gbPagefile_Peak
@@ -813,6 +923,7 @@ public partial class tabPerformance : UserControl {
         gbPagefile_Peak.Location = new Point(65, 48);
         gbPagefile_Peak.Name = "gbPagefile_Peak";
         gbPagefile_Peak.Size = new Size(75, 15);
+        gbPagefile_Peak.TabIndex = 1;
         gbPagefile_Peak.Text = "0 Kb.";
         gbPagefile_Peak.TextAlign = ContentAlignment.TopRight;
         // 
@@ -822,6 +933,7 @@ public partial class tabPerformance : UserControl {
         gbPagefile_Label2.Location = new Point(9, 33);
         gbPagefile_Label2.Name = "gbPagefile_Label2";
         gbPagefile_Label2.Size = new Size(60, 15);
+        gbPagefile_Label2.TabIndex = 2;
         gbPagefile_Label2.Text = "Current:";
         // 
         // gbPagefile_Label1
@@ -830,6 +942,7 @@ public partial class tabPerformance : UserControl {
         gbPagefile_Label1.Location = new Point(9, 18);
         gbPagefile_Label1.Name = "gbPagefile_Label1";
         gbPagefile_Label1.Size = new Size(60, 15);
+        gbPagefile_Label1.TabIndex = 3;
         gbPagefile_Label1.Text = "Limit:";
         // 
         // gbPagefile_Current
@@ -839,6 +952,7 @@ public partial class tabPerformance : UserControl {
         gbPagefile_Current.Location = new Point(65, 33);
         gbPagefile_Current.Name = "gbPagefile_Current";
         gbPagefile_Current.Size = new Size(75, 15);
+        gbPagefile_Current.TabIndex = 4;
         gbPagefile_Current.Text = "0 Kb.";
         gbPagefile_Current.TextAlign = ContentAlignment.TopRight;
         // 
@@ -849,6 +963,7 @@ public partial class tabPerformance : UserControl {
         gbPagefile_Limit.Location = new Point(65, 18);
         gbPagefile_Limit.Name = "gbPagefile_Limit";
         gbPagefile_Limit.Size = new Size(75, 15);
+        gbPagefile_Limit.TabIndex = 5;
         gbPagefile_Limit.Text = "0 Kb.";
         gbPagefile_Limit.TextAlign = ContentAlignment.TopRight;
         // 
@@ -866,6 +981,7 @@ public partial class tabPerformance : UserControl {
         gbKernel.Name = "gbKernel";
         gbKernel.Padding = new Padding(6, 2, 1, 3);
         gbKernel.Size = new Size(144, 69);
+        gbKernel.TabIndex = 4;
         gbKernel.TabStop = false;
         gbKernel.Text = "Kernel Memory";
         // 
@@ -875,6 +991,7 @@ public partial class tabPerformance : UserControl {
         gbKernel_Label3.Location = new Point(9, 48);
         gbKernel_Label3.Name = "gbKernel_Label3";
         gbKernel_Label3.Size = new Size(70, 15);
+        gbKernel_Label3.TabIndex = 0;
         gbKernel_Label3.Text = "NonPaged:";
         // 
         // gbKernel_NonPaged
@@ -884,6 +1001,7 @@ public partial class tabPerformance : UserControl {
         gbKernel_NonPaged.Location = new Point(65, 48);
         gbKernel_NonPaged.Name = "gbKernel_NonPaged";
         gbKernel_NonPaged.Size = new Size(75, 15);
+        gbKernel_NonPaged.TabIndex = 1;
         gbKernel_NonPaged.Text = "0 Kb.";
         gbKernel_NonPaged.TextAlign = ContentAlignment.TopRight;
         // 
@@ -893,6 +1011,7 @@ public partial class tabPerformance : UserControl {
         gbKernel_Label2.Location = new Point(9, 33);
         gbKernel_Label2.Name = "gbKernel_Label2";
         gbKernel_Label2.Size = new Size(60, 15);
+        gbKernel_Label2.TabIndex = 2;
         gbKernel_Label2.Text = "Paged:";
         // 
         // gbKernel_Label1
@@ -901,6 +1020,7 @@ public partial class tabPerformance : UserControl {
         gbKernel_Label1.Location = new Point(9, 18);
         gbKernel_Label1.Name = "gbKernel_Label1";
         gbKernel_Label1.Size = new Size(60, 15);
+        gbKernel_Label1.TabIndex = 3;
         gbKernel_Label1.Text = "Total:";
         // 
         // gbKernel_Paged
@@ -910,6 +1030,7 @@ public partial class tabPerformance : UserControl {
         gbKernel_Paged.Location = new Point(65, 33);
         gbKernel_Paged.Name = "gbKernel_Paged";
         gbKernel_Paged.Size = new Size(75, 15);
+        gbKernel_Paged.TabIndex = 4;
         gbKernel_Paged.Text = "0 Kb.";
         gbKernel_Paged.TextAlign = ContentAlignment.TopRight;
         // 
@@ -920,6 +1041,7 @@ public partial class tabPerformance : UserControl {
         gbKernel_Total.Location = new Point(65, 18);
         gbKernel_Total.Name = "gbKernel_Total";
         gbKernel_Total.Size = new Size(75, 15);
+        gbKernel_Total.TabIndex = 5;
         gbKernel_Total.Text = "0 Kb.";
         gbKernel_Total.TextAlign = ContentAlignment.TopRight;
         // 
@@ -937,6 +1059,7 @@ public partial class tabPerformance : UserControl {
         gbIOops.Name = "gbIOops";
         gbIOops.Padding = new Padding(6, 2, 1, 3);
         gbIOops.Size = new Size(144, 69);
+        gbIOops.TabIndex = 5;
         gbIOops.TabStop = false;
         gbIOops.Text = "I/O Operations Delta";
         // 
@@ -946,6 +1069,7 @@ public partial class tabPerformance : UserControl {
         gbIOops_Label3.Location = new Point(9, 48);
         gbIOops_Label3.Name = "gbIOops_Label3";
         gbIOops_Label3.Size = new Size(60, 15);
+        gbIOops_Label3.TabIndex = 0;
         gbIOops_Label3.Text = "Others:";
         // 
         // gbIOops_Others
@@ -955,6 +1079,7 @@ public partial class tabPerformance : UserControl {
         gbIOops_Others.Location = new Point(65, 48);
         gbIOops_Others.Name = "gbIOops_Others";
         gbIOops_Others.Size = new Size(75, 15);
+        gbIOops_Others.TabIndex = 1;
         gbIOops_Others.Text = "0";
         gbIOops_Others.TextAlign = ContentAlignment.TopRight;
         // 
@@ -964,6 +1089,7 @@ public partial class tabPerformance : UserControl {
         gbIOops_Label2.Location = new Point(9, 33);
         gbIOops_Label2.Name = "gbIOops_Label2";
         gbIOops_Label2.Size = new Size(60, 15);
+        gbIOops_Label2.TabIndex = 2;
         gbIOops_Label2.Text = "Writes:";
         // 
         // gbIOops_Label1
@@ -972,6 +1098,7 @@ public partial class tabPerformance : UserControl {
         gbIOops_Label1.Location = new Point(9, 18);
         gbIOops_Label1.Name = "gbIOops_Label1";
         gbIOops_Label1.Size = new Size(60, 15);
+        gbIOops_Label1.TabIndex = 3;
         gbIOops_Label1.Text = "Reads:";
         // 
         // gbIOops_Writes
@@ -981,6 +1108,7 @@ public partial class tabPerformance : UserControl {
         gbIOops_Writes.Location = new Point(65, 33);
         gbIOops_Writes.Name = "gbIOops_Writes";
         gbIOops_Writes.Size = new Size(75, 15);
+        gbIOops_Writes.TabIndex = 4;
         gbIOops_Writes.Text = "0";
         gbIOops_Writes.TextAlign = ContentAlignment.TopRight;
         // 
@@ -1008,6 +1136,7 @@ public partial class tabPerformance : UserControl {
         gbMemory.Name = "gbMemory";
         gbMemory.Padding = new Padding(6, 2, 1, 3);
         gbMemory.Size = new Size(144, 69);
+        gbMemory.TabIndex = 6;
         gbMemory.TabStop = false;
         gbMemory.Text = "Physical Memory";
         // 
@@ -1017,6 +1146,7 @@ public partial class tabPerformance : UserControl {
         gbMemory_Label3.Location = new Point(9, 48);
         gbMemory_Label3.Name = "gbMemory_Label3";
         gbMemory_Label3.Size = new Size(55, 15);
+        gbMemory_Label3.TabIndex = 0;
         gbMemory_Label3.Text = "Cached:";
         // 
         // gbMemory_Cached
@@ -1026,6 +1156,7 @@ public partial class tabPerformance : UserControl {
         gbMemory_Cached.Location = new Point(65, 48);
         gbMemory_Cached.Name = "gbMemory_Cached";
         gbMemory_Cached.Size = new Size(75, 15);
+        gbMemory_Cached.TabIndex = 1;
         gbMemory_Cached.Text = "0 Kb.";
         gbMemory_Cached.TextAlign = ContentAlignment.TopRight;
         // 
@@ -1035,6 +1166,7 @@ public partial class tabPerformance : UserControl {
         gbMemory_Label2.Location = new Point(9, 33);
         gbMemory_Label2.Name = "gbMemory_Label2";
         gbMemory_Label2.Size = new Size(60, 15);
+        gbMemory_Label2.TabIndex = 2;
         gbMemory_Label2.Text = "Available:";
         // 
         // gbMemory_Label1
@@ -1043,6 +1175,7 @@ public partial class tabPerformance : UserControl {
         gbMemory_Label1.Location = new Point(9, 18);
         gbMemory_Label1.Name = "gbMemory_Label1";
         gbMemory_Label1.Size = new Size(60, 15);
+        gbMemory_Label1.TabIndex = 3;
         gbMemory_Label1.Text = "Total:";
         // 
         // gbMemory_Avail
@@ -1052,6 +1185,7 @@ public partial class tabPerformance : UserControl {
         gbMemory_Avail.Location = new Point(65, 33);
         gbMemory_Avail.Name = "gbMemory_Avail";
         gbMemory_Avail.Size = new Size(75, 15);
+        gbMemory_Avail.TabIndex = 4;
         gbMemory_Avail.Text = "0 Kb.";
         gbMemory_Avail.TextAlign = ContentAlignment.TopRight;
         // 
@@ -1062,6 +1196,7 @@ public partial class tabPerformance : UserControl {
         gbMemory_Total.Location = new Point(65, 18);
         gbMemory_Total.Name = "gbMemory_Total";
         gbMemory_Total.Size = new Size(75, 15);
+        gbMemory_Total.TabIndex = 5;
         gbMemory_Total.Text = "0 Kb.";
         gbMemory_Total.TextAlign = ContentAlignment.TopRight;
         // 
@@ -1081,15 +1216,13 @@ public partial class tabPerformance : UserControl {
         gbMemory.ResumeLayout(false);
         ResumeLayout(false);
     }
-
     private void InitializeSettings() {
-
         chartCpu.SetIndexes("Total", "Kernel");
         chartCpu.BackColorShade = Color.FromArgb(0, 50, 0);
         chartCpu.PenGraph1.Color = Color.Lime;
         chartCpu.ScaleMode = sMkPerfChart.ScaleModes.Absolute;
 
-        chartMem.SetIndexes("Memory","PageFile");
+        chartMem.SetIndexes("Memory", "PageFile");
         chartMem.BackColorShade = Color.FromArgb(50, 50, 0);
         chartMem.PenGraph1.Color = Color.Yellow;
         chartMem.PenGraph2.Color = Color.DarkCyan;
@@ -1116,84 +1249,138 @@ public partial class tabPerformance : UserControl {
         chartNet.PenGraph2.Color = Color.LightPink;
         chartNet.ScaleMode = sMkPerfChart.ScaleModes.Relative;
         chartNet.ValuesSuffix = " Kb.";
-
     }
 
-    internal TableLayoutPanel tlpMain;
-    internal Label lblCpuMeter;
-    internal Label lblCpuChart;
-    internal Label lblMemMeter;
-    internal Label lblMemChart;
-    internal Label lblIOMeter;
-    internal Label lblIOChart;
-    internal Label lblDiskMeter;
-    internal Label lblDiskChart;
-    internal Label lblNetMeter;
-    internal Label lblNetChart;
-    internal sMkPerfMeter meterCpu;
-    internal sMkPerfChart chartCpu;
-    internal sMkPerfMeter meterMem;
-    internal sMkPerfChart chartMem;
-    internal sMkPerfMeter meterIO;
-    internal sMkPerfChart chartIO;
-    internal sMkPerfMeter meterDisk;
-    internal sMkPerfChart chartDisk;
-    internal sMkPerfMeter meterNet;
-    internal sMkPerfChart chartNet;
-    private TableLayoutPanel tlpDetails;
-    private GroupBox gbMemory;
-    private Label gbMemory_Label1;
-    internal Label gbMemory_Avail;
-    internal Label gbMemory_Total;
-    private Label gbMemory_Label3;
-    private Label gbMemory_Label2;
-    internal Label gbMemory_Cached;
-    private GroupBox gbIOops;
-    private Label gbIOops_Label3;
-    internal Label gbIOops_Others;
-    private Label gbIOops_Label2;
-    private Label gbIOops_Label1;
-    internal Label gbIOops_Writes;
-    internal Label gbIOops_Reads;
-    private GroupBox gbIOtranf;
-    private Label gbIOtranf_Label3;
-    internal Label gbIOtranf_Others;
-    private Label gbIOtranf_Labe2;
-    private Label gbIOtranf_Labe1;
-    internal Label gbIOtranf_Writes;
-    internal Label gbIOtranf_Reads;
-    private GroupBox gbCommit;
-    private Label gbCommit_Label3;
-    internal Label gbCommit_Peak;
-    private Label gbCommit_Label2;
-    private Label gbCommit_Label1;
-    internal Label gbCommit_Current;
-    internal Label gbCommit_Limit;
-    private GroupBox gbPagefile;
-    private Label gbPagefile_Label3;
-    internal Label gbPagefile_Peak;
-    private Label gbPagefile_Label2;
-    private Label gbPagefile_Label1;
-    internal Label gbPagefile_Current;
-    internal Label gbPagefile_Limit;
-    private GroupBox gbKernel;
-    private Label gbKernel_Label3;
-    internal Label gbKernel_NonPaged;
-    private Label gbKernel_Label2;
-    private Label gbKernel_Label1;
-    internal Label gbKernel_Paged;
-    internal Label gbKernel_Total;
-    private GroupBox gbSystem;
-    private Label gbSystem_Label3;
-    internal Label gbSystem_Processes;
-    private Label gbSystem_Label2;
-    private Label gbSystem_Label1;
-    internal Label gbSystem_Threads;
-    internal Label gbSystem_Handles;
-    private Label gbSystem_Label6;
-    private Label gbSystem_Label5;
-    private Label gbSystem_Label4;
-    internal Label gbSystem_UpTime;
-    internal Label gbSystem_Devices;
-    internal Label gbSystem_Services;
+    private void OnResizeEventHandler(object? sender, EventArgs e) {
+        if (ParentForm != null && ParentForm?.WindowState == FormWindowState.Minimized) return;
+
+        // Accomodate the Table Details columns
+        if (Width >= 660 && !gbIOops.Visible) {
+            tlpDetails.ColumnStyles[0].Width = 25;
+            tlpDetails.ColumnStyles[1].Width = 25;
+            tlpDetails.ColumnStyles[2].Width = 26;
+            tlpDetails.ColumnStyles[3].Width = 24;
+            gbIOops.Visible = true;
+            gbIOtranf.Visible = true;
+        } else if (Width < 660 && gbIOops.Visible) {
+            gbIOops.Visible = false;
+            gbIOtranf.Visible = false;
+            tlpDetails.ColumnStyles[0].Width = 34;
+            tlpDetails.ColumnStyles[1].Width = 34;
+            tlpDetails.ColumnStyles[2].Width = 0;
+            tlpDetails.ColumnStyles[3].Width = 32;
+        }
+        // Accomodate the Graphs to be displayed
+        setMeterVisible(PerformanceMeters.Mem, tlpMain.Height > 270 | FullScreen);
+        setMeterVisible(PerformanceMeters.IO, tlpMain.Height > 370 | FullScreen);
+        setMeterVisible(PerformanceMeters.Disk, (tlpMain.Height > 470) & ETW.Running);
+        setMeterVisible(PerformanceMeters.Net, (tlpMain.Height > 570) & ETW.Running);
+    }
+    private void OnMouseDoubleClickEventHandler(object? sender, MouseEventArgs e) {
+        FullScreen = !FullScreen;
+        Invoke(OnMouseDoubleClick, e);
+    }
+    private void OnMouseUpEventHandler(object? sender, MouseEventArgs e) {
+        if (FullScreen) Tag = "";
+    }
+    private void OnMouseDownEventHandler(object? sender, MouseEventArgs e) {
+        if (e.Button == MouseButtons.Left && e.Clicks == 1 && FullScreen) {
+            LastMousePoint = e.Location;
+            Tag = "Drag";
+        }
+    }
+    private void OnMouseMoveEventHandler(object? sender, MouseEventArgs e) {
+        if (ParentForm == null) return;
+        if (Tag == null || Tag.ToString() != "Drag") return;
+        if (e.Button == MouseButtons.Left && FullScreen) {
+            ParentForm.Left = ParentForm.Left + (e.Location.X - LastMousePoint.X);
+            ParentForm.Top = ParentForm.Top + (e.Location.Y - LastMousePoint.Y);
+        }
+    }
+
+    private void CascadeDoubleClickHandlers(Control MainControl) {
+        foreach (Control c in MainControl.Controls) {
+            c.MouseDoubleClick += OnMouseDoubleClickEventHandler;
+            if (c.Controls.Count > 1) CascadeDoubleClickHandlers(c);
+        }
+    }
+
+    private bool FullScreen {
+        get { return !tlpDetails.Visible; }
+        set {
+            tlpDetails.Visible = !value;
+            tlpMain.RowStyles[10].Height = value ? 0 : 150;
+            OnResizeEventHandler(this, new());
+            foreach (Control c in tlpMain.Controls) {
+                if (value) { c.MouseMove += OnMouseMoveEventHandler; } else { c.MouseMove -= OnMouseMoveEventHandler; }
+                if (value) { c.MouseDown += OnMouseDownEventHandler; } else { c.MouseDown -= OnMouseDownEventHandler; }
+                if (value) { c.MouseUp += OnMouseUpEventHandler; } else { c.MouseUp -= OnMouseUpEventHandler; }
+            }
+        }
+    }
+    private bool isMeterVisible(PerformanceMeters meter) {
+        return meter switch {
+            PerformanceMeters.CPU => chartCpu.Visible,
+            PerformanceMeters.Mem => chartMem.Visible,
+            PerformanceMeters.IO => chartIO.Visible,
+            PerformanceMeters.Disk => chartDisk.Visible,
+            PerformanceMeters.Net => chartNet.Visible,
+            _ => false,
+        };
+    }
+    private void setMeterVisible(PerformanceMeters meter, bool visible) {
+        switch (meter) {
+            case PerformanceMeters.CPU:
+                lblCpuMeter.Visible = visible;
+                lblCpuChart.Visible = visible;
+                meterCpu.Visible = visible;
+                chartCpu.Visible = visible;
+                tlpMain.RowStyles[0].Height = visible ? 16 : 0;
+                tlpMain.RowStyles[1].Height = visible ? 20 : 0;
+                break;
+            case PerformanceMeters.Mem:
+                lblMemMeter.Visible = visible;
+                lblMemChart.Visible = visible;
+                meterMem.Visible = visible;
+                chartMem.Visible = visible;
+                tlpMain.RowStyles[2].Height = visible ? 16 : 0;
+                tlpMain.RowStyles[3].Height = visible ? 20 : 0;
+                break;
+            case PerformanceMeters.IO:
+                lblIOMeter.Visible = visible;
+                lblIOChart.Visible = visible;
+                meterIO.Visible = visible;
+                chartIO.Visible = visible;
+                tlpMain.RowStyles[4].Height = visible ? 16 : 0;
+                tlpMain.RowStyles[5].Height = visible ? 20 : 0;
+                break;
+            case PerformanceMeters.Disk:
+                lblDiskMeter.Visible = visible;
+                lblDiskChart.Visible = visible;
+                meterDisk.Visible = visible;
+                chartDisk.Visible = visible;
+                tlpMain.RowStyles[6].Height = visible ? 16 : 0;
+                tlpMain.RowStyles[7].Height = visible ? 20 : 0;
+                break;
+            case PerformanceMeters.Net:
+                lblNetMeter.Visible = visible;
+                lblNetChart.Visible = visible;
+                meterNet.Visible = visible;
+                chartNet.Visible = visible;
+                tlpMain.RowStyles[8].Height = visible ? 16 : 0;
+                tlpMain.RowStyles[9].Height = visible ? 20 : 0;
+                break;
+        }
+
+    }
+    private Point LastMousePoint = new(0, 0);
+    private enum PerformanceMeters {
+        CPU = 1,
+        Mem = 2,
+        IO = 3,
+        Disk = 4,
+        Net = 5
+    }
+
 }
+

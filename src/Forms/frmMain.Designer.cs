@@ -153,7 +153,6 @@
             // 
             // timer1
             // 
-            timer1.Enabled = false;
             timer1.Tick += timer1_Tick;
             // 
             // tc
@@ -209,7 +208,8 @@
             MinimumSize = new Size(480, 400);
             Name = "frmMain";
             Text = "sMk Task Manager - Next Gen";
-            Load += frmMain_Load;
+            Load += OnLoadEventHandler;
+            SizeChanged += OnSizeChangedEventHandler;
             mnu.ResumeLayout(false);
             mnu.PerformLayout();
             ss.ResumeLayout(false);

@@ -31,6 +31,6 @@ internal class TaskManagerValuesBase {
     public delegate void MetricEventHandler(object sender, Metric metric, MetricChangedEventArgs e);
 
     public void SetValue(Metric m, Int128 newValue) => m.SetValue(newValue);
-    public bool CancellingEvents { get; set; } = false;
-    public long LastUpdate { get; set; } = 0;
+    public bool CancellingEvents = false;
+    public long LastUpdate = 0;
 }
