@@ -1351,7 +1351,7 @@ public partial class tabPerformance : UserControl {
             case PerformanceMeters.IO:
                 lblIOMeter.Visible = visible;
                 meterIO.Visible = visible;
-                lblIOChart.Visible = visible &Width > minWidth;
+                lblIOChart.Visible = visible & Width > minWidth;
                 chartIO.Visible = visible & Width > minWidth;
                 tlpMain.RowStyles[4].Height = visible ? 16 : 0;
                 tlpMain.RowStyles[5].Height = visible ? 20 : 0;

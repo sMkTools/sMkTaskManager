@@ -8,7 +8,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>sMKTaskManager</AssemblyName>
-    <IsPublishable>False</IsPublishable>
+    <IsPublishable>True</IsPublishable>
     <Authors>Smoke</Authors>
     <Company>sMkDesigns</Company>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -29,6 +29,8 @@
     <FileVersion>3.0.0.0</FileVersion>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>sMkTaskManager.ico</ApplicationIcon>
+    <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+    <StartupObject>sMkTaskManager.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>

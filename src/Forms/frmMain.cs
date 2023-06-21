@@ -28,7 +28,7 @@ public partial class frmMain : Form {
         Extensions.StartMeasure(_StopWatch1);
         Settings.LoadAll();
         OnLoadLoadSettings();
-        frmAddHandlers();
+        OnLoadAddHandlers();
         Settings_Apply();
         // Parallel Init by using a Timer
         _ParallelTimer = new() { Interval = 1, AutoReset = false };
@@ -65,6 +65,10 @@ public partial class frmMain : Form {
             if (Settings.ToTrayWhenMinimized) Hide();
         }
     }
+    private void OnLoadAddHandlers() {
+        _System.MetricValueChanged += perf_MetricValueChangedEventHandler;
+        tabPerformance.MouseDoubleClick += perf_MouseDoubleClickEventHandler;
+    }
     private void OnSizeChangedEventHandler(object sender, EventArgs e) {
         if (!_LoadComplete) return;
         ToolStripMenuItem mnuItm = (ToolStripMenuItem)mnuOptions.DropDownItems["mnuOptions_HideMinimize"];
@@ -79,15 +83,6 @@ public partial class frmMain : Form {
         if ((WindowState == FormWindowState.Normal | WindowState == FormWindowState.Maximized) && !Visible) {
             Visible = true;
         }
-    }
-
-
-    private void frmAddHandlers() {
-        _System.MetricValueChanged += perf_MetricValueChangedEventHandler;
-        //tabPerformance.MouseUp += perf_MouseUpEventHandler;
-        //tabPerformance.MouseDown += perf_MouseDownEventHandler;
-        //tabPerformance.MouseMove += perf_MouseMoveEventHandler;
-        tabPerformance.MouseDoubleClick += perf_MouseDoubleClickEventHandler;
     }
 
     private void ParallelInit(object? sender, ElapsedEventArgs e) {
@@ -212,7 +207,6 @@ public partial class frmMain : Form {
         }
     }
 
-
     private void Settings_Apply() {
         //Performance Graphs Settings
         tabPerformance.chartCpu.SetIndexes("Total", Settings.Performance.ShowKernelTime ? "Kernel" : null);
@@ -237,7 +231,6 @@ public partial class frmMain : Form {
         tabPerformance.chartCpu.DisplayLegends = true;
         tabPerformance.chartCpu.DisplayIndexes = true;
 
-
         tabPerformance.chartMem.CopySettings(tabPerformance.chartCpu);
         tabPerformance.chartIO.CopySettings(tabPerformance.chartCpu);
         tabPerformance.chartDisk.CopySettings(tabPerformance.chartCpu);
@@ -247,8 +240,6 @@ public partial class frmMain : Form {
         tabPerformance.meterIO.LightColors = tabPerformance.chartCpu.LightColors;
         tabPerformance.meterDisk.LightColors = tabPerformance.chartCpu.LightColors;
         tabPerformance.meterNet.LightColors = tabPerformance.chartCpu.LightColors;
-
-
 
     }
 }
