@@ -1,12 +1,18 @@
+using System;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Numerics;
 using System.Runtime.Versioning;
 using System.Timers;
+using Microsoft.VisualBasic;
 using sMkTaskManager.Classes;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace sMkTaskManager;
 
-[SupportedOSPlatform("windows")]
+[DesignerCategory("Component"), SupportedOSPlatform("windows")]
 public partial class frmMain : Form {
 
     public frmMain() {
@@ -17,12 +23,15 @@ public partial class frmMain : Form {
     }
 
     // Local variables...
-    private System.Timers.Timer _ParallelTimer;
+    private List<Task> _MonitorTasks = new();
+    private System.Timers.Timer _ParallelTimer, _MonitorTriggerTimer;
+    private System.Windows.Forms.Timer StatusTimer = new();
     private bool _InitComplete = false, _LoadComplete = false;
     private readonly Stopwatch _StopWatch1 = new(), _StopWatch2 = new(), _StopWatch3 = new();
     private readonly TaskManagerSystem _System = new();
     private Size? _prevSize, _prevMinSize; Point? _prevLocation;
     private Size? _fullScreenSize; Point? _fullScreenLocation;
+    private Dictionary<string, Stopwatch> _Timmings = new();
 
     private void OnLoadEventHandler(object sender, EventArgs e) {
         Extensions.StartMeasure(_StopWatch1);
@@ -30,18 +39,27 @@ public partial class frmMain : Form {
         OnLoadLoadSettings();
         OnLoadAddHandlers();
         Settings_Apply();
+        // This Timer is used to trigger the Monitor Refresh
+        _MonitorTriggerTimer = new() { Interval = Settings.UpdateSpeed, Enabled = false };
+        _MonitorTriggerTimer.Elapsed += MonitorTriggerExecutor;
         // Parallel Init by using a Timer
         _ParallelTimer = new() { Interval = 1, AutoReset = false };
-        _ParallelTimer.Elapsed += ParallelInit;
+        _ParallelTimer.Elapsed += OnLoadEParallelInit;
         _ParallelTimer.Start();
-
-        ETW.Start();
 
         _LoadComplete = true;
         Extensions.StopMeasure(_StopWatch1);
-        timer1.Interval = 1000;
-        timer1.Start();
+    }
+    private void OnLoadEParallelInit(object? sender, ElapsedEventArgs e) {
+        _ParallelTimer.Stop();
+        Stopwatch sw = new();
+        Extensions.StartMeasure(sw);
+        // We should use this to initialize something that is not really critical?
+        ETW.Start();
 
+        _InitComplete = true;
+        Extensions.StopMeasure(sw);
+        MonitorStart(true);
     }
     private void OnLoadLoadSettings() {
         // Load Window Size & Position
@@ -84,28 +102,17 @@ public partial class frmMain : Form {
             Visible = true;
         }
     }
-
-    private void ParallelInit(object? sender, ElapsedEventArgs e) {
-        _ParallelTimer.Stop();
-        Stopwatch sw = new();
-        Extensions.StartMeasure(sw);
-
-        // We should use this to initialize something that is not really critical?
-
-        _InitComplete = true;
-        Extensions.StopMeasure(sw);
+    private void OnStatusTimerEventHandler(object sender, EventArgs e) {
+        SetStatusText(null);
+        StatusTimer.Stop();
     }
 
     private void perf_MouseDoubleClickEventHandler(object? sender, MouseEventArgs e) {
         if (e.Button == MouseButtons.Left && e.Clicks > 1) { FullScreen = !FullScreen; }
     }
-
     private void perf_MetricValueChangedEventHandler(object sender, Metric metric, MetricChangedEventArgs e) {
         switch (e.MetricName) {
-            case "PhysicalTotal":
-                Debug.WriteLine("Entre");
-                tabPerformance.gbMemory_Total.Text = _System.PhysicalTotal.ValueFmt;
-                break;
+            case "PhysicalTotal": tabPerformance.gbMemory_Total.Text = _System.PhysicalTotal.ValueFmt; break;
             case "PhysicalAvail": tabPerformance.gbMemory_Avail.Text = _System.PhysicalAvail.ValueFmt; break;
             case "SystemCached": tabPerformance.gbMemory_Cached.Text = _System.SystemCached.ValueFmt; break;
 
@@ -136,9 +143,17 @@ public partial class frmMain : Form {
         }
     }
 
+    private void Refresh_Applications(bool firstTime = false) {
+        TimmingStart();
+        Thread.Sleep(Extensions.RandomGenerator.Next(20, 50));
+        TimmingStop();
+    }
     private void Refresh_Performance(bool firstTime = false) {
+        if (InvokeRequired) { BeginInvoke(() => Refresh_Performance(firstTime)); return; }
+
+        TimmingStart();
         // Call the Refresher, and cancel events cascading if we are not visible. 
-        _System.Refresh(tc.SelectedTab != tpPerformance & !firstTime);
+        _System.Refresh(!firstTime);
         // Always set these values. regardless we are visible or not.
         tabPerformance.gbSystem_UpTime.Text = _System.UpTime;
         tabPerformance.meterCpu.SetValue(_System.CpuUsage.Value);
@@ -157,10 +172,42 @@ public partial class frmMain : Form {
         ssCpuLoad.Text = "CPU Load: " + _System.CpuUsage.Value + "%";
         // Always flush the ETW, if its active.
         ETW.Flush();
+        TimmingStop();
     }
-
-    private void timer1_Tick(object sender, EventArgs e) {
-        Refresh_Performance();
+    private void Refresh_Processes(bool firstTime = false) {
+        TimmingStart();
+        Thread.Sleep(Extensions.RandomGenerator.Next(10, 30));
+        TimmingStop();
+    }
+    private void Refresh_Services(bool firstTime = false) {
+        TimmingStart();
+        Thread.Sleep(Extensions.RandomGenerator.Next(10, 30));
+        TimmingStop();
+    }
+    private void Refresh_Connections(bool firstTime = false) {
+        TimmingStart();
+        Thread.Sleep(Extensions.RandomGenerator.Next(1, 30));
+        TimmingStop();
+    }
+    private void Refresh_Ports(bool firstTime = false) {
+        TimmingStart();
+        Thread.Sleep(Extensions.RandomGenerator.Next(1, 20));
+        TimmingStop();
+    }
+    private void Refresh_Nics(bool firstTime = false) {
+        TimmingStart();
+        Thread.Sleep(Extensions.RandomGenerator.Next(1, 10));
+        TimmingStop();
+    }
+    private void Refresh_TrayIcons(bool firstTime = false) {
+        TimmingStart();
+        Thread.Sleep(Extensions.RandomGenerator.Next(1, 5));
+        TimmingStop();
+    }
+    private void Refresh_Users(bool firstTime = false) {
+        TimmingStart();
+        Thread.Sleep(Extensions.RandomGenerator.Next(1, 5));
+        TimmingStop();
     }
 
     public bool FullScreen {
@@ -206,7 +253,6 @@ public partial class frmMain : Form {
             OnSizeChangedEventHandler(this, new EventArgs());
         }
     }
-
     private void Settings_Apply() {
         //Performance Graphs Settings
         tabPerformance.chartCpu.SetIndexes("Total", Settings.Performance.ShowKernelTime ? "Kernel" : null);
@@ -242,4 +288,142 @@ public partial class frmMain : Form {
         tabPerformance.meterNet.LightColors = tabPerformance.chartCpu.LightColors;
 
     }
+
+    internal bool MonitorRunning;
+    internal bool MonitorBusy;
+    internal double MonitorSpeed {
+        get { return _MonitorTriggerTimer.Interval; }
+        set { _MonitorTriggerTimer.Interval = value; }
+    }
+    internal void MonitorStart(bool firstTime = false) {
+        MonitorRunning = true;
+        MonitorRefreshParallel(firstTime);
+        _MonitorTriggerTimer.Start();
+        SetStatusText();
+    }
+    internal void MonitorStop() {
+        _MonitorTriggerTimer.Stop();
+        MonitorRunning = false;
+        SetStatusText();
+    }
+    internal void MonitorToggle() {
+        if (MonitorRunning) { MonitorStop(); } else { MonitorStart(); }
+    }
+    internal void MonitorRefresh(bool firstTime = false) {
+        if (MonitorBusy) return;
+        _StopWatch1.Restart();
+        MonitorBusy = true;
+        Refresh_Applications(firstTime);
+        Refresh_Performance(firstTime);
+        Refresh_Processes(firstTime);
+        Refresh_Services(firstTime);
+        Refresh_Connections(firstTime);
+        Refresh_Ports(firstTime);
+        Refresh_Nics(firstTime);
+        Refresh_TrayIcons(firstTime);
+        Refresh_Users(firstTime);
+        MonitorBusy = false;
+        _StopWatch1.Stop();
+        SetStatusText(ssBusyTime, _StopWatch1.ElapsedMilliseconds + "ms.");
+        TimmingDisplay();
+    }
+    internal async void MonitorRefreshParallel(bool firstTime = false) {
+        if (MonitorBusy) return;
+        _StopWatch1.Restart();
+        MonitorBusy = true;
+        _MonitorTasks.Clear();
+        _MonitorTasks.Add(Task.Run(() => Refresh_Applications(firstTime)));
+        _MonitorTasks.Add(Task.Run(() => Refresh_Performance(firstTime)));
+        _MonitorTasks.Add(Task.Run(() => Refresh_Processes(firstTime)));
+        _MonitorTasks.Add(Task.Run(() => Refresh_Services(firstTime)));
+        _MonitorTasks.Add(Task.Run(() => Refresh_Connections(firstTime)));
+        _MonitorTasks.Add(Task.Run(() => Refresh_Ports(firstTime)));
+        _MonitorTasks.Add(Task.Run(() => Refresh_Nics(firstTime)));
+        _MonitorTasks.Add(Task.Run(() => Refresh_TrayIcons(firstTime)));
+        _MonitorTasks.Add(Task.Run(() => Refresh_Users(firstTime)));
+        await Task.WhenAll(_MonitorTasks);
+        MonitorBusy = false;
+        _StopWatch1.Stop();
+        SetStatusText(ssBusyTime, _StopWatch1.ElapsedMilliseconds + "ms.");
+        TimmingDisplay();
+    }
+    private void MonitorTriggerExecutor(object? sender, ElapsedEventArgs e) {
+        if (MonitorRunning) { MonitorRefreshParallel(); }
+    }
+
+    private bool TimmingVisible {
+        get { return timmingStrip.Visible; }
+        set {
+            if (timmingStrip.Visible == value) return;
+            if (timmingStrip.Items.Count == 0 && value) TimmingInitStrip();
+            timmingStrip.Visible = value;
+            tc.Height += value ? -20 : +20;
+            if (timmingStrip.Dock == DockStyle.Top) tc.Top += value ? +20 : -20; ;
+        }
+    }
+    private void TimmingStart([System.Runtime.CompilerServices.CallerMemberName] string methodName = "") {
+        if (!_Timmings.ContainsKey(methodName)) {
+            _Timmings.Add(methodName, new());
+        } else {
+            _Timmings[methodName].Restart();
+        }
+    }
+    private void TimmingStop([System.Runtime.CompilerServices.CallerMemberName] string methodName = "") {
+        if (_Timmings.ContainsKey(methodName)) _Timmings[methodName].Stop();
+    }
+    private void TimmingInitStrip() {
+        timmingStrip.Items.Clear();
+        timmingStrip.Items.AddRange(new ToolStripStatusLabel[] {
+            new ToolStripStatusLabel("  ") { Name = "Space", Size=new(17,17), Spring=false, Visible=true, AutoSize=false },
+            new ToolStripStatusLabel("Apps") { Name = "Refresh_Applications", BackColor = Color.FromArgb(255, 192, 192) },
+            new ToolStripStatusLabel("Procs") { Name = "Refresh_Processes", BackColor = Color.FromArgb(255, 224, 192) },
+            new ToolStripStatusLabel("Servs") { Name = "Refresh_Services", BackColor = Color.FromArgb(255, 255, 192) },
+            new ToolStripStatusLabel("Perf") { Name = "Refresh_Performance", BackColor = Color.FromArgb(192, 255, 192) },
+            new ToolStripStatusLabel("Net") { Name = "Refresh_Nics", BackColor = Color.FromArgb(192, 255, 255) },
+            new ToolStripStatusLabel("Conns") { Name = "Refresh_Connections", BackColor = Color.FromArgb(192, 255, 255) },
+            new ToolStripStatusLabel("Port") { Name = "Refresh_Ports", BackColor = Color.FromArgb(192, 192, 255) },
+            new ToolStripStatusLabel("Users") { Name = "Refresh_Users", BackColor = Color.FromArgb(255, 192, 255) },
+            new ToolStripStatusLabel("Trays") { Name = "Refresh_SystemTray", BackColor = Color.FromArgb(192, 192, 192) }
+        });
+        foreach (ToolStripStatusLabel c in timmingStrip.Items) {
+            if (c.Name == "Space") continue;
+            c.BorderSides = ToolStripStatusLabelBorderSides.All;
+            c.BorderStyle = Border3DStyle.Flat;
+            c.AutoToolTip = false;
+            c.Spring = true;
+            c.Visible = false;
+            c.AccessibleName = c.Text + ": ";
+        }
+    }
+    private void TimmingDisplay() {
+        if (!TimmingVisible) return;
+        if (InvokeRequired) { Invoke(TimmingDisplay); return; }
+        foreach (var t in _Timmings) {
+            if (!timmingStrip.Items.ContainsKey(t.Key)) continue;
+            var itm = timmingStrip.Items[t.Key];
+            itm.Visible = true;
+            itm.Tag ??= t.Value.ElapsedMilliseconds;
+            itm.Tag = Math.Round((t.Value.ElapsedMilliseconds + Convert.ToDouble(itm.Tag)) / 2, 2);
+            itm.Text = itm.AccessibleName + string.Format("{0:N0}", t.Value.ElapsedMilliseconds) + "ms.";
+            itm.ToolTipText = $"Average: {string.Format("{0:N2}", itm.Tag)}ms ";
+        };
+
+    }
+
+    public void SetStatusText(ToolStripLabel? obj = null, string value = "") {
+        obj ??= ssText;
+        if (ss.InvokeRequired) { ss.Invoke(SetStatusText, new object[] { obj, value }); return; }
+        if (value == "") { value = MonitorRunning ? "Running ..." : "Paused ..."; }
+        if (value != obj.Text) {
+            obj.Text = value;
+            StatusTimer.Stop();
+            StatusTimer.Interval = 10000;
+            StatusTimer.Start();
+        }
+    }
+    public string GetStatusText(ToolStripLabel? obj) {
+        obj ??= ssText;
+        return obj.Text;
+    }
+
 }

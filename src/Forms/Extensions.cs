@@ -9,6 +9,7 @@ namespace sMkTaskManager;
 
 [SupportedOSPlatform("windows")]
 internal static class Extensions {
+    public static Random RandomGenerator = new();
 
     // Friendly functions to make it easier add items and separators to menus
     public static ToolStripMenuItem AddMenuItem(this ToolStripItemCollection parent, string text) => (ToolStripMenuItem)parent.Add(text);

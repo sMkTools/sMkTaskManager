@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.Versioning;
 using sMkTaskManager.Classes;
 using sMkTaskManager.Controls;
@@ -96,6 +97,7 @@ public partial class tabPerformance : UserControl {
         InitializeSettings();
         Extensions.CascadingDoubleBuffer(this);
         Resize += OnResizeEventHandler;
+        GotFocus += OnResizeEventHandler;
         CascadeDoubleClickHandlers(this);
     }
     private void InitializeComponent() {
@@ -217,6 +219,7 @@ public partial class tabPerformance : UserControl {
         tlpMain.Dock = DockStyle.Fill;
         tlpMain.Location = new Point(0, 0);
         tlpMain.Name = "tlpMain";
+        tlpMain.Padding = new Padding(0, 3, 0, 0);
         tlpMain.RowCount = 11;
         tlpMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 16F));
         tlpMain.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
@@ -229,17 +232,16 @@ public partial class tabPerformance : UserControl {
         tlpMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 16F));
         tlpMain.RowStyles.Add(new RowStyle(SizeType.Percent, 20F));
         tlpMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 150F));
-        tlpMain.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
         tlpMain.Size = new Size(600, 600);
         tlpMain.TabIndex = 0;
         // 
         // lblCpuMeter
         // 
         lblCpuMeter.Dock = DockStyle.Fill;
-        lblCpuMeter.Location = new Point(7, 1);
-        lblCpuMeter.Margin = new Padding(7, 1, 3, 0);
+        lblCpuMeter.Location = new Point(7, 3);
+        lblCpuMeter.Margin = new Padding(7, 0, 3, 0);
         lblCpuMeter.Name = "lblCpuMeter";
-        lblCpuMeter.Size = new Size(70, 15);
+        lblCpuMeter.Size = new Size(70, 16);
         lblCpuMeter.TabIndex = 1;
         lblCpuMeter.Text = "CPU Usage";
         lblCpuMeter.TextAlign = ContentAlignment.BottomCenter;
@@ -247,7 +249,7 @@ public partial class tabPerformance : UserControl {
         // lblCpuChart
         // 
         lblCpuChart.Dock = DockStyle.Fill;
-        lblCpuChart.Location = new Point(83, 1);
+        lblCpuChart.Location = new Point(83, 4);
         lblCpuChart.Margin = new Padding(3, 1, 3, 0);
         lblCpuChart.Name = "lblCpuChart";
         lblCpuChart.Size = new Size(514, 15);
@@ -264,11 +266,11 @@ public partial class tabPerformance : UserControl {
         meterCpu.Dock = DockStyle.Fill;
         meterCpu.HistoryValues = 10;
         meterCpu.LightColors = false;
-        meterCpu.Location = new Point(7, 18);
+        meterCpu.Location = new Point(7, 21);
         meterCpu.Margin = new Padding(7, 2, 3, 2);
         meterCpu.Name = "meterCpu";
         meterCpu.ScaleMode = sMkPerfMeter.ScaleModes.Absolute;
-        meterCpu.Size = new Size(70, 70);
+        meterCpu.Size = new Size(70, 69);
         meterCpu.TabIndex = 3;
         meterCpu.TabStop = false;
         // 
@@ -287,13 +289,13 @@ public partial class tabPerformance : UserControl {
         chartCpu.GridSpacing = 10;
         chartCpu.LegendSpacing = 35;
         chartCpu.LightColors = false;
-        chartCpu.Location = new Point(83, 18);
+        chartCpu.Location = new Point(83, 21);
         chartCpu.Margin = new Padding(3, 2, 5, 2);
         chartCpu.MaxValue = 0D;
         chartCpu.Name = "chartCpu";
         chartCpu.ScaleMode = sMkPerfChart.ScaleModes.Absolute;
         chartCpu.ShadeBackground = true;
-        chartCpu.Size = new Size(512, 70);
+        chartCpu.Size = new Size(512, 69);
         chartCpu.TabIndex = 4;
         chartCpu.TabStop = false;
         chartCpu.ValueSpacing = 2;
@@ -302,10 +304,10 @@ public partial class tabPerformance : UserControl {
         // lblMemMeter
         // 
         lblMemMeter.Dock = DockStyle.Fill;
-        lblMemMeter.Location = new Point(7, 91);
-        lblMemMeter.Margin = new Padding(7, 1, 3, 0);
+        lblMemMeter.Location = new Point(7, 92);
+        lblMemMeter.Margin = new Padding(7, 0, 3, 0);
         lblMemMeter.Name = "lblMemMeter";
-        lblMemMeter.Size = new Size(70, 15);
+        lblMemMeter.Size = new Size(70, 16);
         lblMemMeter.TabIndex = 5;
         lblMemMeter.Text = "Mem Usage";
         lblMemMeter.TextAlign = ContentAlignment.BottomCenter;
@@ -313,7 +315,7 @@ public partial class tabPerformance : UserControl {
         // lblMemChart
         // 
         lblMemChart.Dock = DockStyle.Fill;
-        lblMemChart.Location = new Point(83, 91);
+        lblMemChart.Location = new Point(83, 93);
         lblMemChart.Margin = new Padding(3, 1, 3, 0);
         lblMemChart.Name = "lblMemChart";
         lblMemChart.Size = new Size(514, 15);
@@ -330,11 +332,11 @@ public partial class tabPerformance : UserControl {
         meterMem.Dock = DockStyle.Fill;
         meterMem.HistoryValues = 10;
         meterMem.LightColors = false;
-        meterMem.Location = new Point(7, 108);
+        meterMem.Location = new Point(7, 110);
         meterMem.Margin = new Padding(7, 2, 3, 2);
         meterMem.Name = "meterMem";
         meterMem.ScaleMode = sMkPerfMeter.ScaleModes.Absolute;
-        meterMem.Size = new Size(70, 70);
+        meterMem.Size = new Size(70, 69);
         meterMem.TabIndex = 7;
         meterMem.TabStop = false;
         // 
@@ -353,13 +355,13 @@ public partial class tabPerformance : UserControl {
         chartMem.GridSpacing = 10;
         chartMem.LegendSpacing = 35;
         chartMem.LightColors = false;
-        chartMem.Location = new Point(83, 108);
+        chartMem.Location = new Point(83, 110);
         chartMem.Margin = new Padding(3, 2, 5, 2);
         chartMem.MaxValue = 0D;
         chartMem.Name = "chartMem";
         chartMem.ScaleMode = sMkPerfChart.ScaleModes.Absolute;
         chartMem.ShadeBackground = true;
-        chartMem.Size = new Size(512, 70);
+        chartMem.Size = new Size(512, 69);
         chartMem.TabIndex = 8;
         chartMem.TabStop = false;
         chartMem.ValueSpacing = 2;
@@ -368,7 +370,7 @@ public partial class tabPerformance : UserControl {
         // lblIOMeter
         // 
         lblIOMeter.Dock = DockStyle.Fill;
-        lblIOMeter.Location = new Point(7, 181);
+        lblIOMeter.Location = new Point(7, 182);
         lblIOMeter.Margin = new Padding(7, 1, 3, 0);
         lblIOMeter.Name = "lblIOMeter";
         lblIOMeter.Size = new Size(70, 15);
@@ -379,7 +381,7 @@ public partial class tabPerformance : UserControl {
         // lblIOChart
         // 
         lblIOChart.Dock = DockStyle.Fill;
-        lblIOChart.Location = new Point(83, 181);
+        lblIOChart.Location = new Point(83, 182);
         lblIOChart.Margin = new Padding(3, 1, 3, 0);
         lblIOChart.Name = "lblIOChart";
         lblIOChart.Size = new Size(514, 15);
@@ -396,11 +398,11 @@ public partial class tabPerformance : UserControl {
         meterIO.Dock = DockStyle.Fill;
         meterIO.HistoryValues = 10;
         meterIO.LightColors = false;
-        meterIO.Location = new Point(7, 198);
+        meterIO.Location = new Point(7, 199);
         meterIO.Margin = new Padding(7, 2, 3, 2);
         meterIO.Name = "meterIO";
         meterIO.ScaleMode = sMkPerfMeter.ScaleModes.Relative;
-        meterIO.Size = new Size(70, 70);
+        meterIO.Size = new Size(70, 69);
         meterIO.TabIndex = 11;
         meterIO.TabStop = false;
         // 
@@ -419,13 +421,13 @@ public partial class tabPerformance : UserControl {
         chartIO.GridSpacing = 10;
         chartIO.LegendSpacing = 35;
         chartIO.LightColors = false;
-        chartIO.Location = new Point(83, 198);
+        chartIO.Location = new Point(83, 199);
         chartIO.Margin = new Padding(3, 2, 5, 2);
         chartIO.MaxValue = 0D;
         chartIO.Name = "chartIO";
         chartIO.ScaleMode = sMkPerfChart.ScaleModes.Absolute;
         chartIO.ShadeBackground = true;
-        chartIO.Size = new Size(512, 70);
+        chartIO.Size = new Size(512, 69);
         chartIO.TabIndex = 12;
         chartIO.TabStop = false;
         chartIO.ValueSpacing = 2;
@@ -466,7 +468,7 @@ public partial class tabPerformance : UserControl {
         meterDisk.Margin = new Padding(7, 2, 3, 2);
         meterDisk.Name = "meterDisk";
         meterDisk.ScaleMode = sMkPerfMeter.ScaleModes.Relative;
-        meterDisk.Size = new Size(70, 70);
+        meterDisk.Size = new Size(70, 69);
         meterDisk.TabIndex = 15;
         meterDisk.TabStop = false;
         // 
@@ -491,7 +493,7 @@ public partial class tabPerformance : UserControl {
         chartDisk.Name = "chartDisk";
         chartDisk.ScaleMode = sMkPerfChart.ScaleModes.Absolute;
         chartDisk.ShadeBackground = true;
-        chartDisk.Size = new Size(512, 70);
+        chartDisk.Size = new Size(512, 69);
         chartDisk.TabIndex = 16;
         chartDisk.TabStop = false;
         chartDisk.ValueSpacing = 2;
@@ -500,7 +502,7 @@ public partial class tabPerformance : UserControl {
         // lblNetMeter
         // 
         lblNetMeter.Dock = DockStyle.Fill;
-        lblNetMeter.Location = new Point(7, 361);
+        lblNetMeter.Location = new Point(7, 360);
         lblNetMeter.Margin = new Padding(7, 1, 3, 0);
         lblNetMeter.Name = "lblNetMeter";
         lblNetMeter.Size = new Size(70, 15);
@@ -511,7 +513,7 @@ public partial class tabPerformance : UserControl {
         // lblNetChart
         // 
         lblNetChart.Dock = DockStyle.Fill;
-        lblNetChart.Location = new Point(83, 361);
+        lblNetChart.Location = new Point(83, 360);
         lblNetChart.Margin = new Padding(3, 1, 3, 0);
         lblNetChart.Name = "lblNetChart";
         lblNetChart.Size = new Size(514, 15);
@@ -528,11 +530,11 @@ public partial class tabPerformance : UserControl {
         meterNet.Dock = DockStyle.Fill;
         meterNet.HistoryValues = 10;
         meterNet.LightColors = false;
-        meterNet.Location = new Point(7, 378);
+        meterNet.Location = new Point(7, 377);
         meterNet.Margin = new Padding(7, 2, 3, 2);
         meterNet.Name = "meterNet";
         meterNet.ScaleMode = sMkPerfMeter.ScaleModes.Relative;
-        meterNet.Size = new Size(70, 70);
+        meterNet.Size = new Size(70, 69);
         meterNet.TabIndex = 19;
         meterNet.TabStop = false;
         // 
@@ -551,13 +553,13 @@ public partial class tabPerformance : UserControl {
         chartNet.GridSpacing = 10;
         chartNet.LegendSpacing = 35;
         chartNet.LightColors = false;
-        chartNet.Location = new Point(83, 378);
+        chartNet.Location = new Point(83, 377);
         chartNet.Margin = new Padding(3, 2, 5, 2);
         chartNet.MaxValue = 0D;
         chartNet.Name = "chartNet";
         chartNet.ScaleMode = sMkPerfChart.ScaleModes.Absolute;
         chartNet.ShadeBackground = true;
-        chartNet.Size = new Size(512, 70);
+        chartNet.Size = new Size(512, 69);
         chartNet.TabIndex = 20;
         chartNet.TabStop = false;
         chartNet.ValueSpacing = 2;
@@ -579,13 +581,13 @@ public partial class tabPerformance : UserControl {
         tlpDetails.Controls.Add(gbIOops, 2, 0);
         tlpDetails.Controls.Add(gbMemory, 0, 0);
         tlpDetails.Dock = DockStyle.Fill;
-        tlpDetails.Location = new Point(0, 450);
+        tlpDetails.Location = new Point(0, 448);
         tlpDetails.Margin = new Padding(0);
         tlpDetails.Name = "tlpDetails";
         tlpDetails.RowCount = 2;
         tlpDetails.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
         tlpDetails.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-        tlpDetails.Size = new Size(600, 150);
+        tlpDetails.Size = new Size(600, 152);
         tlpDetails.TabIndex = 20;
         // 
         // gbSystem
@@ -743,10 +745,10 @@ public partial class tabPerformance : UserControl {
         gbIOtranf.Controls.Add(gbIOtranf_Reads);
         gbIOtranf.Dock = DockStyle.Fill;
         gbIOtranf.ForeColor = SystemColors.HotTrack;
-        gbIOtranf.Location = new Point(303, 78);
+        gbIOtranf.Location = new Point(303, 79);
         gbIOtranf.Name = "gbIOtranf";
         gbIOtranf.Padding = new Padding(6, 2, 1, 3);
-        gbIOtranf.Size = new Size(144, 69);
+        gbIOtranf.Size = new Size(144, 70);
         gbIOtranf.TabIndex = 1;
         gbIOtranf.TabStop = false;
         gbIOtranf.Text = "I/O Transfer Delta";
@@ -821,10 +823,10 @@ public partial class tabPerformance : UserControl {
         gbCommit.Controls.Add(gbCommit_Limit);
         gbCommit.Dock = DockStyle.Fill;
         gbCommit.ForeColor = SystemColors.HotTrack;
-        gbCommit.Location = new Point(3, 78);
+        gbCommit.Location = new Point(3, 79);
         gbCommit.Name = "gbCommit";
         gbCommit.Padding = new Padding(6, 2, 1, 3);
-        gbCommit.Size = new Size(144, 69);
+        gbCommit.Size = new Size(144, 70);
         gbCommit.TabIndex = 2;
         gbCommit.TabStop = false;
         gbCommit.Text = "Commit Charge";
@@ -899,10 +901,10 @@ public partial class tabPerformance : UserControl {
         gbPagefile.Controls.Add(gbPagefile_Limit);
         gbPagefile.Dock = DockStyle.Fill;
         gbPagefile.ForeColor = SystemColors.HotTrack;
-        gbPagefile.Location = new Point(153, 78);
+        gbPagefile.Location = new Point(153, 79);
         gbPagefile.Name = "gbPagefile";
         gbPagefile.Padding = new Padding(6, 2, 1, 3);
-        gbPagefile.Size = new Size(144, 69);
+        gbPagefile.Size = new Size(144, 70);
         gbPagefile.TabIndex = 3;
         gbPagefile.TabStop = false;
         gbPagefile.Text = "Pagefile Usage";
@@ -980,7 +982,7 @@ public partial class tabPerformance : UserControl {
         gbKernel.Location = new Point(153, 3);
         gbKernel.Name = "gbKernel";
         gbKernel.Padding = new Padding(6, 2, 1, 3);
-        gbKernel.Size = new Size(144, 69);
+        gbKernel.Size = new Size(144, 70);
         gbKernel.TabIndex = 4;
         gbKernel.TabStop = false;
         gbKernel.Text = "Kernel Memory";
@@ -1058,7 +1060,7 @@ public partial class tabPerformance : UserControl {
         gbIOops.Location = new Point(303, 3);
         gbIOops.Name = "gbIOops";
         gbIOops.Padding = new Padding(6, 2, 1, 3);
-        gbIOops.Size = new Size(144, 69);
+        gbIOops.Size = new Size(144, 70);
         gbIOops.TabIndex = 5;
         gbIOops.TabStop = false;
         gbIOops.Text = "I/O Operations Delta";
@@ -1135,7 +1137,7 @@ public partial class tabPerformance : UserControl {
         gbMemory.Location = new Point(3, 3);
         gbMemory.Name = "gbMemory";
         gbMemory.Padding = new Padding(6, 2, 1, 3);
-        gbMemory.Size = new Size(144, 69);
+        gbMemory.Size = new Size(144, 70);
         gbMemory.TabIndex = 6;
         gbMemory.TabStop = false;
         gbMemory.Text = "Physical Memory";
@@ -1216,6 +1218,7 @@ public partial class tabPerformance : UserControl {
         gbMemory.ResumeLayout(false);
         ResumeLayout(false);
     }
+
     private void InitializeSettings() {
         chartCpu.SetIndexes("Total", "Kernel");
         chartCpu.BackColorShade = Color.FromArgb(0, 50, 0);
@@ -1252,8 +1255,9 @@ public partial class tabPerformance : UserControl {
     }
 
     private void OnResizeEventHandler(object? sender, EventArgs e) {
-        if (ParentForm != null && ParentForm?.WindowState == FormWindowState.Minimized) return;
-
+        if (ParentForm == null) return;
+        if (ParentForm.WindowState == FormWindowState.Minimized) return;
+        if (!ParentForm.Visible) return;
         // Accomodate the Table Details columns
         if (Width >= 660 && !gbIOops.Visible) {
             tlpDetails.ColumnStyles[0].Width = 25;
@@ -1376,6 +1380,8 @@ public partial class tabPerformance : UserControl {
 
     }
     private Point LastMousePoint = new(0, 0);
+
+
     private enum PerformanceMeters {
         CPU = 1,
         Mem = 2,

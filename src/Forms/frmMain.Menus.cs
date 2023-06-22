@@ -1,4 +1,7 @@
-﻿namespace sMkTaskManager;
+﻿using System.Linq;
+using System.Windows.Forms;
+
+namespace sMkTaskManager;
 
 partial class frmMain {
     private ToolStripMenuItem mnuMonitor, mnuComputer;
@@ -106,11 +109,14 @@ partial class frmMain {
 
     private void Menu_DropDownOpening(object? sender, EventArgs e) {
         var mnu = (ToolStripMenuItem)sender!;
+        if (mnu == mnuHelp) { ((ToolStripMenuItem)mnu.DropDownItems["mnuHelp_Timmings"]).Checked = TimmingVisible; }
+
 
     }
     private void Mnu_DropDownItemClicked(object? sender, ToolStripItemClickedEventArgs e) {
         if (e.ClickedItem == null) return;
         switch (e.ClickedItem.Name) {
+            case "mnuHelp_Timmings": TimmingVisible = !TimmingVisible; break;
             default: break;
         }
     }

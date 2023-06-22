@@ -39,9 +39,16 @@
             ssBusyTime = new ToolStripStatusLabel();
             timer1 = new System.Windows.Forms.Timer(components);
             tc = new TabControl();
-            tabPage1 = new TabPage();
+            tcApplications = new TabPage();
+            tcProcesses = new TabPage();
+            tcServices = new TabPage();
             tpPerformance = new TabPage();
             tabPerformance = new Forms.tabPerformance();
+            tcNetworking = new TabPage();
+            tcConnections = new TabPage();
+            tcPorts = new TabPage();
+            tcUsers = new TabPage();
+            timmingStrip = new StatusStrip();
             mnu.SuspendLayout();
             ss.SuspendLayout();
             tc.SuspendLayout();
@@ -151,16 +158,18 @@
             ssBusyTime.Size = new Size(50, 19);
             ssBusyTime.Text = "20ms";
             // 
-            // timer1
-            // 
-            timer1.Tick += timer1_Tick;
-            // 
             // tc
             // 
             tc.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            tc.Controls.Add(tabPage1);
+            tc.Controls.Add(tcApplications);
+            tc.Controls.Add(tcProcesses);
+            tc.Controls.Add(tcServices);
             tc.Controls.Add(tpPerformance);
-            tc.ItemSize = new Size(69, 20);
+            tc.Controls.Add(tcNetworking);
+            tc.Controls.Add(tcConnections);
+            tc.Controls.Add(tcPorts);
+            tc.Controls.Add(tcUsers);
+            tc.ItemSize = new Size(70, 20);
             tc.Location = new Point(3, 27);
             tc.Margin = new Padding(0, 3, 0, 3);
             tc.Name = "tc";
@@ -169,14 +178,32 @@
             tc.Size = new Size(577, 508);
             tc.TabIndex = 1;
             // 
-            // tabPage1
+            // tcApplications
             // 
-            tabPage1.BackColor = SystemColors.Control;
-            tabPage1.Location = new Point(4, 24);
-            tabPage1.Name = "tabPage1";
-            tabPage1.Size = new Size(569, 480);
-            tabPage1.TabIndex = 0;
-            tabPage1.Text = "tabPage1";
+            tcApplications.BackColor = SystemColors.Control;
+            tcApplications.Location = new Point(4, 24);
+            tcApplications.Name = "tcApplications";
+            tcApplications.Size = new Size(569, 480);
+            tcApplications.TabIndex = 0;
+            tcApplications.Text = "Applications";
+            // 
+            // tcProcesses
+            // 
+            tcProcesses.BackColor = SystemColors.Control;
+            tcProcesses.Location = new Point(4, 24);
+            tcProcesses.Name = "tcProcesses";
+            tcProcesses.Size = new Size(569, 480);
+            tcProcesses.TabIndex = 2;
+            tcProcesses.Text = "Processes";
+            // 
+            // tcServices
+            // 
+            tcServices.BackColor = SystemColors.Control;
+            tcServices.Location = new Point(4, 24);
+            tcServices.Name = "tcServices";
+            tcServices.Size = new Size(569, 480);
+            tcServices.TabIndex = 3;
+            tcServices.Text = "Services";
             // 
             // tpPerformance
             // 
@@ -184,7 +211,6 @@
             tpPerformance.Controls.Add(tabPerformance);
             tpPerformance.Location = new Point(4, 24);
             tpPerformance.Name = "tpPerformance";
-            tpPerformance.Padding = new Padding(0, 2, 0, 0);
             tpPerformance.Size = new Size(569, 480);
             tpPerformance.TabIndex = 1;
             tpPerformance.Text = "Performance";
@@ -192,14 +218,65 @@
             // tabPerformance
             // 
             tabPerformance.Dock = DockStyle.Fill;
-            tabPerformance.Location = new Point(0, 2);
+            tabPerformance.Location = new Point(0, 0);
             tabPerformance.Name = "tabPerformance";
-            tabPerformance.Size = new Size(569, 478);
+            tabPerformance.Size = new Size(569, 480);
             tabPerformance.TabIndex = 0;
+            // 
+            // tcNetworking
+            // 
+            tcNetworking.BackColor = SystemColors.Control;
+            tcNetworking.Location = new Point(4, 24);
+            tcNetworking.Name = "tcNetworking";
+            tcNetworking.Size = new Size(569, 480);
+            tcNetworking.TabIndex = 4;
+            tcNetworking.Text = "Networking";
+            // 
+            // tcConnections
+            // 
+            tcConnections.BackColor = SystemColors.Control;
+            tcConnections.Location = new Point(4, 24);
+            tcConnections.Name = "tcConnections";
+            tcConnections.Size = new Size(569, 480);
+            tcConnections.TabIndex = 5;
+            tcConnections.Text = "Connections";
+            // 
+            // tcPorts
+            // 
+            tcPorts.BackColor = SystemColors.Control;
+            tcPorts.Location = new Point(4, 24);
+            tcPorts.Name = "tcPorts";
+            tcPorts.Size = new Size(569, 480);
+            tcPorts.TabIndex = 6;
+            tcPorts.Text = "Ports";
+            // 
+            // tcUsers
+            // 
+            tcUsers.BackColor = SystemColors.Control;
+            tcUsers.Location = new Point(4, 24);
+            tcUsers.Name = "tcUsers";
+            tcUsers.Size = new Size(569, 480);
+            tcUsers.TabIndex = 7;
+            tcUsers.Text = "Users";
+            // 
+            // timmingStrip
+            // 
+            timmingStrip.AllowMerge = false;
+            timmingStrip.Dock = DockStyle.Top;
+            timmingStrip.GripMargin = new Padding(0);
+            timmingStrip.Location = new Point(0, 515);
+            timmingStrip.Name = "timmingStrip";
+            timmingStrip.ShowItemToolTips = true;
+            timmingStrip.Size = new Size(584, 22);
+            timmingStrip.SizingGrip = false;
+            timmingStrip.TabIndex = 2;
+            timmingStrip.Text = "statusStrip1";
+            timmingStrip.Visible = false;
             // 
             // frmMain
             // 
             ClientSize = new Size(584, 561);
+            Controls.Add(timmingStrip);
             Controls.Add(tc);
             Controls.Add(ss);
             Controls.Add(mnu);
@@ -236,8 +313,15 @@
         private ToolStripStatusLabel ssBusyTime;
         private System.Windows.Forms.Timer timer1;
         private TabControl tc;
-        private TabPage tabPage1;
+        private TabPage tcApplications;
         private TabPage tpPerformance;
         private Forms.tabPerformance tabPerformance;
+        private TabPage tcProcesses;
+        private TabPage tcServices;
+        private TabPage tcNetworking;
+        private TabPage tcConnections;
+        private TabPage tcPorts;
+        private TabPage tcUsers;
+        private StatusStrip timmingStrip;
     }
 }
