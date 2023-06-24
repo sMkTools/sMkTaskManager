@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using sMkTaskManager.Controls;
 using System.Diagnostics;
 using System.Runtime.Versioning;
 namespace sMkTaskManager.Classes;
@@ -453,9 +454,48 @@ internal static class Settings {
             return false;
         }
     }
+    public static bool LoadColsInformation(string strName, sMkListView lv, ref HashSet<string> Destination) {
+        try {
+            byte[] bt = ReadReg(strName, ""u8.ToArray());
+            string allValues = (bt.Length > 10) ? allValues = _Encoding.GetString(bt) : GetInitialValues(strName);
 
-    /*
-    public bool LoadInterfaces() {
+            foreach (string colValues in allValues.Split(Environment.NewLine)) {
+                if (colValues.Trim().Length < 5) continue;
+                sMkListView.ColumnInformation c = new(colValues.Trim());
+                // Check if a column with that Tag is already created on the ListView
+                int colExist = -1;
+                foreach (ColumnHeader col in lv.Columns) {
+                    if (col.Tag?.ToString()!.ToLower() == c.Tag.ToString().ToLower()) { colExist = col.Index; }
+                }
+                if (colExist == -1) {
+                    // If the column is not on the control then add it, This is used for Process & Services
+                    ColumnHeader newCol = new() {
+                        Name = lv.Name + "_" + c.Tag.ToString(),
+                        Tag = c.Tag,
+                        Text = c.Text,
+                        Width = c.Width,
+                        TextAlign = c.Align
+                    };
+                    lv.Columns.Insert(c.Index, newCol);
+                } else {
+                    // Otherwise just set the position and width, This is used for Connections and Ports
+                    lv.Columns[colExist].Name = lv.Name + "_" + c.Tag.ToString();
+                    lv.Columns[colExist].Width = c.Width;
+                    lv.Columns[colExist].DisplayIndex = c.Index;
+                }
+                // Check if we need to sort by this column, and do it.
+                if (lv.Sortable && !(c.SortOrder == SortOrder.None)) { lv.SetSort(c.Index, c.SortOrder); }
+            }
+        } catch (Exception e) {
+            Debug.WriteLine("LoadColsInformation: " + e.ToString());
+            return false;
+        } finally {
+            Destination.Clear();
+            foreach (ColumnHeader c in lv.Columns) { Destination.Add(c.Tag!.ToString()!); }
+        }
+        return true;
+    }
+    public static bool LoadInterfaces() {
         try {
             string[] ChunkValues = ReadReg("Selected Nics", "").Split(',');
             CheckedInterfaces.Clear();
@@ -464,60 +504,26 @@ internal static class Settings {
             }
             return true;
         } catch (Exception e) {
-            Debug.WriteLine("LoadTray: " + e.ToString());
+            Debug.WriteLine("LoadInterfaces: " + e.ToString());
             return false;
         }
     }
-    public bool LoadColsInformation(string strName, ref sMkListView LV, ref HashSet<string> Destination) {
+    public static bool LoadCustomColors() {
         try {
-            byte[] bt = ReadReg(strName, new[] { 0 });
-            string allValues = "";
-            if (bt.Length > 10) {
-                allValues = _Encoding.GetString(bt);
-            } else {
-                allValues = GetInitialValues(strName);
+            string[] ChunkValues = ReadReg("Custom Colors", "9498256,8421616,12180223,14053594").Split(",".ToCharArray());
+            CustomColors.Clear();
+            for (int i = 0; i < ChunkValues.Length; i++) {
+                CustomColors.Add(int.Parse(ChunkValues[i]));
             }
-            foreach (string colValues in allValues.Split(Convert.ToChar("\r\n"))) {
-                if (colValues.Trim().Length < 5) {
-                    continue;
-                }
-                sMkListView.ColumnInformation c = new(colValues.Trim());
-                // Check if a column with that Tag is already created
-                int colExist = -1;
-                foreach (ColumnHeader col in LV.Columns) {
-                    if (col.Tag?.ToString().ToLower() == c.Tag.ToString().ToLower()) { colExist = col.Index; }
-                }
-                if (colExist == -1) {
-                    // If the column is not on the control then add it, This is used for Process & Services
-                    ColumnHeader newCol = new() {
-                        Name = LV.Name + "_" + c.Tag.ToString(),
-                        Tag = c.Tag,
-                        Text = c.Text,
-                        Width = c.Width,
-                        TextAlign = c.Align
-                    };
-                    LV.Columns.Insert(c.Index, newCol);
-                } else {
-                    // Otherwise just set the position and width, This is used for Connections and Ports
-                    LV.Columns(colExist).Name = LV.Name + "_" + c.Tag.ToString();
-                    LV.Columns(colExist).Width = c.Width;
-                    LV.Columns(colExist).DisplayIndex = c.Index;
-                }
-                if (LV.Sortable && !(c.SortOrder == SortOrder.None)) {
-                    LV.SetSort(c.Index, c.SortOrder);
-                }
-            }
+            return true;
         } catch (Exception e) {
-            Debug.WriteLine("LoadColsInformation: " + e.ToString());
+            Debug.WriteLine("LoadCustomColors: " + e.ToString());
             return false;
-        } finally {
-            Destination.Clear();
-            foreach (ColumnHeader c in LV.Columns) {
-                Destination.Add(c.Tag.ToString());
-            }
         }
-        return true;
     }
+
+
+    /*
     public bool LoadSummaryColumns(ref sMkSummaryView SV) {
         try {
             byte[] bt = ReadReg("colsSummary", new[] { 0 });
@@ -531,7 +537,7 @@ internal static class Settings {
             SV.SuspendLayout();
             SV.ClearRows();
             SV.Columns = 1;
-            foreach (string colValues in allValues.Split(Convert.ToChar("\r\n"))) {
+            foreach (string colValues in allValues.Split(Environment.NewLine)) {
                 if (colValues.Trim().Length < 5) {
                     continue;
                 }
@@ -574,22 +580,6 @@ internal static class Settings {
             Debug.WriteLine("LoadProcDetails: " + e.ToString());
             return false;
         }
-    }
-    public bool LoadCustomColors() {
-        try {
-            string[] ChunkValues = ReadReg("Custom Colors", "9498256,8421616,12180223,14053594").Split(",".ToCharArray());
-            CustomColors.Clear();
-            for (int i = 0; i < ChunkValues.Length; i++) {
-                if (NumericHelper.IsNumeric(ChunkValues[i])) {
-                    CustomColors.Add(int.Parse(ChunkValues[i]));
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            Debug.WriteLine("LoadMainWindow: " + e.ToString());
-            return false;
-        }
-
     }
     */
     #endregion
@@ -693,7 +683,30 @@ internal static class Settings {
     */
     #endregion
 
-    private static string ReadReg(string ValueName, string DefaultValue) {
+    private static T ReadReg<T>(string valueName, T defaultValue) {
+        T retValue = defaultValue;
+        RegistryKey ParentKey = Registry.CurrentUser;
+        try {
+            var Key = ParentKey.OpenSubKey(RegKey, false);
+            if (Key == null || Key.GetValue(valueName) == null) {
+                retValue = defaultValue;
+            } else if (string.IsNullOrEmpty(Key.GetValue(valueName)!.ToString()!.Trim())) {
+                retValue = defaultValue;
+            } else {
+                retValue = (T)Key.GetValue(valueName)!;
+            }
+            Key?.Close();
+        } catch (Exception e) {
+            Debug.WriteLine("ReadReg: " + e.ToString());
+            retValue = defaultValue;
+        } finally {
+            ParentKey.Close();
+        }
+        return retValue;
+    }
+
+
+    private static string oldReadReg(string ValueName, string DefaultValue) {
         string retValue = DefaultValue;
         RegistryKey ParentKey = Registry.CurrentUser;
         try {
@@ -715,13 +728,13 @@ internal static class Settings {
         return retValue;
 
     }
-    private static int ReadReg(string ValueName, int DefaultValue) {
+    private static int oldReadReg(string ValueName, int DefaultValue) {
         return int.Parse(ReadReg(ValueName, DefaultValue.ToString()));
     }
-    private static bool ReadReg(string ValueName, bool DefaultValue) {
+    private static bool oldReadReg(string ValueName, bool DefaultValue) {
         return ReadReg(ValueName, DefaultValue ? "1" : "0") != "0";
     }
-    private static byte[] ReadReg(string ValueName, byte[] DefaultValue) {
+    private static byte[] oldReadReg(string ValueName, byte[] DefaultValue) {
         byte[]? retValue = null;
         RegistryKey ParentKey = Registry.CurrentUser;
         try {

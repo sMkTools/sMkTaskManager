@@ -19,9 +19,13 @@ internal class TaskManagerSystem : TaskManagerValuesBase {
         _PI.cb = (uint)Marshal.SizeOf(_PI);
     }
 
+    public event EventHandler? RefreshStarting;
+    public event EventHandler? RefreshCompleted;
+
     public void Refresh(bool cancellingEvents = false) {
         CancellingEvents = cancellingEvents;
         if (LastUpdate == 0) { LastUpdate = DateTime.Now.Ticks - 10; }
+        if (!CancellingEvents) RefreshStarting?.Invoke(this, new());
 
         // Compute System Uptime
         if (Environment.TickCount > 0) {
@@ -85,6 +89,7 @@ internal class TaskManagerSystem : TaskManagerValuesBase {
         }
 
         LastUpdate = DateTime.Now.Ticks;
+        if (!CancellingEvents) RefreshCompleted?.Invoke(this, new());
         CancellingEvents = false;
     }
 

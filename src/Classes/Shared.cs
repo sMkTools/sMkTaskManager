@@ -2,6 +2,11 @@
 
 internal static class Shared {
 
+    public static bool IsNumeric(string value) => double.TryParse(value, out _);
+    public static bool IsNumeric(this object value) => double.TryParse(Convert.ToString(value), out _);
+    public static bool IsInteger(string value) => value.All(char.IsNumber);
+    public static bool IsInteger(this object value) => Convert.ToString(value)!.All(char.IsNumber);
+
 }
 
 internal class CpuUsage {

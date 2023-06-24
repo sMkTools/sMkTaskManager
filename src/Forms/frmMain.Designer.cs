@@ -41,9 +41,10 @@
             tc = new TabControl();
             tcApplications = new TabPage();
             tcProcesses = new TabPage();
+            tabProcs = new Forms.tabProcesses();
             tcServices = new TabPage();
             tpPerformance = new TabPage();
-            tabPerformance = new Forms.tabPerformance();
+            tabPerf = new Forms.tabPerformance();
             tcNetworking = new TabPage();
             tcConnections = new TabPage();
             tcPorts = new TabPage();
@@ -52,6 +53,7 @@
             mnu.SuspendLayout();
             ss.SuspendLayout();
             tc.SuspendLayout();
+            tcProcesses.SuspendLayout();
             tpPerformance.SuspendLayout();
             SuspendLayout();
             // 
@@ -190,11 +192,21 @@
             // tcProcesses
             // 
             tcProcesses.BackColor = SystemColors.Control;
+            tcProcesses.Controls.Add(tabProcs);
             tcProcesses.Location = new Point(4, 24);
             tcProcesses.Name = "tcProcesses";
             tcProcesses.Size = new Size(569, 480);
             tcProcesses.TabIndex = 2;
             tcProcesses.Text = "Processes";
+            // 
+            // tabProcs
+            // 
+            tabProcs.Dock = DockStyle.Fill;
+            tabProcs.InfoText = "";
+            tabProcs.Location = new Point(0, 0);
+            tabProcs.Name = "tabProcs";
+            tabProcs.Size = new Size(569, 480);
+            tabProcs.TabIndex = 0;
             // 
             // tcServices
             // 
@@ -208,20 +220,20 @@
             // tpPerformance
             // 
             tpPerformance.BackColor = SystemColors.Control;
-            tpPerformance.Controls.Add(tabPerformance);
+            tpPerformance.Controls.Add(tabPerf);
             tpPerformance.Location = new Point(4, 24);
             tpPerformance.Name = "tpPerformance";
             tpPerformance.Size = new Size(569, 480);
             tpPerformance.TabIndex = 1;
             tpPerformance.Text = "Performance";
             // 
-            // tabPerformance
+            // tabPerf
             // 
-            tabPerformance.Dock = DockStyle.Fill;
-            tabPerformance.Location = new Point(0, 0);
-            tabPerformance.Name = "tabPerformance";
-            tabPerformance.Size = new Size(569, 480);
-            tabPerformance.TabIndex = 0;
+            tabPerf.Dock = DockStyle.Fill;
+            tabPerf.Location = new Point(0, 0);
+            tabPerf.Name = "tabPerf";
+            tabPerf.Size = new Size(569, 480);
+            tabPerf.TabIndex = 0;
             // 
             // tcNetworking
             // 
@@ -292,6 +304,7 @@
             ss.ResumeLayout(false);
             ss.PerformLayout();
             tc.ResumeLayout(false);
+            tcProcesses.ResumeLayout(false);
             tpPerformance.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -315,7 +328,7 @@
         private TabControl tc;
         private TabPage tcApplications;
         private TabPage tpPerformance;
-        private Forms.tabPerformance tabPerformance;
+        private Forms.tabPerformance tabPerf;
         private TabPage tcProcesses;
         private TabPage tcServices;
         private TabPage tcNetworking;
@@ -323,5 +336,6 @@
         private TabPage tcPorts;
         private TabPage tcUsers;
         private StatusStrip timmingStrip;
+        private Forms.tabProcesses tabProcs;
     }
 }

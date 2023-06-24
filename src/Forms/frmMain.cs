@@ -1,8 +1,11 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing.Drawing2D;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
+using System.Text;
 using System.Timers;
 using Microsoft.VisualBasic;
 using sMkTaskManager.Classes;
@@ -20,7 +23,10 @@ public partial class frmMain : Form {
         Initialize_MainMenu();
         // Flicker Free Controls by DoubleBuffer
         Extensions.CascadingDoubleBuffer(this);
+        // Extensions.UseImmersiveDarkMode(Handle, true);
+        // Extensions.UseImmersiveRoundCorner(Handle, 3);
     }
+
 
     // Local variables...
     private List<Task> _MonitorTasks = new();
@@ -33,6 +39,9 @@ public partial class frmMain : Form {
     private Size? _fullScreenSize; Point? _fullScreenLocation;
     private Dictionary<string, Stopwatch> _Timmings = new();
 
+    private HashSet<string> _ProcsColumns = new();
+    private HashSet<string> _HashProcs = new();
+
     private void OnLoadEventHandler(object sender, EventArgs e) {
         Extensions.StartMeasure(_StopWatch1);
         Settings.LoadAll();
@@ -44,19 +53,18 @@ public partial class frmMain : Form {
         _MonitorTriggerTimer.Elapsed += MonitorTriggerExecutor;
         // Parallel Init by using a Timer
         _ParallelTimer = new() { Interval = 1, AutoReset = false };
-        _ParallelTimer.Elapsed += OnLoadEParallelInit;
+        _ParallelTimer.Elapsed += OnLoadParallelInit;
         _ParallelTimer.Start();
 
         _LoadComplete = true;
         Extensions.StopMeasure(_StopWatch1);
     }
-    private void OnLoadEParallelInit(object? sender, ElapsedEventArgs e) {
+    private void OnLoadParallelInit(object? sender, ElapsedEventArgs e) {
         _ParallelTimer.Stop();
         Stopwatch sw = new();
         Extensions.StartMeasure(sw);
         // We should use this to initialize something that is not really critical?
         ETW.Start();
-
         _InitComplete = true;
         Extensions.StopMeasure(sw);
         MonitorStart(true);
@@ -82,10 +90,15 @@ public partial class frmMain : Form {
             ShowInTaskbar = !Settings.ToTrayWhenMinimized;
             if (Settings.ToTrayWhenMinimized) Hide();
         }
+        // Load Column definitions for all the listviews
+        Settings.LoadColsInformation("colsProcess", tabProcs.lv, ref _ProcsColumns);
+        tabProcs.btnAllUsers.Checked = Settings.ShowAllProcess;
+
     }
     private void OnLoadAddHandlers() {
         _System.MetricValueChanged += perf_MetricValueChangedEventHandler;
-        tabPerformance.MouseDoubleClick += perf_MouseDoubleClickEventHandler;
+        _System.RefreshCompleted += perf_RefreshCompletedEventHandler;
+        tabPerf.MouseDoubleClick += perf_MouseDoubleClickEventHandler;
     }
     private void OnSizeChangedEventHandler(object sender, EventArgs e) {
         if (!_LoadComplete) return;
@@ -112,35 +125,55 @@ public partial class frmMain : Form {
     }
     private void perf_MetricValueChangedEventHandler(object sender, Metric metric, MetricChangedEventArgs e) {
         switch (e.MetricName) {
-            case "PhysicalTotal": tabPerformance.gbMemory_Total.Text = _System.PhysicalTotal.ValueFmt; break;
-            case "PhysicalAvail": tabPerformance.gbMemory_Avail.Text = _System.PhysicalAvail.ValueFmt; break;
-            case "SystemCached": tabPerformance.gbMemory_Cached.Text = _System.SystemCached.ValueFmt; break;
+            case "PhysicalTotal": tabPerf.gbMemory_Total.Text = _System.PhysicalTotal.ValueFmt; break;
+            case "PhysicalAvail": tabPerf.gbMemory_Avail.Text = _System.PhysicalAvail.ValueFmt; break;
+            case "SystemCached": tabPerf.gbMemory_Cached.Text = _System.SystemCached.ValueFmt; break;
 
-            case "CommitTotal": tabPerformance.gbCommit_Current.Text = _System.CommitTotal.ValueFmt; break;
-            case "CommitPeak": tabPerformance.gbCommit_Peak.Text = _System.CommitPeak.ValueFmt; break;
-            case "CommitLimit": tabPerformance.gbCommit_Limit.Text = _System.CommitLimit.ValueFmt; break;
-            case "KernelTotal": tabPerformance.gbKernel_Total.Text = _System.KernelTotal.ValueFmt; break;
-            case "KernelPaged": tabPerformance.gbKernel_Paged.Text = _System.KernelPaged.ValueFmt; break;
-            case "KernelNonPaged": tabPerformance.gbKernel_NonPaged.Text = _System.KernelNonPaged.ValueFmt; break;
-            case "PageFileTotal": tabPerformance.gbPagefile_Limit.Text = _System.PageFileTotal.ValueFmt; break;
-            case "PageFileUsed": tabPerformance.gbPagefile_Current.Text = _System.PageFileUsed.ValueFmt; break;
-            case "PageFilePeak": tabPerformance.gbPagefile_Peak.Text = _System.PageFilePeak.ValueFmt; break;
+            case "CommitTotal": tabPerf.gbCommit_Current.Text = _System.CommitTotal.ValueFmt; break;
+            case "CommitPeak": tabPerf.gbCommit_Peak.Text = _System.CommitPeak.ValueFmt; break;
+            case "CommitLimit": tabPerf.gbCommit_Limit.Text = _System.CommitLimit.ValueFmt; break;
+            case "KernelTotal": tabPerf.gbKernel_Total.Text = _System.KernelTotal.ValueFmt; break;
+            case "KernelPaged": tabPerf.gbKernel_Paged.Text = _System.KernelPaged.ValueFmt; break;
+            case "KernelNonPaged": tabPerf.gbKernel_NonPaged.Text = _System.KernelNonPaged.ValueFmt; break;
+            case "PageFileTotal": tabPerf.gbPagefile_Limit.Text = _System.PageFileTotal.ValueFmt; break;
+            case "PageFileUsed": tabPerf.gbPagefile_Current.Text = _System.PageFileUsed.ValueFmt; break;
+            case "PageFilePeak": tabPerf.gbPagefile_Peak.Text = _System.PageFilePeak.ValueFmt; break;
 
-            case "ioReadCount": tabPerformance.gbIOops_Reads.Text = _System.ioReadCount.ValueFmt; break;
-            case "ioReadBytes": tabPerformance.gbIOtranf_Reads.Text = _System.ioReadBytes.ValueFmt; break;
-            case "ioWriteCount": tabPerformance.gbIOops_Writes.Text = _System.ioWriteCount.ValueFmt; break;
-            case "ioWriteBytes": tabPerformance.gbIOtranf_Writes.Text = _System.ioWriteBytes.ValueFmt; break;
-            case "ioOtherCount": tabPerformance.gbIOops_Others.Text = _System.ioOtherCount.ValueFmt; break;
-            case "ioOtherBytes": tabPerformance.gbIOtranf_Others.Text = _System.ioOtherBytes.ValueFmt; break;
+            case "ioReadCount": tabPerf.gbIOops_Reads.Text = _System.ioReadCount.ValueFmt; break;
+            case "ioReadBytes": tabPerf.gbIOtranf_Reads.Text = _System.ioReadBytes.ValueFmt; break;
+            case "ioWriteCount": tabPerf.gbIOops_Writes.Text = _System.ioWriteCount.ValueFmt; break;
+            case "ioWriteBytes": tabPerf.gbIOtranf_Writes.Text = _System.ioWriteBytes.ValueFmt; break;
+            case "ioOtherCount": tabPerf.gbIOops_Others.Text = _System.ioOtherCount.ValueFmt; break;
+            case "ioOtherBytes": tabPerf.gbIOtranf_Others.Text = _System.ioOtherBytes.ValueFmt; break;
 
-            case "HandleCount": tabPerformance.gbSystem_Handles.Text = _System.HandleCount.ValueFmt; break;
-            case "ThreadCount": tabPerformance.gbSystem_Threads.Text = _System.ThreadCount.ValueFmt; break;
-            case "ProcessCount": tabPerformance.gbSystem_Processes.Text = _System.ProcessCount.ValueFmt; break;
-            case "DevicesCount": tabPerformance.gbSystem_Devices.Text = _System.DevicesCount.ValueFmt; break;
-            case "ServicesCount": tabPerformance.gbSystem_Services.Text = _System.ServicesCount.ValueFmt; break;
+            case "HandleCount": tabPerf.gbSystem_Handles.Text = _System.HandleCount.ValueFmt; break;
+            case "ThreadCount": tabPerf.gbSystem_Threads.Text = _System.ThreadCount.ValueFmt; break;
+            case "ProcessCount": tabPerf.gbSystem_Processes.Text = _System.ProcessCount.ValueFmt; break;
+            case "DevicesCount": tabPerf.gbSystem_Devices.Text = _System.DevicesCount.ValueFmt; break;
+            case "ServicesCount": tabPerf.gbSystem_Services.Text = _System.ServicesCount.ValueFmt; break;
 
 
         }
+    }
+    private void perf_RefreshCompletedEventHandler(object? sender, EventArgs e) {
+        // Always set these values. regardless we are visible or not.
+        tabPerf.gbSystem_UpTime.Text = _System.UpTime;
+        tabPerf.meterCpu.SetValue(_System.CpuUsage.Value);
+        tabPerf.chartCpu.AddValue(_System.CpuUsage.Value, _System.CpuUsageKernel.Value);
+        tabPerf.meterMem.SetValue(_System.MemoryUsage, _System.MemoryUsageString);
+        tabPerf.chartMem.AddValue((double)_System.MemoryUsage, _System.SwapUsage);
+        tabPerf.meterIO.SetValue(_System.ioDataUsage, _System.ioDataUsageString);
+        tabPerf.chartIO.AddValue((double)_System.ioOtherBytes.Delta / 1024, (double)_System.ioWriteBytes.Delta / 1024, (double)_System.ioReadBytes.Delta / 1024);
+        tabPerf.meterDisk.SetValue(_System.DiskUsage, _System.DiskUsageString);
+        tabPerf.chartDisk.AddValue((double)_System.DiskRead.Delta / 1024, (double)_System.DiskWrite.Delta / 1024);
+        tabPerf.meterNet.SetValue(_System.NetworkUsage, _System.NetworkUsageString);
+        tabPerf.chartNet.AddValue((double)_System.NetReceived.Delta / 1024, (double)_System.NetSent.Delta / 1024);
+        // Always set the status bar labels as well
+        ssProcesses.Text = "Processes: " + _System.ProcessCount.Value;
+        ssServices.Text = "Services: " + _System.ServicesCount.Value;
+        ssCpuLoad.Text = "CPU Load: " + _System.CpuUsage.Value + "%";
+        // Always flush the ETW, if its active.
+        ETW.Flush();
     }
 
     private void Refresh_Applications(bool firstTime = false) {
@@ -149,29 +182,14 @@ public partial class frmMain : Form {
         TimmingStop();
     }
     private void Refresh_Performance(bool firstTime = false) {
-        if (InvokeRequired) { BeginInvoke(() => Refresh_Performance(firstTime)); return; }
-
+        if (InvokeRequired) {
+            BeginInvoke(() => Refresh_Performance(firstTime));
+            Debug.WriteLine("Invoked");
+            return;
+        }
         TimmingStart();
         // Call the Refresher, and cancel events cascading if we are not visible. 
-        _System.Refresh(!firstTime);
-        // Always set these values. regardless we are visible or not.
-        tabPerformance.gbSystem_UpTime.Text = _System.UpTime;
-        tabPerformance.meterCpu.SetValue(_System.CpuUsage.Value);
-        tabPerformance.chartCpu.AddValue(_System.CpuUsage.Value, _System.CpuUsageKernel.Value);
-        tabPerformance.meterMem.SetValue(_System.MemoryUsage, _System.MemoryUsageString);
-        tabPerformance.chartMem.AddValue((double)_System.MemoryUsage, _System.SwapUsage);
-        tabPerformance.meterIO.SetValue(_System.ioDataUsage, _System.ioDataUsageString);
-        tabPerformance.chartIO.AddValue((double)_System.ioOtherBytes.Delta / 1024, (double)_System.ioWriteBytes.Delta / 1024, (double)_System.ioReadBytes.Delta / 1024);
-        tabPerformance.meterDisk.SetValue(_System.DiskUsage, _System.DiskUsageString);
-        tabPerformance.chartDisk.AddValue((double)_System.DiskRead.Delta / 1024, (double)_System.DiskWrite.Delta / 1024);
-        tabPerformance.meterNet.SetValue(_System.NetworkUsage, _System.NetworkUsageString);
-        tabPerformance.chartNet.AddValue((double)_System.NetReceived.Delta / 1024, (double)_System.NetSent.Delta / 1024);
-        // Always set the status bar labels as well
-        ssProcesses.Text = "Processes: " + _System.ProcessCount.Value;
-        ssServices.Text = "Services: " + _System.ServicesCount.Value;
-        ssCpuLoad.Text = "CPU Load: " + _System.CpuUsage.Value + "%";
-        // Always flush the ETW, if its active.
-        ETW.Flush();
+        _System.Refresh();
         TimmingStop();
     }
     private void Refresh_Processes(bool firstTime = false) {
@@ -219,7 +237,7 @@ public partial class frmMain : Form {
             ss.Visible = !value;
             tc.Visible = !value;
             if (value) {
-                Controls.Add(tabPerformance);
+                Controls.Add(tabPerf);
                 if (WindowState == FormWindowState.Normal) {
                     _prevLocation = Location;
                     _prevMinSize = MinimumSize;
@@ -236,7 +254,7 @@ public partial class frmMain : Form {
                     Location = (Point)_fullScreenLocation;
                 }
             } else {
-                tpPerformance.Controls.Add(tabPerformance);
+                tpPerformance.Controls.Add(tabPerf);
                 if (WindowState == FormWindowState.Normal) {
                     _fullScreenSize = Size;
                     _fullScreenLocation = Location;
@@ -255,37 +273,37 @@ public partial class frmMain : Form {
     }
     private void Settings_Apply() {
         //Performance Graphs Settings
-        tabPerformance.chartCpu.SetIndexes("Total", Settings.Performance.ShowKernelTime ? "Kernel" : null);
-        tabPerformance.chartCpu.BackSolid = Settings.Performance.Solid;
-        tabPerformance.chartCpu.AntiAliasing = Settings.Performance.AntiAlias;
-        tabPerformance.chartCpu.ShadeBackground = Settings.Performance.ShadeBackground;
-        tabPerformance.chartCpu.DisplayAverage = Settings.Performance.DisplayAverages;
-        tabPerformance.chartCpu.DisplayLegends = Settings.Performance.DisplayLegends;
-        tabPerformance.chartCpu.DisplayIndexes = Settings.Performance.DisplayIndexes;
-        tabPerformance.chartCpu.DetailsOnHover = Settings.Performance.DisplayOnHover;
-        tabPerformance.chartCpu.ValueSpacing = Settings.Performance.ValueSpacing;
-        tabPerformance.chartCpu.GridSpacing = Settings.Performance.GridSize;
-        tabPerformance.chartCpu.PenGridVertical.DashStyle = (System.Drawing.Drawing2D.DashStyle)Settings.Performance.VerticalGridStyle;
-        tabPerformance.chartCpu.PenGridVertical.Color = Settings.Performance.VerticalGridColor;
-        tabPerformance.chartCpu.PenGridHorizontal.DashStyle = (System.Drawing.Drawing2D.DashStyle)Settings.Performance.HorizontalGridStyle;
-        tabPerformance.chartCpu.PenGridHorizontal.Color = Settings.Performance.HorizontalGridColor;
-        tabPerformance.chartCpu.PenAverage.DashStyle = (System.Drawing.Drawing2D.DashStyle)Settings.Performance.AverageLineStyle;
-        tabPerformance.chartCpu.PenAverage.Color = Settings.Performance.AverageLineColor;
-        tabPerformance.chartCpu.LightColors = Settings.Performance.LightColors;
+        tabPerf.chartCpu.SetIndexes("Total", Settings.Performance.ShowKernelTime ? "Kernel" : null);
+        tabPerf.chartCpu.BackSolid = Settings.Performance.Solid;
+        tabPerf.chartCpu.AntiAliasing = Settings.Performance.AntiAlias;
+        tabPerf.chartCpu.ShadeBackground = Settings.Performance.ShadeBackground;
+        tabPerf.chartCpu.DisplayAverage = Settings.Performance.DisplayAverages;
+        tabPerf.chartCpu.DisplayLegends = Settings.Performance.DisplayLegends;
+        tabPerf.chartCpu.DisplayIndexes = Settings.Performance.DisplayIndexes;
+        tabPerf.chartCpu.DetailsOnHover = Settings.Performance.DisplayOnHover;
+        tabPerf.chartCpu.ValueSpacing = Settings.Performance.ValueSpacing;
+        tabPerf.chartCpu.GridSpacing = Settings.Performance.GridSize;
+        tabPerf.chartCpu.PenGridVertical.DashStyle = (System.Drawing.Drawing2D.DashStyle)Settings.Performance.VerticalGridStyle;
+        tabPerf.chartCpu.PenGridVertical.Color = Settings.Performance.VerticalGridColor;
+        tabPerf.chartCpu.PenGridHorizontal.DashStyle = (System.Drawing.Drawing2D.DashStyle)Settings.Performance.HorizontalGridStyle;
+        tabPerf.chartCpu.PenGridHorizontal.Color = Settings.Performance.HorizontalGridColor;
+        tabPerf.chartCpu.PenAverage.DashStyle = (System.Drawing.Drawing2D.DashStyle)Settings.Performance.AverageLineStyle;
+        tabPerf.chartCpu.PenAverage.Color = Settings.Performance.AverageLineColor;
+        tabPerf.chartCpu.LightColors = Settings.Performance.LightColors;
         // TODO: Force for now, remove later
-        tabPerformance.chartCpu.DisplayAverage = true;
-        tabPerformance.chartCpu.DisplayLegends = true;
-        tabPerformance.chartCpu.DisplayIndexes = true;
+        tabPerf.chartCpu.DisplayAverage = true;
+        tabPerf.chartCpu.DisplayLegends = true;
+        tabPerf.chartCpu.DisplayIndexes = true;
 
-        tabPerformance.chartMem.CopySettings(tabPerformance.chartCpu);
-        tabPerformance.chartIO.CopySettings(tabPerformance.chartCpu);
-        tabPerformance.chartDisk.CopySettings(tabPerformance.chartCpu);
-        tabPerformance.chartNet.CopySettings(tabPerformance.chartCpu);
-        tabPerformance.meterCpu.LightColors = tabPerformance.chartCpu.LightColors;
-        tabPerformance.meterMem.LightColors = tabPerformance.chartCpu.LightColors;
-        tabPerformance.meterIO.LightColors = tabPerformance.chartCpu.LightColors;
-        tabPerformance.meterDisk.LightColors = tabPerformance.chartCpu.LightColors;
-        tabPerformance.meterNet.LightColors = tabPerformance.chartCpu.LightColors;
+        tabPerf.chartMem.CopySettings(tabPerf.chartCpu);
+        tabPerf.chartIO.CopySettings(tabPerf.chartCpu);
+        tabPerf.chartDisk.CopySettings(tabPerf.chartCpu);
+        tabPerf.chartNet.CopySettings(tabPerf.chartCpu);
+        tabPerf.meterCpu.LightColors = tabPerf.chartCpu.LightColors;
+        tabPerf.meterMem.LightColors = tabPerf.chartCpu.LightColors;
+        tabPerf.meterIO.LightColors = tabPerf.chartCpu.LightColors;
+        tabPerf.meterDisk.LightColors = tabPerf.chartCpu.LightColors;
+        tabPerf.meterNet.LightColors = tabPerf.chartCpu.LightColors;
 
     }
 
