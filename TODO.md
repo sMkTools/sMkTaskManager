@@ -15,3 +15,6 @@ These features have to be implemented because they are not part of old VB.net pr
 * WSL Instances lists and monitoring
 
 ## Known bugs
+* Idle process is not showing when not showing Processes for all users, it should always display
+* DONE: Process PageFault is freaking out, most likely some signature // It was a STRUCT issue with the value
+* ListView Sorted values are not re-sorted, check with cpu usage, shall we call sort again after all refreshers?

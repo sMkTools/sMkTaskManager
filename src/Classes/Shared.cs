@@ -7,6 +7,26 @@ internal static class Shared {
     public static bool IsInteger(string value) => value.All(char.IsNumber);
     public static bool IsInteger(this object value) => Convert.ToString(value)!.All(char.IsNumber);
 
+    public static string TimeSpanToElapsed(TimeSpan lpTimeSpan) {
+        return string.Format("{0,3:D2}:{1,2:D2}:{2,2:D2}", Convert.ToInt32(lpTimeSpan.Hours + (Math.Floor(lpTimeSpan.TotalDays) * 24)), lpTimeSpan.Minutes, lpTimeSpan.Seconds);
+    }
+
+    public static string TimeDiff(long startTime, short Format = 1) {
+        TimeSpan upX = new(DateTime.Now.Ticks - startTime);
+        return Format switch {
+            1 => string.Format("{0}d {1,2:D2}:{2,2:D2}:{3,2:D2}", upX.Days, upX.Hours, upX.Minutes, upX.Seconds),
+            2 => string.Format("{0}d {1,2:D2}h {2,2:D2}m", upX.Days, upX.Hours, upX.Minutes),
+            3 => string.Format("{0}d {1,2:D2}h {2,2:D2}m {3,2:D2}s", upX.Days, upX.Hours, upX.Minutes, upX.Seconds),
+            _ => "",
+        };
+    }
+
+    public static Array RedimPreserve(Array origArray, int desiredSize) {
+        Type t = origArray.GetType().GetElementType()!;
+        Array newArray = Array.CreateInstance(t, desiredSize);
+        Array.Copy(origArray, 0, newArray, 0, Math.Min(origArray.Length, desiredSize));
+        return newArray;
+    }
 }
 
 internal class CpuUsage {

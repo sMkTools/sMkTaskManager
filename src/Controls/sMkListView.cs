@@ -172,7 +172,7 @@ internal class sMkListView : ListView {
                         }
                     }
                 }
-            } catch { Debug.WriteLine("Error Code 011"); }
+            } catch (Exception ex) { Globals.DebugLine(ex,011); }
         }
         if (itmFound != null) {
             SelectedItems.Clear();

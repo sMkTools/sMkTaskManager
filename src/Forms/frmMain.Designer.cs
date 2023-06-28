@@ -39,21 +39,21 @@
             ssBusyTime = new ToolStripStatusLabel();
             timer1 = new System.Windows.Forms.Timer(components);
             tc = new TabControl();
-            tcApplications = new TabPage();
-            tcProcesses = new TabPage();
+            tpApplications = new TabPage();
+            tpProcesses = new TabPage();
             tabProcs = new Forms.tabProcesses();
-            tcServices = new TabPage();
+            tpServices = new TabPage();
             tpPerformance = new TabPage();
             tabPerf = new Forms.tabPerformance();
-            tcNetworking = new TabPage();
-            tcConnections = new TabPage();
-            tcPorts = new TabPage();
-            tcUsers = new TabPage();
+            tpNetworking = new TabPage();
+            tpConnections = new TabPage();
+            tpPorts = new TabPage();
+            tpUsers = new TabPage();
             timmingStrip = new StatusStrip();
             mnu.SuspendLayout();
             ss.SuspendLayout();
             tc.SuspendLayout();
-            tcProcesses.SuspendLayout();
+            tpProcesses.SuspendLayout();
             tpPerformance.SuspendLayout();
             SuspendLayout();
             // 
@@ -163,14 +163,14 @@
             // tc
             // 
             tc.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            tc.Controls.Add(tcApplications);
-            tc.Controls.Add(tcProcesses);
-            tc.Controls.Add(tcServices);
+            tc.Controls.Add(tpApplications);
+            tc.Controls.Add(tpProcesses);
+            tc.Controls.Add(tpServices);
             tc.Controls.Add(tpPerformance);
-            tc.Controls.Add(tcNetworking);
-            tc.Controls.Add(tcConnections);
-            tc.Controls.Add(tcPorts);
-            tc.Controls.Add(tcUsers);
+            tc.Controls.Add(tpNetworking);
+            tc.Controls.Add(tpConnections);
+            tc.Controls.Add(tpPorts);
+            tc.Controls.Add(tpUsers);
             tc.ItemSize = new Size(70, 20);
             tc.Location = new Point(3, 27);
             tc.Margin = new Padding(0, 3, 0, 3);
@@ -180,24 +180,24 @@
             tc.Size = new Size(577, 508);
             tc.TabIndex = 1;
             // 
-            // tcApplications
+            // tpApplications
             // 
-            tcApplications.BackColor = SystemColors.Control;
-            tcApplications.Location = new Point(4, 24);
-            tcApplications.Name = "tcApplications";
-            tcApplications.Size = new Size(569, 480);
-            tcApplications.TabIndex = 0;
-            tcApplications.Text = "Applications";
+            tpApplications.BackColor = SystemColors.Control;
+            tpApplications.Location = new Point(4, 24);
+            tpApplications.Name = "tpApplications";
+            tpApplications.Size = new Size(569, 480);
+            tpApplications.TabIndex = 0;
+            tpApplications.Text = "Applications";
             // 
-            // tcProcesses
+            // tpProcesses
             // 
-            tcProcesses.BackColor = SystemColors.Control;
-            tcProcesses.Controls.Add(tabProcs);
-            tcProcesses.Location = new Point(4, 24);
-            tcProcesses.Name = "tcProcesses";
-            tcProcesses.Size = new Size(569, 480);
-            tcProcesses.TabIndex = 2;
-            tcProcesses.Text = "Processes";
+            tpProcesses.BackColor = SystemColors.Control;
+            tpProcesses.Controls.Add(tabProcs);
+            tpProcesses.Location = new Point(4, 24);
+            tpProcesses.Name = "tpProcesses";
+            tpProcesses.Size = new Size(569, 480);
+            tpProcesses.TabIndex = 2;
+            tpProcesses.Text = "Processes";
             // 
             // tabProcs
             // 
@@ -208,14 +208,14 @@
             tabProcs.Size = new Size(569, 480);
             tabProcs.TabIndex = 0;
             // 
-            // tcServices
+            // tpServices
             // 
-            tcServices.BackColor = SystemColors.Control;
-            tcServices.Location = new Point(4, 24);
-            tcServices.Name = "tcServices";
-            tcServices.Size = new Size(569, 480);
-            tcServices.TabIndex = 3;
-            tcServices.Text = "Services";
+            tpServices.BackColor = SystemColors.Control;
+            tpServices.Location = new Point(4, 24);
+            tpServices.Name = "tpServices";
+            tpServices.Size = new Size(569, 480);
+            tpServices.TabIndex = 3;
+            tpServices.Text = "Services";
             // 
             // tpPerformance
             // 
@@ -235,41 +235,41 @@
             tabPerf.Size = new Size(569, 480);
             tabPerf.TabIndex = 0;
             // 
-            // tcNetworking
+            // tpNetworking
             // 
-            tcNetworking.BackColor = SystemColors.Control;
-            tcNetworking.Location = new Point(4, 24);
-            tcNetworking.Name = "tcNetworking";
-            tcNetworking.Size = new Size(569, 480);
-            tcNetworking.TabIndex = 4;
-            tcNetworking.Text = "Networking";
+            tpNetworking.BackColor = SystemColors.Control;
+            tpNetworking.Location = new Point(4, 24);
+            tpNetworking.Name = "tpNetworking";
+            tpNetworking.Size = new Size(569, 480);
+            tpNetworking.TabIndex = 4;
+            tpNetworking.Text = "Networking";
             // 
-            // tcConnections
+            // tpConnections
             // 
-            tcConnections.BackColor = SystemColors.Control;
-            tcConnections.Location = new Point(4, 24);
-            tcConnections.Name = "tcConnections";
-            tcConnections.Size = new Size(569, 480);
-            tcConnections.TabIndex = 5;
-            tcConnections.Text = "Connections";
+            tpConnections.BackColor = SystemColors.Control;
+            tpConnections.Location = new Point(4, 24);
+            tpConnections.Name = "tpConnections";
+            tpConnections.Size = new Size(569, 480);
+            tpConnections.TabIndex = 5;
+            tpConnections.Text = "Connections";
             // 
-            // tcPorts
+            // tpPorts
             // 
-            tcPorts.BackColor = SystemColors.Control;
-            tcPorts.Location = new Point(4, 24);
-            tcPorts.Name = "tcPorts";
-            tcPorts.Size = new Size(569, 480);
-            tcPorts.TabIndex = 6;
-            tcPorts.Text = "Ports";
+            tpPorts.BackColor = SystemColors.Control;
+            tpPorts.Location = new Point(4, 24);
+            tpPorts.Name = "tpPorts";
+            tpPorts.Size = new Size(569, 480);
+            tpPorts.TabIndex = 6;
+            tpPorts.Text = "Ports";
             // 
-            // tcUsers
+            // tpUsers
             // 
-            tcUsers.BackColor = SystemColors.Control;
-            tcUsers.Location = new Point(4, 24);
-            tcUsers.Name = "tcUsers";
-            tcUsers.Size = new Size(569, 480);
-            tcUsers.TabIndex = 7;
-            tcUsers.Text = "Users";
+            tpUsers.BackColor = SystemColors.Control;
+            tpUsers.Location = new Point(4, 24);
+            tpUsers.Name = "tpUsers";
+            tpUsers.Size = new Size(569, 480);
+            tpUsers.TabIndex = 7;
+            tpUsers.Text = "Users";
             // 
             // timmingStrip
             // 
@@ -304,7 +304,7 @@
             ss.ResumeLayout(false);
             ss.PerformLayout();
             tc.ResumeLayout(false);
-            tcProcesses.ResumeLayout(false);
+            tpProcesses.ResumeLayout(false);
             tpPerformance.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -326,15 +326,15 @@
         private ToolStripStatusLabel ssBusyTime;
         private System.Windows.Forms.Timer timer1;
         private TabControl tc;
-        private TabPage tcApplications;
+        private TabPage tpApplications;
         private TabPage tpPerformance;
         private Forms.tabPerformance tabPerf;
-        private TabPage tcProcesses;
-        private TabPage tcServices;
-        private TabPage tcNetworking;
-        private TabPage tcConnections;
-        private TabPage tcPorts;
-        private TabPage tcUsers;
+        private TabPage tpProcesses;
+        private TabPage tpServices;
+        private TabPage tpNetworking;
+        private TabPage tpConnections;
+        private TabPage tpPorts;
+        private TabPage tpUsers;
         private StatusStrip timmingStrip;
         private Forms.tabProcesses tabProcs;
     }

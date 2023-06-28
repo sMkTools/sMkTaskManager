@@ -360,6 +360,7 @@ public class tabProcesses : UserControl {
     public void Feature_ProcessSetPriority(ProcessPriorityClass newPriority) { Globals.NotImplemented(); }
     public ProcessPriorityClass Feature_ProcessGetPriority() { return ProcessPriorityClass.Normal; }
 
+    public bool AllUsers => btnAllUsers.Checked;
     public void RefreshInfoText() {
         lblText.Text = string.Format("Total: {0}, Selected: {1}", lv.Items.Count, lv.SelectedItems.Count);
     }
