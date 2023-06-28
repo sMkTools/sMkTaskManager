@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.Versioning;
 using sMkTaskManager.Classes;
 using sMkTaskManager.Controls;
@@ -1218,7 +1217,6 @@ public partial class tabPerformance : UserControl {
         gbMemory.ResumeLayout(false);
         ResumeLayout(false);
     }
-
     private void InitializeSettings() {
         chartCpu.SetIndexes("Total", "Kernel");
         chartCpu.BackColorShade = Color.FromArgb(0, 50, 0);

@@ -3,9 +3,11 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using static sMkTaskManager.Controls.sMkListViewHelpers;
 namespace sMkTaskManager.Controls;
 
+[SupportedOSPlatform("windows")]
 internal class sMkListView : ListView {
     private readonly sMkColumnSorter _sorter = new();
     private BindingSource _dataSource = new();
@@ -172,7 +174,7 @@ internal class sMkListView : ListView {
                         }
                     }
                 }
-            } catch (Exception ex) { Globals.DebugLine(ex,011); }
+            } catch (Exception ex) { Shared.DebugTrap(ex,011); }
         }
         if (itmFound != null) {
             SelectedItems.Clear();

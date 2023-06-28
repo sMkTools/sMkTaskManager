@@ -231,7 +231,7 @@ public partial class frmMain : Form {
             Array.Resize(ref spi.Threads, (int)spi.NumberOfThreads);
             lastOffset = hmain;
             while (spi.NextEntryOffset >= 0) {
-                if (tabProcs.AllUsers || spi.SessionId == Globals.CurrentSessionID) {
+                if (tabProcs.AllUsers || spi.SessionId == Shared.CurrentSessionID) {
                     TaskManagerProcess? thisProcess;
                     Tables.HashProcesses.Add(spi.UniqueProcessId.ToInt32());
                     if (Tables.Processes.Contains(spi.UniqueProcessId)) {
@@ -239,15 +239,15 @@ public partial class frmMain : Form {
                         if (thisProcess.BackColor == Settings.Highlights.NewColor) thisProcess.BackColor = Color.Empty;
                         try {
                             thisProcess.Update(spi, ref Tables.ColsProcesses);
-                        } catch (Exception ex) { Globals.DebugLine(ex, 021); }
+                        } catch (Exception ex) { Shared.DebugTrap(ex, 021); }
                     } else {
                         thisProcess = new TaskManagerProcess(spi.UniqueProcessId);
                         try {
                             thisProcess.Load(spi, ref Tables.ColsProcesses);
-                        } catch (Exception ex) { Globals.DebugLine(ex, 022); }
+                        } catch (Exception ex) { Shared.DebugTrap(ex, 022); }
                         if (Settings.Highlights.NewItems && !firstTime) thisProcess.BackColor = Settings.Highlights.NewColor;
                         thisProcess.ImageIndex = (spi.UniqueProcessId == 0) ? 0 : 1;
-                        //if (spi.UniqueProcessId.ToInt32() > Globals.bpi && tabProcs.lv.SmallImageList != null && GetProcessIcon(thisProcess.ID, thisProcess.Name, thisProcess.ImagePath)) {
+                        //if (spi.UniqueProcessId.ToInt32() > Shared.bpi && tabProcs.lv.SmallImageList != null && GetProcessIcon(thisProcess.ID, thisProcess.Name, thisProcess.ImagePath)) {
                         //    thisProcess.ImageKey = thisProcess.ID + "-" + thisProcess.Name;
                         //    thisProcess.ImageIndex = -1;
                         //}

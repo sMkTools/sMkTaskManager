@@ -170,7 +170,7 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
         _CancellingEvents = true;
 
         // Load values that are fixed to this process and wont change...
-        if (_PID > Globals.bpi) {
+        if (_PID > Shared.bpi) {
             Name = spi.ImageName.Buffer ?? "";
             SessionID = spi.SessionId;
 
@@ -181,7 +181,7 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
             SessionID = 0;
             Priority = "Normal";
             Affinity = "All";
-            Username = Globals.GetSystemAccount();
+            Username = Shared.GetSystemAccount();
         }
 
         // And then update the rest of values...
@@ -294,7 +294,7 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
     }
 
     private string FormatValue(ulong value, FormatValueTypes format, bool skipBPI = false) {
-        if (skipBPI && _PID < Globals.bpi) { return "n/a."; }
+        if (skipBPI && _PID < Shared.bpi) { return "n/a."; }
         switch (format) {
             case FormatValueTypes.Literal: return value.ToString();
             case FormatValueTypes.Number: return string.Format("{0:#,0}", value);

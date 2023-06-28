@@ -135,7 +135,7 @@ internal static class Settings {
             _StringBuilder.Append(Convert.ToInt16(StartMinimized) + ",");
             _StringBuilder.Append(Convert.ToInt16(AlternateRowColors) + ",");
             return WriteReg("General", FixStringToWrite(_StringBuilder));
-        } catch (Exception e) { Globals.DebugLine(e); return false; }
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public bool SaveHighlights() {
         _StringBuilder.Clear();
@@ -149,7 +149,7 @@ internal static class Settings {
             _StringBuilder.Append(Convert.ToInt16(Highlights.FrozenItems) + ",");
             _StringBuilder.Append(Highlights.FrozenColor.ToArgb() + ",");
             return WriteReg("Highlights", FixStringToWrite(_StringBuilder));
-        } catch (Exception e) { Globals.DebugLine(e); return false; }
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public bool SavePerformance() {
         _StringBuilder.Clear();
@@ -173,7 +173,7 @@ internal static class Settings {
             _StringBuilder.Append(Convert.ToInt16(Performance.ShowKernelTime) + ",");
             _StringBuilder.Append(Convert.ToInt16(Performance.SeparateCPUs) + ",");
             return WriteReg("Performance", FixStringToWrite(_StringBuilder));
-        } catch (Exception e) { Globals.DebugLine(e); return false; }
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public bool SaveNetworking() {
         _StringBuilder.Clear();
@@ -197,7 +197,7 @@ internal static class Settings {
             _StringBuilder.Append(Networking.DownloadColor.ToArgb() + ",");
             _StringBuilder.Append(Convert.ToInt16(Networking.KeepUpdating) + ",");
             return WriteReg("Networking", FixStringToWrite(_StringBuilder));
-        } catch (Exception e) { Globals.DebugLine(e); return false; }
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public bool SaveTray() {
         _StringBuilder.Clear();
@@ -209,7 +209,7 @@ internal static class Settings {
             _StringBuilder.Append(Tray.Background + ",");
             _StringBuilder.Append(Tray.Border + ",");
             return WriteReg("Tray", FixStringToWrite(_StringBuilder));
-        } catch (Exception e) { Globals.DebugLine(e); return false; }
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public bool SaveInterfaces() {
         _StringBuilder.Clear();
@@ -218,7 +218,7 @@ internal static class Settings {
                 _StringBuilder.Append(s + ",");
             }
             return WriteReg("Selected Nics", FixStringToWrite(_StringBuilder));
-        } catch (Exception e) { Globals.DebugLine(e); return false; }
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public bool SaveColsInformation(string strName, sMkListView LV) {
         _StringBuilder.Clear();
@@ -241,7 +241,7 @@ internal static class Settings {
                 }
             }
             return WriteReg(strName, _Encoding.GetBytes(_StringBuilder.ToString()));
-        } catch (Exception e) { Globals.DebugLine(e); return false; }
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public bool SaveSummaryColumns(ref sMkSummaryView SV) {
         _StringBuilder.Clear();
@@ -250,7 +250,7 @@ internal static class Settings {
                 _StringBuilder.AppendLine(l);
             }
             return WriteReg("colsSummary", _Encoding.GetBytes(_StringBuilder.ToString()));
-        } catch (Exception e) { Globals.DebugLine(e); return false; }
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public bool SaveProcDetails() {
         _StringBuilder.Clear();
@@ -260,7 +260,7 @@ internal static class Settings {
             _StringBuilder.Append(ProcessDetails.UpdateSpeed + ",");
             _StringBuilder.Append(ProcessDetails.LastTab + ",");
             return WriteReg("winProcess", FixStringToWrite(_StringBuilder));
-        } catch (Exception e) { Globals.DebugLine(e); return false; }
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public bool SaveMainWindow() {
         _StringBuilder.Clear();
@@ -269,7 +269,7 @@ internal static class Settings {
             _StringBuilder.Append(MainWindow.Location.X + "," + MainWindow.Location.Y + ",");
             _StringBuilder.Append(Convert.ToInt32(MainWindow.Maximized) + ",");
             return WriteReg("winMain", FixStringToWrite(_StringBuilder));
-        } catch (Exception e) { Globals.DebugLine(e); return false; }
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public bool SaveCustomColors() {
         _StringBuilder.Clear();
@@ -280,7 +280,7 @@ internal static class Settings {
                 _StringBuilder.Append(c + ",");
             }
             return WriteReg("Custom Colors", _StringBuilder.ToString().TrimEnd(','));
-        } catch (Exception e) { Globals.DebugLine(e); return false; }
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     */
     #endregion
@@ -312,7 +312,7 @@ internal static class Settings {
             StartMinimized = ChunkValues[16] != "0";
             AlternateRowColors = ChunkValues[17] != "0";
             return true;
-        } catch (Exception e) { Globals.DebugLine(e); return false; }
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
 
     }
     public static bool LoadHighlights() {
@@ -328,7 +328,7 @@ internal static class Settings {
             Highlights.FrozenItems = ChunkValues[6] != "0";
             Highlights.FrozenColor = Color.FromArgb(int.Parse(ChunkValues[7]));
             return true;
-        } catch (Exception e) { Globals.DebugLine(e); return false; }
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public static bool LoadPerformance() {
         try {
@@ -353,7 +353,7 @@ internal static class Settings {
             Performance.ShowKernelTime = ChunkValues[16] != "0";
             Performance.SeparateCPUs = ChunkValues[17] != "0";
             return true;
-        } catch (Exception e) { Globals.DebugLine(e); return false; }
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public static bool LoadNetworking() {
         try {
@@ -378,7 +378,7 @@ internal static class Settings {
             Networking.DownloadColor = Color.FromArgb(int.Parse(ChunkValues[16]));
             Networking.KeepUpdating = ChunkValues[17] != "0";
             return true;
-        } catch (Exception e) { Globals.DebugLine(e); return false; }
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public static bool LoadTray() {
         try {
@@ -391,7 +391,7 @@ internal static class Settings {
             Tray.Background = int.Parse(ChunkValues[4]);
             Tray.Border = int.Parse(ChunkValues[5]);
             return true;
-        } catch (Exception e) { Globals.DebugLine(e); return false; }
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public static bool LoadMainWindow() {
         try {
@@ -401,7 +401,7 @@ internal static class Settings {
             MainWindow.Location = new Point(int.Parse(ChunkValues[2]), int.Parse(ChunkValues[3]));
             MainWindow.Maximized = ChunkValues[4] != "0";
             return true;
-        } catch (Exception e) { Globals.DebugLine(e); return false; }
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public static bool LoadColsInformation(string strName, sMkListView lv, ref HashSet<string> Destination) {
         try {
@@ -436,7 +436,7 @@ internal static class Settings {
                 if (lv.Sortable && !(c.SortOrder == SortOrder.None)) { lv.SetSort(c.Index, c.SortOrder); }
             }
         } catch (Exception e) {
-            Globals.DebugLine(e); return false;
+            Shared.DebugTrap(e); return false;
         } finally {
             Destination.Clear();
             foreach (ColumnHeader c in lv.Columns) { Destination.Add(c.Tag!.ToString()!); }
@@ -451,7 +451,7 @@ internal static class Settings {
                 CheckedInterfaces.Add(s);
             }
             return true;
-        } catch (Exception e) { Globals.DebugLine(e); return false; }
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public static bool LoadCustomColors() {
         try {
@@ -461,7 +461,7 @@ internal static class Settings {
                 CustomColors.Add(int.Parse(ChunkValues[i]));
             }
             return true;
-        } catch (Exception e) { Globals.DebugLine(e); return false; }
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
 
 
@@ -503,7 +503,7 @@ internal static class Settings {
             spValues = null;
             allValues = null;
             bt = null;
-        } catch (Exception e) { Globals.DebugLine(e); return false; }
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
         return true;
     }
     public bool LoadProcDetails() {
@@ -515,7 +515,7 @@ internal static class Settings {
             ProcessDetails.UpdateSpeed = int.Parse(ChunkValues[4]);
             ProcessDetails.LastTab = int.Parse(ChunkValues[5]);
             return true;
-        } catch (Exception e) { Globals.DebugLine(e); return false; }
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     */
     #endregion
@@ -633,7 +633,7 @@ internal static class Settings {
             }
             Key?.Close();
         } catch (Exception e) {
-            Globals.DebugLine(e);
+            Shared.DebugTrap(e);
             retValue = defaultValue;
         } finally {
             ParentKey.Close();
@@ -656,7 +656,7 @@ internal static class Settings {
             }
             Key?.Close();
         } catch (Exception e) {
-            Globals.DebugLine(e);
+            Shared.DebugTrap(e);
             retValue = DefaultValue;
         } finally {
             ParentKey.Close();

@@ -211,7 +211,7 @@ public class tabProcesses : UserControl {
             // We should not allow actions on PID < bpi
             for (int i = 0; i < lv.SelectedItems.Count; i++) {
                 if ((i + 1) > lv.SelectedItems.Count) { break; }
-                if (int.Parse(lv.SelectedItems[i].Name) < Globals.bpi) {
+                if (int.Parse(lv.SelectedItems[i].Name) < Shared.bpi) {
                     if (lv.SelectedItems.Count == 1 && i == 0) {
                         // If its the only one selected then dont deselect it, just cancel 
                         e.Cancel = true;
@@ -339,25 +339,25 @@ public class tabProcesses : UserControl {
         RefreshInfoText();
     }
 
-    public void Feature_ForceRefresh() { Globals.NotImplemented(); }
+    public void Feature_ForceRefresh() { Shared.NotImplemented(); }
     public void Feature_OpenDetails() {
         if (lv.SelectedItems.Count > 0) {
-            if (int.Parse(lv.SelectedItems[0].Name) < Globals.bpi) { return; }
-            Globals.OpenProcessForm(int.Parse(lv.SelectedItems[0].Name));
+            if (int.Parse(lv.SelectedItems[0].Name) < Shared.bpi) { return; }
+            Shared.OpenProcessForm(int.Parse(lv.SelectedItems[0].Name));
         }
     }
-    public void Feature_OpenFileProperties() { Globals.NotImplemented(); }
-    public void Feature_OpenFileLocation() { Globals.NotImplemented(); }
-    public void Feature_OpenLockedFiles() { Globals.NotImplemented(); }
-    public void Feature_RevealWindows() { Globals.NotImplemented(); }
-    public void Feature_OpenOnline() { Globals.NotImplemented(); }
-    public void Feature_ProcessKill() { Globals.NotImplemented(); }
-    public void Feature_ProcessPause() { Globals.NotImplemented(); }
-    public void Feature_ProcessResume() { Globals.NotImplemented(); }
-    public void Feature_ProcessDebug() { Globals.NotImplemented(); }
-    public void Feature_ProcessDump() { Globals.NotImplemented(); }
-    public void Feature_ProcessAffinity() { Globals.NotImplemented(); }
-    public void Feature_ProcessSetPriority(ProcessPriorityClass newPriority) { Globals.NotImplemented(); }
+    public void Feature_OpenFileProperties() { Shared.NotImplemented(); }
+    public void Feature_OpenFileLocation() { Shared.NotImplemented(); }
+    public void Feature_OpenLockedFiles() { Shared.NotImplemented(); }
+    public void Feature_RevealWindows() { Shared.NotImplemented(); }
+    public void Feature_OpenOnline() { Shared.NotImplemented(); }
+    public void Feature_ProcessKill() { Shared.NotImplemented(); }
+    public void Feature_ProcessPause() { Shared.NotImplemented(); }
+    public void Feature_ProcessResume() { Shared.NotImplemented(); }
+    public void Feature_ProcessDebug() { Shared.NotImplemented(); }
+    public void Feature_ProcessDump() { Shared.NotImplemented(); }
+    public void Feature_ProcessAffinity() { Shared.NotImplemented(); }
+    public void Feature_ProcessSetPriority(ProcessPriorityClass newPriority) { Shared.NotImplemented(); }
     public ProcessPriorityClass Feature_ProcessGetPriority() { return ProcessPriorityClass.Normal; }
 
     public bool AllUsers => btnAllUsers.Checked;
