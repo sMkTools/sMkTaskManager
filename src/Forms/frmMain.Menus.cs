@@ -12,32 +12,32 @@ partial class frmMain {
         mnuMonitor = new("&Monitor") { Name = "mnuMonitor" };
         mnuMonitor.DropDownItems.AddRange(GenerateMenuItems_Monitor());
         mnuMonitor.DropDownOpening += Menu_DropDownOpening;
-        mnuMonitor.DropDownItemClicked += Mnu_DropDownItemClicked;
+        mnuMonitor.DropDownItemClicked += Menu_DropDownItemClicked;
 
         mnuComputer = new("&Computer") { Name = "mnuComputer" };
         mnuComputer.DropDownItems.AddRange(GenerateMenuItems_Computer());
         mnuComputer.DropDownOpening += Menu_DropDownOpening;
-        mnuComputer.DropDownItemClicked += Mnu_DropDownItemClicked;
+        mnuComputer.DropDownItemClicked += Menu_DropDownItemClicked;
 
         mnuFile.DropDownItems.Clear();
         mnuFile.DropDownItems.AddRange(GenerateMenuItems_File());
         mnuFile.DropDownOpening += Menu_DropDownOpening;
-        mnuFile.DropDownItemClicked += Mnu_DropDownItemClicked;
+        mnuFile.DropDownItemClicked += Menu_DropDownItemClicked;
 
         mnuOptions.DropDownItems.Clear();
         mnuOptions.DropDownItems.AddRange(GenerateMenuItems_Options());
         mnuOptions.DropDownOpening += Menu_DropDownOpening;
-        mnuOptions.DropDownItemClicked += Mnu_DropDownItemClicked;
+        mnuOptions.DropDownItemClicked += Menu_DropDownItemClicked;
 
         mnuView.DropDownItems.Clear();
         mnuView.DropDownItems.AddRange(GenerateMenuItems_View());
         mnuView.DropDownOpening += Menu_DropDownOpening;
-        mnuView.DropDownItemClicked += Mnu_DropDownItemClicked;
+        mnuView.DropDownItemClicked += Menu_DropDownItemClicked;
 
         mnuHelp.DropDownItems.Clear();
         mnuHelp.DropDownItems.AddRange(GenerateMenuItems_Help());
         mnuHelp.DropDownOpening += Menu_DropDownOpening;
-        mnuHelp.DropDownItemClicked += Mnu_DropDownItemClicked;
+        mnuHelp.DropDownItemClicked += Menu_DropDownItemClicked;
 
         mnu.ResumeLayout(false);
         mnu.PerformLayout();
@@ -113,9 +113,10 @@ partial class frmMain {
 
 
     }
-    private void Mnu_DropDownItemClicked(object? sender, ToolStripItemClickedEventArgs e) {
+    private void Menu_DropDownItemClicked(object? sender, ToolStripItemClickedEventArgs e) {
         if (e.ClickedItem == null) return;
         switch (e.ClickedItem.Name) {
+            case "mnuOptions_SelectColumns": Feature_SelectColumns(); break;
             case "mnuHelp_Timmings": TimmingVisible = !TimmingVisible; break;
             default: break;
         }
