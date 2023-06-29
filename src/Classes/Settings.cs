@@ -9,7 +9,7 @@ internal static class Settings {
     private static readonly System.Text.UTF8Encoding _Encoding = new();
     private static readonly System.Text.StringBuilder _StringBuilder = new();
     public static string Filename = Application.ExecutablePath.Replace(".exe", ".cfg");
-    public static string RegKey = "Software\\sMk Tools\\sMk TaskManager";
+    public static string RegKey = "Software\\sMk Tools\\sMk TaskManager2";
 
     public static bool RememberPositions = true;
     public static bool RememberActiveTab = true;
@@ -529,19 +529,17 @@ internal static class Settings {
             retValue.AppendLine("|Description,Description,164,0,0,3,0|");
             retValue.AppendLine("|Priority,Priority,60,0,0,4,0|");
             retValue.AppendLine("|Username,Username,91,0,0,5,0|");
-            retValue.AppendLine("|Mem Usage,Memory,71,1,0,6,0|");
-            retValue.AppendLine("|Mem Peak,MemoryPeak,75,1,0,7,0|");
+            retValue.AppendLine("|Mem Usage,WorkingSet,71,1,0,6,0|");
+            retValue.AppendLine("|Mem Peak,WorkingSetPeak,75,1,0,7,0|");
             retValue.AppendLine("|Virtual Memory,VirtualMemory,86,1,0,8,0|");
             retValue.AppendLine("|PF Memory,PagedMemory,71,1,0,9,0|");
             retValue.AppendLine("|Handles,Handles,55,1,0,10,0|");
             retValue.AppendLine("|Threads,Threads,55,1,0,11,0|");
             retValue.AppendLine("|GDI Objects,GDIObjects,70,1,0,12,0|");
             retValue.AppendLine("|User Objects,UserObjects,75,1,0,13,0|");
-            retValue.AppendLine("|I/O Read Bytes,ReadTransfers,90,1,0,14,0|");
-            retValue.AppendLine("|I/O Write Bytes,WriteTransfers,90,1,0,15,0|");
-            retValue.AppendLine("|Page Faults,PageFaults,71,1,0,16,0|");
-            retValue.AppendLine("|Run Time,RunTime,81,1,0,17,0|");
-            retValue.AppendLine("|Image Path,ImagePath,150,0,0,18,0|");
+            retValue.AppendLine("|Page Faults,PageFaults,71,1,0,14,0|");
+            retValue.AppendLine("|Run Time,RunTime,81,1,0,15,0|");
+            retValue.AppendLine("|Image Path,ImagePath,150,0,0,16,0|");
         } else if (strName == "colsServices") {
             retValue.AppendLine("|Name,Name,188,0,1,0,0|");
             retValue.AppendLine("|Status,Status,52,0,0,1,0|");

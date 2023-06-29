@@ -388,6 +388,7 @@ internal static class ETW {
         return !EtwActive;
     }
     public static bool Running => EtwActive;
+    public static EtwStats Stats(int PID) => _AllStats.ContainsKey((uint)PID) ? _AllStats[(uint)PID] : new EtwStats();
     public static EtwStats Stats(uint PID) => _AllStats.ContainsKey(PID) ? _AllStats[PID] : new EtwStats();
     public static EtwNetStats NetStats(string Hash) => _NetStats.ContainsKey(Hash) ? _NetStats[Hash] : new EtwNetStats();
 

@@ -917,7 +917,7 @@ internal unsafe static partial class API {
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", SetLastError = true)]
     internal static extern unsafe int ProcessIdToSessionId(int dwProcessId, ref int pSessionId);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    internal static extern unsafe bool OpenProcessToken(IntPtr ProcessHandle, int DesiredAccess, ref IntPtr TokenHandle);
+    internal static extern unsafe bool OpenProcessToken(IntPtr ProcessHandle, int DesiredAccess, out IntPtr TokenHandle);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", SetLastError = true)]
     internal static extern unsafe IntPtr OpenProcess(ProcessAccessFlags dwDesiredAccess, [MarshalAs(UnmanagedType.Bool)] bool bInheritHandle, int dwProcessId);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
@@ -930,6 +930,31 @@ internal unsafe static partial class API {
     internal static extern unsafe uint SuspendThread(IntPtr hThread);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", SetLastError = true)]
     internal static extern unsafe bool CloseHandle(IntPtr handle);
-
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", SetLastError = true)]
+    internal static extern unsafe int GetPriorityClass(IntPtr hProcess);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", SetLastError = true)]
+    internal static extern unsafe bool SetPriorityClass(IntPtr hProcess, int dwPriorityClass);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", SetLastError = true)]
+    internal static extern unsafe bool GetProcessAffinityMask(IntPtr hProcess, out IntPtr lpProcessAffinityMask, out IntPtr lpSystemAffinityMask);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", SetLastError = true)]
+    internal static extern unsafe bool SetProcessAffinityMask(IntPtr hProcess, ref IntPtr dwProcessAffinityMask);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    internal static extern unsafe bool QueryFullProcessImageName(IntPtr hProcess, uint dwFlags, [Out] StringBuilder lpExeName, ref uint lpdwSize);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("dbghelp.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    internal static extern unsafe bool MiniDumpWriteDump(IntPtr hProcess, int ProcessId, IntPtr hFile, DumpTypes DumpType, IntPtr ExceptionParam, IntPtr UserStreamParam, IntPtr CallackParam);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", SetLastError = true)]
+    internal static extern unsafe IntPtr CreateToolhelp32Snapshot(SnapshotFlags dwFlags, uint th32ProcessID);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", SetLastError = true)]
+    internal static extern unsafe bool Process32First(IntPtr hSnapshot, ref ProcessEntry32 lppe);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", SetLastError = true)]
+    internal static extern unsafe bool Process32Next(IntPtr hSnapshot, ref ProcessEntry32 lppe);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    internal static extern unsafe bool Thread32First(IntPtr hSnapshot, ref ThreadEntry32 lpte);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    internal static extern unsafe bool Thread32Next(IntPtr hSnapshot, ref ThreadEntry32 lpte);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    internal static extern unsafe bool Module32First(IntPtr hSnapshot, ref ModuleEntry32 lpme);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    internal static extern unsafe bool Module32Next(IntPtr hSnapshot, ref ModuleEntry32 lpme);
 
 }

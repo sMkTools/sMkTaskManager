@@ -1,6 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Runtime.Versioning;
 using System.Runtime.CompilerServices;
+using System.Globalization;
+using System.Runtime.InteropServices;
+
 namespace sMkTaskManager;
 
 [SupportedOSPlatform("windows")]
@@ -11,6 +14,7 @@ internal static class Shared {
     internal static List<string> skipProcess = new List<string>(new[] { "audiodg" });
     internal static List<string> skipServices = new();
     internal static int CurrentSessionID = Process.GetCurrentProcess().SessionId;
+    internal static string TotalProcessorsBin = "".PadLeft(Environment.ProcessorCount, '1');
     internal static void OpenProcessForm(int PID) { }
 
     public static bool IsNumeric(string value) => double.TryParse(value, out _);
@@ -18,6 +22,7 @@ internal static class Shared {
     public static bool IsInteger(string value) => value.All(char.IsNumber);
     public static bool IsInteger(this object value) => Convert.ToString(value)!.All(char.IsNumber);
 
+    public static string ToTitleCase(string text) => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(text.ToLower());
     public static string TimeSpanToElapsed(TimeSpan lpTimeSpan) {
         return string.Format("{0,3:D2}:{1,2:D2}:{2,2:D2}", Convert.ToInt32(lpTimeSpan.Hours + (Math.Floor(lpTimeSpan.TotalDays) * 24)), lpTimeSpan.Minutes, lpTimeSpan.Seconds);
     }
@@ -41,18 +46,18 @@ internal static class Shared {
 
     internal static string GetSystemAccount() {
         if (_SystemAccount != "") return _SystemAccount;
+        try {
+            System.Security.Principal.SecurityIdentifier sid = new(System.Security.Principal.WellKnownSidType.LocalSystemSid, null);
+            _SystemAccount = sid.Translate(typeof(System.Security.Principal.NTAccount)).ToString();
 
-        System.Security.Principal.SecurityIdentifier sid = new(System.Security.Principal.WellKnownSidType.LocalSystemSid, null);
-        System.Security.Principal.NTAccount acc = (System.Security.Principal.NTAccount)sid.Translate(Type.GetType("System.Security.Principal.NTAccount")!);
-
-        // TODO: Validate this and implemente vbProperCase somehow.
-        if (acc.Value.IndexOf("\\") > 0) {
-            _SystemAccount = acc.Value[(acc.Value.LastIndexOf("\\") + 1)..];
-        } else {
-            _SystemAccount = acc.Value;
+            // TODO: Validate this and implemente vbProperCase somehow.
+            if (_SystemAccount.IndexOf("\\") > 0) _SystemAccount = _SystemAccount[(_SystemAccount.LastIndexOf("\\") + 1)..];
+            _SystemAccount = ToTitleCase(_SystemAccount);
+            Debug.WriteLine("Getting System Account... Result: " + _SystemAccount);
+        } catch (Exception ex) {
+            DebugTrap(ex);
+            _SystemAccount = "Error";
         }
-
-        Debug.WriteLine("Getting System Account... Result: " + acc.Value);
 
         return _SystemAccount!;
     }

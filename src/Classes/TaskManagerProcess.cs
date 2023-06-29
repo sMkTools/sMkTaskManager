@@ -1,16 +1,16 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
+using System.Security.Principal;
 using System.Text;
 
 namespace sMkTaskManager.Classes;
 
 [SupportedOSPlatform("windows")]
 internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPropertyChanged {
-    private int _PID;
+    private readonly int _PID;
     private bool _CancellingEvents = false;
     private IntPtr _pHandle = IntPtr.Zero;
 
@@ -48,8 +48,8 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
     public string Username { get => _Username; set { SetField(ref _Username, value); } }
     public string RunTime { get => (_PID == 0) ? "n/a." : _RunTime; set { SetField(ref _RunTime, value); } }
     public string CpuUsage { get => _CpuUsage; set { SetField(ref _CpuUsage, value); } }
-    public uint SessionID { get => _Handles; set { SetField(ref _SessionID, value); } }
-    public uint Handles { get => _SessionID; set { SetField(ref _Handles, value); } }
+    public uint SessionID { get => _SessionID; set { SetField(ref _SessionID, value); } }
+    public uint Handles { get => _Handles; set { SetField(ref _Handles, value); } }
     public uint Threads { get => _Threads; set { SetField(ref _Threads, value); } }
     public ulong PageFaults { get => _PageFaults; set { SetField(ref _PageFaults, value); } }
     public int GDIObjects { get => _GDIObjects; set { SetField(ref _GDIObjects, value); } }
@@ -66,8 +66,6 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
     public string UserTime => (_PID == 0) ? "n/a." : Shared.TimeSpanToElapsed(_UserTimeValue);
     private TimeSpan KernelTimeValue { get => _KernelTimeValue; set { SetField(ref _KernelTimeValue, value); } }
     public string KernelTime => (_PID == 0) ? "n/a." : Shared.TimeSpanToElapsed(_KernelTimeValue);
-
-
     /* Memory Related Properties */
     private ulong _PagedPoolValue, _PagedPoolPeakValue, _NonPagedPoolValue, _NonPagedPoolPeakValue;
     private ulong _PagedMemoryValue, _PagedMemoryPeakValue, _VirtualMemoryValue, _VirtualMemoryPeakValue;
@@ -164,8 +162,16 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
 
     /* Public Methods */
     public event PropertyChangedEventHandler? PropertyChanged;
-    public bool Equals(TaskManagerProcess? other) => (_PID == other?._PID);
-    public void Load(API.SYSTEM_PROCESS_INFORMATION spi, ref HashSet<string> vv, bool getNewSPI = false) {
+    public bool Equals(TaskManagerProcess? other) {
+        return _PID == other?._PID;
+    }
+    public override bool Equals(object? obj) {
+        return Equals(obj as TaskManagerProcess);
+    }
+    public override int GetHashCode() {
+        return _PID;
+    }
+    public void Load(API.SYSTEM_PROCESS_INFORMATION spi, in HashSet<string> vv, bool getNewSPI = false) {
         if (getNewSPI) GetSpecificSPI(_PID, out spi);
         _CancellingEvents = true;
 
@@ -174,7 +180,34 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
             Name = spi.ImageName.Buffer ?? "";
             SessionID = spi.SessionId;
 
-
+            _pHandle = API.OpenProcess(API.ProcessAccessFlags.QueryInformation, false, PID);
+            if (_pHandle == IntPtr.Zero) {
+                ImagePath = "No Access"; Username = "No Access"; CommandLine = "No Access";
+            } else {
+                // Load Process ImagePath
+                try {
+                    uint sbCapacity = 5000;
+                    StringBuilder sbImagePath = new((int)sbCapacity);
+                    API.QueryFullProcessImageName(_pHandle, 0, sbImagePath, ref sbCapacity);
+                    ImagePath = sbImagePath.ToString();
+                    sbImagePath.Clear();
+                } catch { ImagePath = "n/a."; }
+                // Load Username
+                if (API.OpenProcessToken(_pHandle, 0x0008, out nint _tHandle)) {  /* TOKEN_QUERY = 0x0008 */
+                    using WindowsIdentity wi = new(_tHandle);
+                    Username = Shared.ToTitleCase(wi.Name.Contains('\\') ? wi.Name[(wi.Name.IndexOf('\\') + 1)..] : wi.Name);
+                } else { Username = "n/a."; }
+                if (_tHandle != IntPtr.Zero) API.CloseHandle(_tHandle);
+                // Load Process Description
+                if (File.Exists(ImagePath)) {
+                    _FileVersionInfo = FileVersionInfo.GetVersionInfo(ImagePath);
+                    Description = (_FileVersionInfo == null || _FileVersionInfo.FileDescription == null) ? "n/a." : _FileVersionInfo.FileDescription;
+                }
+                // Load Process CommandLine 
+                // TODO: We must implement this
+                CommandLine = "Not Implemented...";
+            }
+            if (_pHandle != IntPtr.Zero) API.CloseHandle(_pHandle);
         } else {
             if (_PID == 0) { Name = "Idle"; Description = "Idle Processor"; }
             if (_PID == 4) { Name = "System"; Description = "NT Kernel & System"; }
@@ -185,15 +218,16 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
         }
 
         // And then update the rest of values...
-        Update(spi, ref vv);
+        Update(spi, vv);
         _CancellingEvents = false;
     }
-    public void Update(API.SYSTEM_PROCESS_INFORMATION spi, ref HashSet<string> vv, bool getNewSPI = false) {
+    public void Update(API.SYSTEM_PROCESS_INFORMATION spi, in HashSet<string> vv, bool getNewSPI = false) {
         // vv is short for visibleValues and contains the cols definition we are showing, so we dont update if we dont need.
         if (getNewSPI) GetSpecificSPI(_PID, out spi);
         PreviousUpdate = LastUpdated;
         LastUpdated = DateTime.Now.Ticks;
-
+        // Check if imSuspended
+        Suspended = imSuspended(spi.Threads);
         // Handles & Threads Count
         if (vv.Contains("Handles")) Handles = spi.HandleCount;
         if (vv.Contains("Threads")) Threads = spi.NumberOfThreads;
@@ -237,7 +271,51 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
             OtherOperationsDeltaValue = (OtherOperationsValue == 0) ? 0 : OtherOperationsValue - spi.OtherOperationCount;
             OtherOperationsValue = spi.OtherOperationCount;
         }
-        // Process Times
+        // ETW Data Values, if running
+        if (ETW.Running) {
+            if (vv.Contains("DiskRead") || vv.Contains("DiskReadDelta") || vv.Contains("DiskReadRate")) {
+                DiskReadDeltaValue = (DiskReadValue == 0) ? 0 : DiskReadValue - ETW.Stats(_PID).DiskReaded;
+                DiskReadValue = ETW.Stats(_PID).DiskReaded;
+                DiskReadRateValue = (DiskReadDeltaValue == 0) ? 0 : DiskReadDeltaValue / (ulong)((LastUpdated - PreviousUpdate) / TimeSpan.TicksPerSecond);
+            }
+            if (vv.Contains("DiskWrite") || vv.Contains("DiskWriteDelta") || vv.Contains("DiskWriteRate")) {
+                DiskWriteDeltaValue = (DiskWriteValue == 0) ? 0 : DiskWriteValue - ETW.Stats(_PID).DiskWroted;
+                DiskWriteValue = ETW.Stats(_PID).DiskWroted;
+                DiskWriteRateValue = (DiskWriteDeltaValue == 0) ? 0 : DiskWriteDeltaValue / (ulong)((LastUpdated - PreviousUpdate) / TimeSpan.TicksPerSecond);
+            }
+            if (vv.Contains("NetSent") || vv.Contains("NetSentDelta") || vv.Contains("NetSentRate")) {
+                NetSentDeltaValue = (NetSentValue == 0) ? 0 : NetSentValue - ETW.Stats(_PID).NetSent;
+                NetSentValue = ETW.Stats(_PID).NetSent;
+                NetSentRateValue = (NetSentDeltaValue == 0) ? 0 : NetSentDeltaValue / (ulong)((LastUpdated - PreviousUpdate) / TimeSpan.TicksPerSecond);
+            }
+            // TODO: There can be a mix on col tagging here as well betweehn NetReceived and NetRcvd
+            if (vv.Contains("NetReceived") || vv.Contains("NetReceivedDelta") || vv.Contains("NetReceivedRate")) {
+                NetRcvdDeltaValue = (NetRcvdValue == 0) ? 0 : NetRcvdValue - ETW.Stats(_PID).NetReceived;
+                NetRcvdValue = ETW.Stats(_PID).NetReceived;
+                NetRcvdRateValue = (NetRcvdDeltaValue == 0) ? 0 : NetRcvdDeltaValue / (ulong)((LastUpdated - PreviousUpdate) / TimeSpan.TicksPerSecond);
+            }
+        }
+        // These values should only be read for >bpi
+        if (PID > Shared.bpi) {
+            _pHandle = API.OpenProcess(API.ProcessAccessFlags.QueryInformation, false, PID);
+            // Process Objects
+            if (vv.Contains("GDIObjects")) GDIObjects = API.GetGuiResources(_pHandle, 0);
+            if (vv.Contains("UserObjects")) UserObjects = API.GetGuiResources(_pHandle, 1);
+            if (vv.Contains("GDIObjectsPeak")) GDIObjectsPeak = API.GetGuiResources(_pHandle, 2);
+            if (vv.Contains("UserObjectsPeak")) UserObjectsPeak = API.GetGuiResources(_pHandle, 4);
+            // Process Priority and Affinity
+            if (vv.Contains("Priority")) Priority = ((ProcessPriorityClass)API.GetPriorityClass(_pHandle)).ToString();
+            if (vv.Contains("Affinity")) {
+                API.GetProcessAffinityMask(_pHandle, out nint _AffinityMask, out _);
+                if (Convert.ToString(_AffinityMask.ToInt32(), 2).Equals(Shared.TotalProcessorsBin)) {
+                    Affinity = "All";
+                } else {
+                    Affinity = (_AffinityMask == 0) ? "None" : GetAffinitiesString(_AffinityMask);
+                }
+            }
+            API.CloseHandle(_pHandle);
+        }
+        // Process Times & CPU Usage
         if (vv.Contains("CpuUsage") || vv.Contains("CpuTime") || vv.Contains("UserTime") || vv.Contains("KernelTime") || vv.Contains("CreationTime") || vv.Contains("RunTime")) {
             if (_CreationTimeValue.Ticks == 0) {
                 CreationTimeValue = new TimeSpan(DateTime.FromFileTime(Convert.ToInt64(spi.CreateTime)).Ticks);
@@ -246,16 +324,13 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
             KernelTimeValue = new TimeSpan(Convert.ToInt64(spi.KernelTime));
             UserTimeValue = new TimeSpan(Convert.ToInt64(spi.UserTime));
             CpuTimeValue = KernelTimeValue + UserTimeValue;
-
             // CPU Usage
-            if (_PID == 0) { /* GetSystemTimes(_CpuTimeValue, _KernelTimeValue, _KernelTimeValue); */ }
+            // No need to get them again.  if (_PID == 0) API.GetSystemTimes(ref _CpuTimeValue, ref _KernelTimeValue, ref _KernelTimeValue);
             if (_prevCpuTimeValue.Ticks == 0) _prevCpuTimeValue = _CpuTimeValue;
             double _rawCpuUsage = (double)(_CpuTimeValue.Ticks - _prevCpuTimeValue.Ticks) * 100 / (DateTime.Now.Ticks - PreviousUpdate) / Environment.ProcessorCount;
             CpuUsage = _rawCpuUsage.ToString("00.0");
             _prevCpuTimeValue = _CpuTimeValue;
         }
-
-
 
 
         // TODO: Implement the rest, this will do for now though..
@@ -278,6 +353,62 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
 
 
     }
+    public void ForceRaiseChange(HashSet<string> visibleValues) {
+        if (_CancellingEvents) return;
+        foreach (string PropertyName in visibleValues) {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(PropertyName));
+        }
+    }
+    public bool DumpFile(string dumpFilename) {
+        try {
+            FileStream ProcDumpFile = File.Open(dumpFilename, FileMode.OpenOrCreate);
+            if (_pHandle == IntPtr.Zero) { _pHandle = Process.GetProcessById(PID).Handle; }
+            bool res = API.MiniDumpWriteDump(_pHandle, PID, ProcDumpFile.SafeFileHandle.DangerousGetHandle(), API.DumpTypes.DumpWithFullMemory, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+            ProcDumpFile.Close();
+            return res;
+        } catch {
+            return false;
+        }
+    }
+    public void Kill() {
+        try {
+            if (_PID < Shared.bpi) return;
+            IntPtr pHandle = API.OpenProcess(API.ProcessAccessFlags.Terminate, false, _PID);
+            if (pHandle != IntPtr.Zero) API.TerminateProcess(pHandle, 0);
+            API.CloseHandle(pHandle);
+        } catch {
+            Debug.WriteLine("Failed To Kill Process PID " + PID);
+        }
+    }
+    public void Pause() {
+        if (_PID < Shared.bpi) return;
+        if (Suspended) return;
+        API.ThreadEntry32 uThread = new();
+        uThread.dwSize = Marshal.SizeOf(uThread);
+        IntPtr hSnapShot = API.CreateToolhelp32Snapshot(API.SnapshotFlags.Thread, (uint)_PID);
+        if (API.Thread32First(hSnapShot, ref uThread)) {
+            do {
+                if (uThread.th32OwnerProcessID != _PID) continue;
+                _ = API.SuspendThread(API.OpenThread(API.ThreadAccessFlags.SUSPEND_RESUME, false, uThread.th32ThreadID));
+            } while (API.Thread32Next(hSnapShot, ref uThread));
+        }
+        API.CloseHandle(hSnapShot);
+        Suspended = imSuspended(Process.GetProcessById(_PID).Threads);
+    }
+    public void Resume() {
+        if (_PID < Shared.bpi) return;
+        API.ThreadEntry32 uThread = new();
+        uThread.dwSize = Marshal.SizeOf(uThread);
+        IntPtr hSnapShot = API.CreateToolhelp32Snapshot(API.SnapshotFlags.Thread, (uint)_PID);
+        if (API.Thread32First(hSnapShot, ref uThread)) {
+            do {
+                if (uThread.th32OwnerProcessID != _PID)  continue;
+                _= API.ResumeThread(API.OpenThread(API.ThreadAccessFlags.SUSPEND_RESUME, false, uThread.th32ThreadID));
+            } while (API.Thread32Next(hSnapShot, ref uThread));
+        }
+        API.CloseHandle(hSnapShot);
+        Suspended = imSuspended(Process.GetProcessById(_PID).Threads);
+    }
 
     /* Private Methods */
     private void OnPropertyChanged(PropertyChangedEventArgs e) { PropertyChanged?.Invoke(this, e); }
@@ -292,7 +423,6 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
             }
         }
     }
-
     private string FormatValue(ulong value, FormatValueTypes format, bool skipBPI = false) {
         if (skipBPI && _PID < Shared.bpi) { return "n/a."; }
         switch (format) {
@@ -323,8 +453,30 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
         AutoBytes = 15,
         Kbps = 22,
     }
+    private static bool imSuspended(in ProcessThreadCollection Threads) {
+        foreach (ProcessThread t in Threads) {
+            if (t.ThreadState != System.Diagnostics.ThreadState.Wait) return false;
+            if (t.ThreadState == System.Diagnostics.ThreadState.Wait && t.WaitReason != ThreadWaitReason.Suspended) return false;
+        }
+        return true;
+    }
+    private static bool imSuspended(in API.SYSTEM_EXTENDED_THREAD_INFORMATION[] Threads) {
+        foreach (API.SYSTEM_EXTENDED_THREAD_INFORMATION t in Threads) {
+            if (t.ThreadInfo.State != 5) return false;
+            if (t.ThreadInfo.State == 5 && t.ThreadInfo.WaitReason != 5) return false;
+        }
+        return true;
+    }
+    private static bool imSuspended(in API.SYSTEM_THREAD_INFORMATION[] Threads) {
+        foreach (API.SYSTEM_THREAD_INFORMATION t in Threads) {
+            if (t.State != 5) return false;
+            if (t.State == 5 && t.WaitReason != 5) return false;
+        }
+        return true;
+    }
 
-    private void GetSpecificSPI(int PID, out API.SYSTEM_PROCESS_INFORMATION spi) {
+    /* Internal Static Methods */
+    internal static void GetSpecificSPI(int PID, out API.SYSTEM_PROCESS_INFORMATION spi) {
         spi = new();
         IntPtr hmain = IntPtr.Zero;
         if (GetProcessesPointer(ref hmain)) {
@@ -357,79 +509,16 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
         }
         return (NTstatus == 0);
     }
-
-    /* TODO: These functions are ugly, inspect */
-    private string GetAffinitiesString(IntPtr bitMask) {
+    internal static string GetAffinitiesString(IntPtr bitMask) {
+        // Example: 111001 return 1,2,3,6 - the position of the numbers 1
         StringBuilder m_StringBuilder = new();
-        // TODO: This is horrible, find a better way
-        // string binMask = ConversionHelper.StrReverse(Convert.ToString(bitMask.ToInt32(), 2));
         string binMask = Convert.ToString(bitMask.ToInt32(), 2);
         for (int i = 0; i < binMask.Length; i++) {
-            if (binMask[i] == '1') {
-                m_StringBuilder.Append((i + 1) + ",");
-            }
+            if (binMask[i] == '1') m_StringBuilder.Append((i + 1) + ",");
         }
         return m_StringBuilder.ToString().Trim(',').Trim();
     }
-    private bool DumpUserInfo(IntPtr pToken, ref IntPtr SID) {
-        bool result = false;
-        IntPtr procToken = IntPtr.Zero;
-        try {
-            if (API.OpenProcessToken(pToken, 0x8, ref procToken)) {
-                result = ProcessTokenToSid(procToken, ref SID);
-                API.CloseHandle(procToken);
-            }
-        } catch (Exception ex) {
-            Debug.WriteLine("DumpUserInfo Said Error: " + ex.Message);
-        }
-        return result;
-    }
-    private bool ProcessTokenToSid(IntPtr token, ref IntPtr SID) {
-        bool result = false;
-        IntPtr tu = Marshal.AllocHGlobal(256);
-        uint _ReturnLength = 0;
-        try {
-            result = API.GetTokenInformation(token, API.TOKEN_INFORMATION_CLASS.TokenUser, tu, 256, ref _ReturnLength);
-            if (result) SID = ((API.TOKEN_USER)Marshal.PtrToStructure(tu, typeof(API.TOKEN_USER))!).User.SID;
-        } catch (Exception ex) {
-            Debug.WriteLine("ProcessTokenToSid Said Error: " + ex.Message);
-        } finally {
-            Marshal.FreeHGlobal(tu);
-        }
-        return result;
-    }
-    private string ConvertSidToUserName(ref IntPtr pSid, bool withDomain = false) {
-        string result = "w32 Error";
-        try {
-            int l_UserNameLength = 160;
-            int l_DomainLength = 160;
-            StringBuilder l_UserName = new(l_UserNameLength);
-            StringBuilder l_Domain = new(l_DomainLength);
-            int sidUse = 0;
-            API.LookupAccountSid(string.Empty, pSid, l_UserName, ref l_UserNameLength, l_Domain, ref l_DomainLength, ref sidUse);
-            result = withDomain ? l_Domain.ToString() + "\\" + l_UserName.ToString() : l_UserName.ToString();
-            l_UserName.Clear(); l_Domain.Clear();
-        } catch (Exception ex) {
-            Debug.WriteLine("ConvertSidToUserName Said Error: " + ex.Message);
-            result = "w32 Error";
-        }
-        return result;
-    }
-    private void ConvertSidToUserName(ref IntPtr pSid, out string result, bool withDomain = false) {
-        try {
-            int l_UserNameLength = 160;
-            int l_DomainLength = 160;
-            StringBuilder l_UserName = new(l_UserNameLength);
-            StringBuilder l_Domain = new(l_DomainLength);
-            int sidUse = 0;
-            API.LookupAccountSid(string.Empty, pSid, l_UserName, ref l_UserNameLength, l_Domain, ref l_DomainLength, ref sidUse);
-            result = withDomain ? l_Domain.ToString() + "\\" + l_UserName.ToString() : l_UserName.ToString();
-            l_UserName.Clear(); l_Domain.Clear();
-        } catch (Exception ex) {
-            Debug.WriteLine("ConvertSidToUserName Said Error: " + ex.Message);
-            result = "w32 Error";
-        }
-    }
+
 }
 
 [SupportedOSPlatform("windows")]

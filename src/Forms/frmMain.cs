@@ -231,19 +231,19 @@ public partial class frmMain : Form {
             Array.Resize(ref spi.Threads, (int)spi.NumberOfThreads);
             lastOffset = hmain;
             while (spi.NextEntryOffset >= 0) {
-                if (tabProcs.AllUsers || spi.SessionId == Shared.CurrentSessionID) {
+                if (tabProcs.AllUsers || spi.SessionId == Shared.CurrentSessionID || spi.UniqueProcessId==0) {
                     TaskManagerProcess? thisProcess;
                     Tables.HashProcesses.Add(spi.UniqueProcessId.ToInt32());
                     if (Tables.Processes.Contains(spi.UniqueProcessId)) {
                         thisProcess = Tables.Processes.GetProcess(spi.UniqueProcessId)!;
                         if (thisProcess.BackColor == Settings.Highlights.NewColor) thisProcess.BackColor = Color.Empty;
                         try {
-                            thisProcess.Update(spi, ref Tables.ColsProcesses);
+                            thisProcess.Update(spi, Tables.ColsProcesses);
                         } catch (Exception ex) { Shared.DebugTrap(ex, 021); }
                     } else {
                         thisProcess = new TaskManagerProcess(spi.UniqueProcessId);
                         try {
-                            thisProcess.Load(spi, ref Tables.ColsProcesses);
+                            thisProcess.Load(spi, Tables.ColsProcesses);
                         } catch (Exception ex) { Shared.DebugTrap(ex, 022); }
                         if (Settings.Highlights.NewItems && !firstTime) thisProcess.BackColor = Settings.Highlights.NewColor;
                         thisProcess.ImageIndex = (spi.UniqueProcessId == 0) ? 0 : 1;
