@@ -110,6 +110,19 @@ internal static class Settings {
 
     #region "Save Methods..."
     /*
+
+    public bool SaveColsInformation(string strName, in sMkListView lv) {
+        _StringBuilder.Clear();
+        try {
+            foreach (ColumnHeader c in lv.Columns) {
+                TaskManagerColumn cc = new(c);
+                if (lv.Sortable && lv.SortColumn == c.Index) cc.SortOrder = lv.Sorting;
+                _StringBuilder.AppendLine(cc.GetChunk());
+            }
+            return WriteReg(strName, _Encoding.GetBytes(_StringBuilder.ToString()));
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
+    }
+
     public bool SaveAll() {
         return SaveGeneral() && SaveHighlights() && SavePerformance() && SaveNetworking() & SaveTray();
     }
@@ -218,29 +231,6 @@ internal static class Settings {
                 _StringBuilder.Append(s + ",");
             }
             return WriteReg("Selected Nics", FixStringToWrite(_StringBuilder));
-        } catch (Exception e) { Shared.DebugTrap(e); return false; }
-    }
-    public bool SaveColsInformation(string strName, sMkListView LV) {
-        _StringBuilder.Clear();
-        try {
-            int colCount = 0;
-            while (colCount < LV.Columns.Count) {
-                foreach (ColumnHeader c in LV.Columns) {
-                    if (c.DisplayIndex != colCount) {
-                        continue;
-                    }
-                    sMkListView.ColumnInformation cc = new(c.Tag?.ToString(), c.Text, c.TextAlign, c.Width) {
-                        Index = c.DisplayIndex
-                    };
-                    if (LV.Sortable && LV.SortColumn == c.Index) {
-                        cc.SortOrder = LV.Sorting;
-                    }
-                    _StringBuilder.AppendLine(cc.GetChunk);
-                    colCount += 1;
-                    cc = null;
-                }
-            }
-            return WriteReg(strName, _Encoding.GetBytes(_StringBuilder.ToString()));
         } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public bool SaveSummaryColumns(ref sMkSummaryView SV) {
@@ -410,8 +400,7 @@ internal static class Settings {
 
             foreach (string colValues in allValues.Split(Environment.NewLine)) {
                 if (colValues.Trim().Length < 5) continue;
-                sMkListView.ColumnInformation c = new(colValues.Trim());
-                // Check if a column with that Tag is already created on the ListView
+                TaskManagerColumn c = new(colValues.Trim());
                 int colExist = -1;
                 foreach (ColumnHeader col in lv.Columns) {
                     if (col.Tag?.ToString()!.ToLower() == c.Tag.ToString().ToLower()) { colExist = col.Index; }
@@ -419,16 +408,16 @@ internal static class Settings {
                 if (colExist == -1) {
                     // If the column is not on the control then add it, This is used for Process & Services
                     ColumnHeader newCol = new() {
-                        Name = lv.Name + "_" + c.Tag.ToString(),
+                        Name = c.Tag.ToString(),
                         Tag = c.Tag,
-                        Text = c.Text,
+                        Text = c.Title,
                         Width = c.Width,
                         TextAlign = c.Align
                     };
                     lv.Columns.Insert(c.Index, newCol);
                 } else {
                     // Otherwise just set the position and width, This is used for Connections and Ports
-                    lv.Columns[colExist].Name = lv.Name + "_" + c.Tag.ToString();
+                    lv.Columns[colExist].Name = c.Tag.ToString();
                     lv.Columns[colExist].Width = c.Width;
                     lv.Columns[colExist].DisplayIndex = c.Index;
                 }

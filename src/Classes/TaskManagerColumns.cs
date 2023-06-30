@@ -8,14 +8,13 @@ internal class TaskManagerColumn {
     internal string Tag;
     internal string Group;
     internal int Width;
-    internal int Align;
+    internal HorizontalAlignment Align;
     internal bool Fixed;
     internal bool Default;
     internal int Index = 0;
-    internal int IntPos = 0;
-    internal int SortOrder = 0;
+    internal SortOrder SortOrder = SortOrder.None;
 
-    public TaskManagerColumn(string label, string title, string tag, string group, int width, int align, bool isFixed, bool isDefault) {
+    public TaskManagerColumn(string label, string title, string tag, string group, int width, HorizontalAlignment align, bool isFixed, bool isDefault) {
         Label = label;
         Title = title;
         Tag = tag;
@@ -31,26 +30,32 @@ internal class TaskManagerColumn {
         Tag = tag;
         Group = group;
         Width = width;
-        Align = align;
+        Align = (HorizontalAlignment)align;
         Fixed = isFixed != 0;
         Default = isDefault != 0;
     }
 
     public TaskManagerColumn(string Chunk) {
-        if (Chunk.Split(',').Length != 7) return;
+        if (Chunk.Split(',').Length < 6) return;
         Chunk = Chunk.Trim('|').Trim();
         string[] ChunkValues = Chunk.Split(',');
         Title = ChunkValues[0];
         Tag = ChunkValues[1];
         Width = int.Parse(ChunkValues[2]);
-        Align = int.Parse(ChunkValues[3]);
-        SortOrder = Convert.ToInt32(ChunkValues[4]);
+        Align = (HorizontalAlignment)int.Parse(ChunkValues[3]);
+        SortOrder = (SortOrder)int.Parse(ChunkValues[4]);
         Index = int.Parse(ChunkValues[5]);
-        IntPos = int.Parse(ChunkValues[6]);
+    }
+    public TaskManagerColumn(ColumnHeader lvCol) {
+        Title = lvCol.Text;
+        Tag = lvCol!.Tag!.ToString()!;
+        Width = lvCol.Width;
+        Align = lvCol.TextAlign;
+        Index = lvCol.DisplayIndex;
     }
 
     public string GetChunk() {
-        return $"|{Title},{Tag},{Width},{Align},{SortOrder},{Index},{IntPos}|";
+        return $"|{Title},{Tag},{Width},{Align},{SortOrder},{Index}|";
     }
 
     public static List<TaskManagerColumn> GetColumnDefinition(TaskManagerColumnTypes type) {

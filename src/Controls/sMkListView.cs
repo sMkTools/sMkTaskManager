@@ -174,7 +174,7 @@ internal class sMkListView : ListView {
                         }
                     }
                 }
-            } catch (Exception ex) { Shared.DebugTrap(ex,011); }
+            } catch (Exception ex) { Shared.DebugTrap(ex, 011); }
         }
         if (itmFound != null) {
             SelectedItems.Clear();
@@ -312,41 +312,34 @@ internal class sMkListView : ListView {
     }
     private void OnDataSource_RowDeleted(ListChangedEventArgs e) { }
 
-    public class ColumnInformation {
-        public string Text = "";
-        public string Tag = "";
-        public HorizontalAlignment Align = 0;
-        public int Width = 60;
-        public int Index = 0;
-        public SortOrder SortOrder = SortOrder.None;
-        public int intPos = 0;
-
-        public ColumnInformation(string chunk) {
-            try {
-                if (chunk.Split(',').Length < 7) { return; }
-                string[] ChunkValues = chunk.Trim('|').Trim().Split(',');
-                Text = ChunkValues[0];
-                Tag = ChunkValues[1];
-                Width = int.Parse(ChunkValues[2]);
-                Align = (HorizontalAlignment)Convert.ToInt32(ChunkValues[3]);
-                SortOrder = (SortOrder)Convert.ToInt32(ChunkValues[4]);
-                Index = int.Parse(ChunkValues[5]);
-                intPos = int.Parse(ChunkValues[6]);
-            } catch { }
+    public void SetColumns(in ListViewItemCollection colItems) {
+        if (colItems == null) return;
+        BeginUpdate();
+        int curPosition = 0;
+        foreach (ListViewItem c in colItems) {
+            if (!c.Checked && Columns.ContainsKey(c.Name)) {
+                Columns.RemoveByKey(c.Name);
+            } else if (c.Checked && !Columns.ContainsKey(c.Name)) {
+                ColumnHeader newCol = new() {
+                    Name = c.Name,
+                    Text = c.ToolTipText,
+                    Tag = c.Tag,
+                    TextAlign = (HorizontalAlignment)c.IndentCount,
+                    Width = c.ImageIndex
+                };
+                if (curPosition <= Columns.Count) {
+                    Columns.Insert(curPosition, newCol);
+                } else {
+                    Columns.Add(newCol);
+                }
+            }
+            curPosition += 1;
         }
-        public ColumnInformation(string tag, string text) {
-            Tag = tag; Text = text;
+        // As a safety measure we should also remove any other column that is on the list.
+        foreach (ColumnHeader c in Columns) {
+            if (!colItems.ContainsKey(c.Tag?.ToString())) Columns.Remove(c);
         }
-        public ColumnInformation(string tag, string text, HorizontalAlignment align) : this(tag, text) {
-            Align = align;
-        }
-        public ColumnInformation(string tag, string text, HorizontalAlignment align, int width) : this(tag, text, align) {
-            Width = width;
-        }
-        public ColumnInformation(string tag, string text, HorizontalAlignment align, int width, int intPos) : this(tag, text, align, width) {
-            this.intPos = intPos;
-        }
-        public string GetChunk => "|" + Text + "," + Tag + "," + Width + "," + Align + "," + SortOrder + "," + Index + "," + intPos + "|";
+        EndUpdate();
     }
 
 }

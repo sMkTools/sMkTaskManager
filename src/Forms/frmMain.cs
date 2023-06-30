@@ -2,20 +2,14 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
-using System.Numerics;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Runtime.Intrinsics.Arm;
 using System.Runtime.Versioning;
-using System.Text;
 using System.Timers;
-using Microsoft.VisualBasic;
+using System.Linq;
 using sMkTaskManager.Classes;
 using sMkTaskManager.Forms;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+using System.Collections;
 
 namespace sMkTaskManager;
 
@@ -67,6 +61,11 @@ public partial class frmMain : Form {
 
         _LoadComplete = true;
         Extensions.StopMeasure(_StopWatch1);
+
+
+        var t1 = tabProcs.lv.Columns.Cast<ColumnHeader>().Select(x => x.Name).ToArray();
+
+
     }
     private void OnLoadParallelInit(object? sender, ElapsedEventArgs e) {
         _ParallelTimer.Stop();
@@ -108,7 +107,10 @@ public partial class frmMain : Form {
         Tables.System.MetricValueChanged += perf_MetricValueChangedEventHandler;
         Tables.System.RefreshCompleted += perf_RefreshCompletedEventHandler;
         tabPerf.MouseDoubleClick += perf_MouseDoubleClickEventHandler;
+        tabProcs.ForceRefreshClicked += proc_ForceRefreshEventHandler;
     }
+
+
     private void OnLoadSetFixedValues() {
         // TODO: We should get rid of this function and move these somewherre else.
         // Processes ListView Settings
@@ -197,6 +199,14 @@ public partial class frmMain : Form {
         ETW.Flush();
     }
 
+    private void proc_ForceRefreshEventHandler(object? sender, EventArgs e) {
+        tabProcs.lv.SuspendLayout();
+        Tables.Processes.Clear();
+        tabProcs.lv.Items.Clear();
+        Refresh_Processes(true);
+        tabProcs.lv.ResumeLayout();
+    }
+
     private void Refresh_Applications(bool firstTime = false) {
         TimmingStart();
         Thread.Sleep(Extensions.RandomGenerator.Next(20, 50));
@@ -231,7 +241,7 @@ public partial class frmMain : Form {
             Array.Resize(ref spi.Threads, (int)spi.NumberOfThreads);
             lastOffset = hmain;
             while (spi.NextEntryOffset >= 0) {
-                if (tabProcs.AllUsers || spi.SessionId == Shared.CurrentSessionID || spi.UniqueProcessId==0) {
+                if (tabProcs.AllUsers || spi.SessionId == Shared.CurrentSessionID || spi.UniqueProcessId == 0) {
                     TaskManagerProcess? thisProcess;
                     Tables.HashProcesses.Add(spi.UniqueProcessId.ToInt32());
                     if (Tables.Processes.Contains(spi.UniqueProcessId)) {

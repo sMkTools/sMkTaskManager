@@ -8,6 +8,7 @@ namespace sMkTaskManager.Forms;
 [DesignerCategory("Component"), SupportedOSPlatform("windows")]
 public class tabProcesses : UserControl {
 
+    public event EventHandler? ForceRefreshClicked;
     private IContainer? components = null;
     protected override void Dispose(bool disposing) {
         if (disposing && (components != null)) { components.Dispose(); }
@@ -162,7 +163,6 @@ public class tabProcesses : UserControl {
         Size = new Size(600, 600);
         ResumeLayout(false);
     }
-
     private void InitializeContextMenu() {
         cms.Items.Clear();
         cms.Items.AddMenuItem("&More Details").Name = "Details";
@@ -297,7 +297,7 @@ public class tabProcesses : UserControl {
         if (sender == btnProperties) { Feature_OpenFileProperties(); }
         if (sender == btnKill) { Feature_ProcessKill(); }
         if (sender == btnForceRefresh) { Feature_ForceRefresh(); }
-        if (sender == btnAllUsers) { Feature_ForceRefresh(); Settings.ShowAllProcess = btnAllUsers.Checked; }
+        if (sender == btnAllUsers) { Settings.ShowAllProcess = btnAllUsers.Checked; }
     }
     private void OnListViewKeyDown(object? sender, KeyEventArgs e) {
         if (e.Control && e.KeyCode == Keys.A) {
@@ -339,7 +339,10 @@ public class tabProcesses : UserControl {
         RefreshInfoText();
     }
 
-    public void Feature_ForceRefresh() { Shared.NotImplemented(); }
+    public void Feature_ForceRefresh() {
+        ForceRefreshClicked?.Invoke(this, EventArgs.Empty);
+        OnListViewSelectedIndexChanged(lv, new EventArgs());
+    }
     public void Feature_OpenDetails() {
         if (lv.SelectedItems.Count > 0) {
             if (int.Parse(lv.SelectedItems[0].Name) < Shared.bpi) { return; }
