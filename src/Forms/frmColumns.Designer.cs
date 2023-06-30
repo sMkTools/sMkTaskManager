@@ -50,7 +50,11 @@
             lv.TabIndex = 1;
             lv.UseCompatibleStateImageBehavior = false;
             lv.View = View.Details;
+            lv.ItemCheck += lv_ItemCheck;
+            lv.ItemChecked += lv_ItemChecked;
             lv.SelectedIndexChanged += lv_SelectedIndexChanged;
+            lv.SizeChanged += lv_SizeChanged;
+            lv.KeyDown += lv_KeyDown;
             // 
             // columnHeader1
             // 
@@ -138,8 +142,8 @@
             txtWidth.Text = "32";
             txtWidth.TextAlign = HorizontalAlignment.Center;
             txtWidth.WordWrap = false;
-            txtWidth.LostFocus += txtWidth_LostFocus;
             txtWidth.KeyPress += txtWidth_KeyPress;
+            txtWidth.LostFocus += txtWidth_LostFocus;
             // 
             // btnCancel
             // 
