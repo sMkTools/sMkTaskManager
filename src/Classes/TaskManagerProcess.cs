@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
@@ -276,23 +277,23 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
             if (vv.Contains("DiskRead") || vv.Contains("DiskReadDelta") || vv.Contains("DiskReadRate")) {
                 DiskReadDeltaValue = (DiskReadValue == 0) ? 0 : DiskReadValue - ETW.Stats(_PID).DiskReaded;
                 DiskReadValue = ETW.Stats(_PID).DiskReaded;
-                DiskReadRateValue = (DiskReadDeltaValue == 0) ? 0 : DiskReadDeltaValue / (ulong)((LastUpdated - PreviousUpdate) / TimeSpan.TicksPerSecond);
+                DiskReadRateValue = CalculateRateValue(DiskReadDeltaValue);
             }
             if (vv.Contains("DiskWrite") || vv.Contains("DiskWriteDelta") || vv.Contains("DiskWriteRate")) {
                 DiskWriteDeltaValue = (DiskWriteValue == 0) ? 0 : DiskWriteValue - ETW.Stats(_PID).DiskWroted;
                 DiskWriteValue = ETW.Stats(_PID).DiskWroted;
-                DiskWriteRateValue = (DiskWriteDeltaValue == 0) ? 0 : DiskWriteDeltaValue / (ulong)((LastUpdated - PreviousUpdate) / TimeSpan.TicksPerSecond);
+                DiskWriteRateValue = CalculateRateValue(DiskWriteDeltaValue);
             }
             if (vv.Contains("NetSent") || vv.Contains("NetSentDelta") || vv.Contains("NetSentRate")) {
                 NetSentDeltaValue = (NetSentValue == 0) ? 0 : NetSentValue - ETW.Stats(_PID).NetSent;
                 NetSentValue = ETW.Stats(_PID).NetSent;
-                NetSentRateValue = (NetSentDeltaValue == 0) ? 0 : NetSentDeltaValue / (ulong)((LastUpdated - PreviousUpdate) / TimeSpan.TicksPerSecond);
+                NetSentRateValue = CalculateRateValue(NetSentDeltaValue);
             }
             // TODO: There can be a mix on col tagging here as well betweehn NetReceived and NetRcvd
             if (vv.Contains("NetReceived") || vv.Contains("NetReceivedDelta") || vv.Contains("NetReceivedRate")) {
                 NetRcvdDeltaValue = (NetRcvdValue == 0) ? 0 : NetRcvdValue - ETW.Stats(_PID).NetReceived;
                 NetRcvdValue = ETW.Stats(_PID).NetReceived;
-                NetRcvdRateValue = (NetRcvdDeltaValue == 0) ? 0 : NetRcvdDeltaValue / (ulong)((LastUpdated - PreviousUpdate) / TimeSpan.TicksPerSecond);
+                NetRcvdRateValue = CalculateRateValue(NetRcvdDeltaValue);
             }
         }
         // These values should only be read for >bpi
@@ -331,11 +332,6 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
             CpuUsage = _rawCpuUsage.ToString("00.0");
             _prevCpuTimeValue = _CpuTimeValue;
         }
-
-
-        // TODO: Implement the rest, this will do for now though..
-
-
         // Define whatever or not we should change the item color
         if (!IgnoreBackColor) {
             if (LastUpdated <= LastChanged && !_CancellingEvents) {
@@ -350,8 +346,6 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
                 BackColor = Color.Empty;
             }
         }
-
-
     }
     public void ForceRaiseChange(HashSet<string> visibleValues) {
         if (_CancellingEvents) return;
@@ -402,8 +396,8 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
         IntPtr hSnapShot = API.CreateToolhelp32Snapshot(API.SnapshotFlags.Thread, (uint)_PID);
         if (API.Thread32First(hSnapShot, ref uThread)) {
             do {
-                if (uThread.th32OwnerProcessID != _PID)  continue;
-                _= API.ResumeThread(API.OpenThread(API.ThreadAccessFlags.SUSPEND_RESUME, false, uThread.th32ThreadID));
+                if (uThread.th32OwnerProcessID != _PID) continue;
+                _ = API.ResumeThread(API.OpenThread(API.ThreadAccessFlags.SUSPEND_RESUME, false, uThread.th32ThreadID));
             } while (API.Thread32Next(hSnapShot, ref uThread));
         }
         API.CloseHandle(hSnapShot);
@@ -474,7 +468,11 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
         }
         return true;
     }
-
+    private ulong CalculateRateValue(in ulong DeltaValue) {
+            if (DeltaValue == 0) return 0;
+            if ((LastUpdated - PreviousUpdate) <= 0) return DeltaValue;
+            return DeltaValue / (ulong)(LastUpdated - PreviousUpdate) / TimeSpan.TicksPerSecond;
+    }
     /* Internal Static Methods */
     internal static void GetSpecificSPI(int PID, out API.SYSTEM_PROCESS_INFORMATION spi) {
         spi = new();

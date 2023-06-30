@@ -99,7 +99,7 @@ public partial class frmMain : Form {
             if (Settings.ToTrayWhenMinimized) Hide();
         }
         // Load Column definitions for all the listviews
-        Settings.LoadColsInformation("colsProcess", tabProcs.lv, ref Tables.ColsProcesses);
+        Settings.LoadColsInformation(TaskManagerColumnTypes.Process, tabProcs.lv, ref Tables.ColsProcesses);
         tabProcs.btnAllUsers.Checked = Settings.ShowAllProcess;
 
     }
@@ -109,8 +109,6 @@ public partial class frmMain : Form {
         tabPerf.MouseDoubleClick += perf_MouseDoubleClickEventHandler;
         tabProcs.ForceRefreshClicked += proc_ForceRefreshEventHandler;
     }
-
-
     private void OnLoadSetFixedValues() {
         // TODO: We should get rid of this function and move these somewherre else.
         // Processes ListView Settings
@@ -123,6 +121,7 @@ public partial class frmMain : Form {
 
 
     }
+
     private void OnSizeChangedEventHandler(object sender, EventArgs e) {
         if (!_LoadComplete) return;
         ToolStripMenuItem mnuItm = (ToolStripMenuItem)mnuOptions.DropDownItems["mnuOptions_HideMinimize"];

@@ -55,7 +55,7 @@ internal class TaskManagerColumn {
     }
 
     public string GetChunk() {
-        return $"|{Title},{Tag},{Width},{Align},{SortOrder},{Index}|";
+        return $"|{Title},{Tag},{Width},{(int)Align},{(int)SortOrder},{Index}|";
     }
 
     public static List<TaskManagerColumn> GetColumnDefinition(TaskManagerColumnTypes type) {
@@ -75,13 +75,13 @@ internal class TaskManagerColumn {
             new("CPU Usage", "CPU", "CpuUsage", "General Information", 40, 2, 0, 1),
             new("Handles Count", "Handles", "Handles", "General Information", 55, 1, 0, 1),
             new("Threads Count", "Threads", "Threads", "General Information", 55, 1, 0, 1),
-            new("GDI Objects", "GDI Objects", "GDIObjects", "General Information", 70, 1, 0, 1),
+            new("GDI Objects", "GDI Objects", "GDIObjects", "General Information", 70, 1, 0, 0),
             new("GDI Objects Peak", "GDI Peak", "GDIObjectsPeak", "General Information", 65, 1, 0, 0),
-            new("User Objects", "User Objects", "UserObjects", "General Information", 75, 1, 0, 1),
+            new("User Objects", "User Objects", "UserObjects", "General Information", 75, 1, 0, 0),
             new("User Objects Peak", "User Peak", "UserObjectsPeak", "General Information", 70, 1, 0, 0),
-            new("Memory Usage", "Mem Usage", "Memory", "Memory Related", 75, 1, 0, 1),
-            new("Memory Usage Peak", "Mem Peak", "MemoryPeak", "Memory Related", 75, 1, 0, 1),
-            new("Virtual Memory", "vMem Usage", "VirtualMemory", "Memory Related", 90, 1, 0, 1),
+            new("Memory Usage", "Mem Usage", "WorkingSet", "Memory Related", 80, 1, 0, 1),
+            new("Memory Usage Peak", "Mem Peak", "WorkingSetPeak", "Memory Related", 80, 1, 0, 1),
+            new("Virtual Memory", "vMem Usage", "VirtualMemory", "Memory Related", 95, 1, 0, 1),
             new("Virtual Memory Peak", "vMem Peak", "VirtualMemoryPeak", "Memory Related", 90, 1, 0, 0),
             new("Virtual Private Bytes", "Private Bytes", "PrivateBytes", "Memory Related", 75, 1, 0, 0),
             new("Page Faults Count", "Page Faults", "PageFaults", "Memory Related", 90, 1, 0, 0),
@@ -101,23 +101,23 @@ internal class TaskManagerColumn {
             new("Product Company", "Company", "ProductCompany", "Version Information", 70, 0, 0, 0),
             new("Product Language", "Language", "ProductLanguage", "Version Information", 70, 0, 0, 0),
             new("Read Operations Count", "io Reads", "ReadOperations", "I/O Counters", 90, 1, 0, 0),
-            new("Read Operations Bytes", "io Read Bytes", "ReadTransfers", "I/O Counters", 90, 1, 0, 1),
+            new("Read Operations Bytes", "io Read Bytes", "ReadTransfer", "I/O Counters", 90, 1, 0, 1),
             new("Write Operations Count", "io Writes", "WriteOperations", "I/O Counters", 90, 1, 0, 0),
-            new("Write Operations Bytes", "io Write Bytes", "WriteTransfers", "I/O Counters", 90, 1, 0, 1),
+            new("Write Operations Bytes", "io Write Bytes", "WriteTransfer", "I/O Counters", 90, 1, 0, 1),
             new("Other Operations Count", "io Others", "OtherOperations", "I/O Counters", 90, 1, 0, 0),
-            new("Other Operations Bytes", "io Other Bytes", "OtherTransfers", "I/O Counters", 90, 1, 0, 0),
+            new("Other Operations Bytes", "io Other Bytes", "OtherTransfer", "I/O Counters", 90, 1, 0, 0),
             new("Disk Read Bytes", "DiskRead", "DiskRead", "Disk & Network", 80, 1, 0, 0),
-            new("Disk Write Bytes", "DiskWrite", "DiskWrite", "Disk & Network", 80, 1, 0, 0),
             new("Disk Read Delta", "DiskRead Delta", "DiskReadDelta", "Disk & Network", 80, 1, 0, 0),
+            new("Disk Read Rate", "DiskRead Rate", "DiskReadRate", "Disk & Network", 80, 1, 0, 1),
+            new("Disk Write Bytes", "DiskWrite", "DiskWrite", "Disk & Network", 80, 1, 0, 0),
             new("Disk Write Delta", "DiskWrite Delta", "DiskWriteDelta", "Disk & Network", 80, 1, 0, 0),
-            new("Disk Read Rate", "DiskRead Rate", "DiskReadRate", "Disk & Network", 80, 1, 0, 0),
-            new("Disk Write Rate", "DiskWrite Rate", "DiskWriteRate", "Disk & Network", 80, 1, 0, 0),
-            new("Network Sent Bytes", "Net Sent", "NetSent", "Disk & Network", 80, 1, 0, 0),
-            new("Network Received Bytes", "Net Rec", "NetReceived", "Disk & Network", 80, 1, 0, 0),
+            new("Disk Write Rate", "DiskWrite Rate", "DiskWriteRate", "Disk & Network", 80, 1, 0, 1),
+            new("Network Sent Bytes", "NetSent", "NetSent", "Disk & Network", 80, 1, 0, 0),
             new("Network Sent Delta", "NetSent Delta", "NetSentDelta", "Disk & Network", 80, 1, 0, 0),
-            new("Network Received Delta", "NetRec Delta", "NetReceivedDelta", "Disk & Network", 80, 1, 0, 0),
-            new("Network Sent Rate", "NetSent Rate", "NetSentRate", "Disk & Network", 80, 1, 0, 0),
-            new("Network Received Rate", "NetRec Rate", "NetReceivedRate", "Disk & Network", 80, 1, 0, 0),
+            new("Network Sent Rate", "NetSent Rate", "NetSentRate", "Disk & Network", 80, 1, 0, 1),
+            new("Network Received Bytes", "NetRcvd", "NetRcvd", "Disk & Network", 80, 1, 0, 0),
+            new("Network Received Delta", "NetRcvd Delta", "NetRcvdDelta", "Disk & Network", 80, 1, 0, 0),
+            new("Network Received Rate", "NetRcvd Rate", "NetRcvdRate", "Disk & Network", 80, 1, 0, 1),
             });
         } else if (type == TaskManagerColumnTypes.Services) {
             r.AddRange(new TaskManagerColumn[] {
@@ -150,6 +150,16 @@ internal class TaskManagerColumn {
             });
         }
         return r;
+    }
+    public static string GetDefaultColumnsChunks(TaskManagerColumnTypes Type) {
+        System.Text.StringBuilder retValue = new();
+        int newIndex = 0;
+        foreach (TaskManagerColumn c in GetColumnDefinition(Type).Where(x => x.Default == true)) {
+            c.Index = newIndex;
+            retValue.AppendLine(c.GetChunk());
+            newIndex++;
+        }
+        return retValue.ToString();
     }
 }
 public enum TaskManagerColumnTypes : int {

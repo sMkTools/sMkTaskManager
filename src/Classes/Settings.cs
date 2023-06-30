@@ -393,10 +393,17 @@ internal static class Settings {
             return true;
         } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
-    public static bool LoadColsInformation(string strName, sMkListView lv, ref HashSet<string> Destination) {
+    public static bool LoadColsInformation(TaskManagerColumnTypes Type, sMkListView lv, ref HashSet<string> destinationTable) {
+        string strName;
+        switch (Type) {
+            case TaskManagerColumnTypes.Process: strName = "colsProcess";  break;
+            case TaskManagerColumnTypes.Services: strName = "colsServices"; break;
+            case TaskManagerColumnTypes.Connections: strName = "colsConnections"; break;
+            default: return false;
+        }
         try {
             byte[] bt = ReadReg(strName, ""u8.ToArray());
-            string allValues = (bt.Length > 10) ? allValues = _Encoding.GetString(bt) : GetInitialValues(strName);
+            string allValues = (bt.Length > 10) ? allValues = _Encoding.GetString(bt) : TaskManagerColumn.GetDefaultColumnsChunks(TaskManagerColumnTypes.Process);
 
             foreach (string colValues in allValues.Split(Environment.NewLine)) {
                 if (colValues.Trim().Length < 5) continue;
@@ -427,8 +434,8 @@ internal static class Settings {
         } catch (Exception e) {
             Shared.DebugTrap(e); return false;
         } finally {
-            Destination.Clear();
-            foreach (ColumnHeader c in lv.Columns) { Destination.Add(c.Tag!.ToString()!); }
+            destinationTable.Clear();
+            foreach (ColumnHeader c in lv.Columns) { destinationTable.Add(c.Tag!.ToString()!); }
         }
         return true;
     }
@@ -509,7 +516,7 @@ internal static class Settings {
     */
     #endregion
 
-    public static string GetInitialValues(string strName) {
+    public static string GetInitialValuesOld(string strName) {
         System.Text.StringBuilder retValue = new();
         if (strName == "colsProcess") {
             retValue.AppendLine("|PID,PID,51,0,1,0,0|");
