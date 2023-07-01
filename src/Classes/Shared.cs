@@ -21,6 +21,9 @@ internal static class Shared {
     public static bool IsNumeric(this object value) => double.TryParse(Convert.ToString(value), out _);
     public static bool IsInteger(string value) => value.All(char.IsNumber);
     public static bool IsInteger(this object value) => Convert.ToString(value)!.All(char.IsNumber);
+    public static bool IsBetween<T>(this T value, T min, T max) where T : IComparable<T> {
+        return (min.CompareTo(value) <= 0) && (value.CompareTo(max) <= 0);
+    }
 
     public static string ToTitleCase(string text) => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(text.ToLower());
     public static string TimeSpanToElapsed(TimeSpan lpTimeSpan) {

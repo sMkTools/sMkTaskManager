@@ -20,6 +20,11 @@ internal static class Extensions {
         parent.Add(separator);
         return separator;
     }
+    public static ToolStripSeparator AddSeparator(this ToolStripItemCollection parent, string name) {
+        var separator = new ToolStripSeparator() { Name = name };
+        parent.Add(separator);
+        return separator;
+    }
 
     public static void SetDoubleBuffered(Control c) {
         if (SystemInformation.TerminalServerSession) return;

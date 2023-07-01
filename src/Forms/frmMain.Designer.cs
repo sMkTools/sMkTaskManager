@@ -145,6 +145,7 @@
             ssBtnState.AutoSize = false;
             ssBtnState.Image = (Image)resources.GetObject("ssBtnState.Image");
             ssBtnState.ImageTransparentColor = Color.Magenta;
+            ssBtnState.DoubleClickEnabled = true;
             ssBtnState.Name = "ssBtnState";
             ssBtnState.Size = new Size(80, 22);
             ssBtnState.Text = "High";

@@ -18,7 +18,6 @@ internal static class Settings {
     public static HighlightsClass Highlights = new();
     public static PerformanceClass Performance = new();
     public static NetworkingClass Networking = new();
-    public static TrayClass Tray = new();
     public static ProcessDetailsClass ProcessDetails = new();
     public static MainWindowClass MainWindow = new();
     public static bool IconsInProcess = true;
@@ -30,6 +29,7 @@ internal static class Settings {
     public static int ActiveTab = 0;
     public static bool ToTrayWhenMinimized = false;
     public static bool ToTrayWhenClosed = false;
+    public static bool ShowCPUOnTray = false;
     public static bool MinimizeWhenClosing = false;
     public static bool DblClickToRestore = true;
     public static bool ShowAllProcess = false;
@@ -88,14 +88,6 @@ internal static class Settings {
         public Color DownloadColor = Color.Cyan;
         public bool KeepUpdating = false;
     }
-    public class TrayClass {
-        public bool ShowCPU = true;
-        public bool ShowMemory = false;
-        public bool ShowIO = false;
-        public bool Combine = false;
-        public int Background = 3;
-        public int Border = 1;
-    }
     public class ProcessDetailsClass {
         public Size Size = new(500, 550);
         public Point Location = new(0, 0);
@@ -108,176 +100,167 @@ internal static class Settings {
         public bool Maximized = false;
     }
 
-    #region "Save Methods..."
-    /*
-
-    public bool SaveColsInformation(string strName, in sMkListView lv) {
-        _StringBuilder.Clear();
-        try {
-            foreach (ColumnHeader c in lv.Columns) {
-                TaskManagerColumn cc = new(c);
-                if (lv.Sortable && lv.SortColumn == c.Index) cc.SortOrder = lv.Sorting;
-                _StringBuilder.AppendLine(cc.GetChunk());
-            }
-            return WriteReg(strName, _Encoding.GetBytes(_StringBuilder.ToString()));
-        } catch (Exception e) { Shared.DebugTrap(e); return false; }
+    public static bool SaveAll() {
+        return SaveGeneral() && SaveHighlights() && SavePerformance() && SaveNetworking();
+    }
+    public static bool SaveGeneral() {
+        return false;
+        //_StringBuilder.Clear();
+        //try {
+        //    _StringBuilder.Append(Convert.ToInt16(RememberPositions) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(RememberActiveTab) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(AlwaysOnTop) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(IconsInProcess) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(TimmingInStatus) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(ServicesInStatus) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(ShowSummaryView) + ",");
+        //    _StringBuilder.Append(UpdateMethod + ",");
+        //    _StringBuilder.Append(UpdateSpeed + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(inFullScreen) + ",");
+        //    _StringBuilder.Append(ActiveTab + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(MinimizeWhenClosing) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(ToTrayWhenMinimized) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(ToTrayWhenClosed) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(DblClickToRestore) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(ShowAllProcess) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(StartMinimized) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(AlternateRowColors) + ",");
+        //    return WriteReg("General", FixStringToWrite(_StringBuilder));
+        //} catch (Exception e) { Shared.DebugTrap(e); return false; }
+    }
+    public static bool SaveMainWindow() {
+        return false;
+        //_StringBuilder.Clear();
+        //try {
+        //    _StringBuilder.Append(MainWindow.Size.Width + "," + MainWindow.Size.Height + ",");
+        //    _StringBuilder.Append(MainWindow.Location.X + "," + MainWindow.Location.Y + ",");
+        //    _StringBuilder.Append(Convert.ToInt32(MainWindow.Maximized) + ",");
+        //    return WriteReg("winMain", FixStringToWrite(_StringBuilder));
+        //} catch (Exception e) { Shared.DebugTrap(e); return false; }
+    }
+    public static bool SaveHighlights() {
+        return false;
+        //_StringBuilder.Clear();
+        //try {
+        //    _StringBuilder.Append(Convert.ToInt16(Highlights.NewItems) + ",");
+        //    _StringBuilder.Append(Highlights.NewColor.ToArgb() + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(Highlights.ChangingItems) + ",");
+        //    _StringBuilder.Append(Highlights.ChangingColor.ToArgb() + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(Highlights.RemovedItems) + ",");
+        //    _StringBuilder.Append(Highlights.RemovedColor.ToArgb() + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(Highlights.FrozenItems) + ",");
+        //    _StringBuilder.Append(Highlights.FrozenColor.ToArgb() + ",");
+        //    return WriteReg("Highlights", FixStringToWrite(_StringBuilder));
+        //} catch (Exception e) { Shared.DebugTrap(e); return false; }
+    }
+    public static bool SavePerformance() {
+        return false;
+        //_StringBuilder.Clear();
+        //try {
+        //    _StringBuilder.Append(Convert.ToInt16(Performance.Solid) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(Performance.AntiAlias) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(Performance.ShadeBackground) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(Performance.DisplayAverages) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(Performance.DisplayIndexes) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(Performance.DisplayLegends) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(Performance.DisplayOnHover) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(Performance.LightColors) + ",");
+        //    _StringBuilder.Append(Performance.ValueSpacing + ",");
+        //    _StringBuilder.Append(Performance.GridSize + ",");
+        //    _StringBuilder.Append(Performance.VerticalGridStyle + ",");
+        //    _StringBuilder.Append(Performance.VerticalGridColor.ToArgb() + ",");
+        //    _StringBuilder.Append(Performance.HorizontalGridStyle + ",");
+        //    _StringBuilder.Append(Performance.HorizontalGridColor.ToArgb() + ",");
+        //    _StringBuilder.Append(Performance.AverageLineStyle + ",");
+        //    _StringBuilder.Append(Performance.AverageLineColor.ToArgb() + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(Performance.ShowKernelTime) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(Performance.SeparateCPUs) + ",");
+        //    return WriteReg("Performance", FixStringToWrite(_StringBuilder));
+        //} catch (Exception e) { Shared.DebugTrap(e); return false; }
+    }
+    public static bool SaveNetworking() {
+        return false;
+        //_StringBuilder.Clear();
+        //try {
+        //    _StringBuilder.Append(Convert.ToInt16(Networking.Solid) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(Networking.AntiAlias) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(Networking.ShadeBackground) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(Networking.DisplayAverages) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(Networking.DisplayIndexes) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(Networking.DisplayLegends) + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(Networking.LightColors) + ",");
+        //    _StringBuilder.Append(Networking.ValueSpacing + ",");
+        //    _StringBuilder.Append(Networking.GridSize + ",");
+        //    _StringBuilder.Append(Networking.VerticalGridStyle + ",");
+        //    _StringBuilder.Append(Networking.VerticalGridColor.ToArgb() + ",");
+        //    _StringBuilder.Append(Networking.HorizontalGridStyle + ",");
+        //    _StringBuilder.Append(Networking.HorizontalGridColor.ToArgb() + ",");
+        //    _StringBuilder.Append(Networking.AverageLineStyle + ",");
+        //    _StringBuilder.Append(Networking.AverageLineColor.ToArgb() + ",");
+        //    _StringBuilder.Append(Networking.UploadColor.ToArgb() + ",");
+        //    _StringBuilder.Append(Networking.DownloadColor.ToArgb() + ",");
+        //    _StringBuilder.Append(Convert.ToInt16(Networking.KeepUpdating) + ",");
+        //    return WriteReg("Networking", FixStringToWrite(_StringBuilder));
+        //} catch (Exception e) { Shared.DebugTrap(e); return false; }
+    }
+    public static bool SaveInterfaces() {
+        return false;
+        //_StringBuilder.Clear();
+        //try {
+        //    foreach (string s in CheckedInterfaces) {
+        //        _StringBuilder.Append(s + ",");
+        //    }
+        //    return WriteReg("Selected Nics", FixStringToWrite(_StringBuilder));
+        //} catch (Exception e) { Shared.DebugTrap(e); return false; }
+    }
+    public static bool SaveCustomColors() {
+        return false;
+        //_StringBuilder.Clear();
+        //try {
+        //    foreach (int c in CustomColors) {
+        //        if (c == 16777215) continue;
+        //        if (c == 0) continue;
+        //        _StringBuilder.Append(c + ",");
+        //    }
+        //    return WriteReg("Custom Colors", _StringBuilder.ToString().TrimEnd(','));
+        //} catch (Exception e) { Shared.DebugTrap(e); return false; }
+    }
+    public static bool SaveProcDetails() {
+        return false;
+        //_StringBuilder.Clear();
+        //try {
+        //    _StringBuilder.Append(ProcessDetails.Size.Width + "," + ProcessDetails.Size.Height + ",");
+        //    _StringBuilder.Append(ProcessDetails.Location.X + "," + ProcessDetails.Location.Y + ",");
+        //    _StringBuilder.Append(ProcessDetails.UpdateSpeed + ",");
+        //    _StringBuilder.Append(ProcessDetails.LastTab + ",");
+        //    return WriteReg("winProcess", FixStringToWrite(_StringBuilder));
+        //} catch (Exception e) { Shared.DebugTrap(e); return false; }
+    }
+    public static bool SaveSummaryColumns(ref object sv) {
+        return false;
+        //_StringBuilder.Clear();
+        //try {
+        //    foreach (string l in SV.RowsChunk) {
+        //        _StringBuilder.AppendLine(l);
+        //    }
+        //    return WriteReg("colsSummary", _Encoding.GetBytes(_StringBuilder.ToString()));
+        //} catch (Exception e) { Shared.DebugTrap(e); return false; }
+    }
+    public static bool SaveColsInformation(string strName, in sMkListView lv) {
+        return false;
+        //_StringBuilder.Clear();
+        //try {
+        //    foreach (ColumnHeader c in lv.Columns) {
+        //        TaskManagerColumn cc = new(c);
+        //        if (lv.Sortable && lv.SortColumn == c.Index) cc.SortOrder = lv.Sorting;
+        //        _StringBuilder.AppendLine(cc.GetChunk());
+        //    }
+        //    return WriteReg(strName, _Encoding.GetBytes(_StringBuilder.ToString()));
+        //} catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
 
-    public bool SaveAll() {
-        return SaveGeneral() && SaveHighlights() && SavePerformance() && SaveNetworking() & SaveTray();
-    }
-    public bool SaveGeneral() {
-        _StringBuilder.Clear();
-        try {
-            _StringBuilder.Append(Convert.ToInt16(RememberPositions) + ",");
-            _StringBuilder.Append(Convert.ToInt16(RememberActiveTab) + ",");
-            _StringBuilder.Append(Convert.ToInt16(AlwaysOnTop) + ",");
-            _StringBuilder.Append(Convert.ToInt16(IconsInProcess) + ",");
-            _StringBuilder.Append(Convert.ToInt16(TimmingInStatus) + ",");
-            _StringBuilder.Append(Convert.ToInt16(ServicesInStatus) + ",");
-            _StringBuilder.Append(Convert.ToInt16(ShowSummaryView) + ",");
-            _StringBuilder.Append(UpdateMethod + ",");
-            _StringBuilder.Append(UpdateSpeed + ",");
-            _StringBuilder.Append(Convert.ToInt16(inFullScreen) + ",");
-            _StringBuilder.Append(ActiveTab + ",");
-            _StringBuilder.Append(Convert.ToInt16(MinimizeWhenClosing) + ",");
-            _StringBuilder.Append(Convert.ToInt16(ToTrayWhenMinimized) + ",");
-            _StringBuilder.Append(Convert.ToInt16(ToTrayWhenClosed) + ",");
-            _StringBuilder.Append(Convert.ToInt16(DblClickToRestore) + ",");
-            _StringBuilder.Append(Convert.ToInt16(ShowAllProcess) + ",");
-            _StringBuilder.Append(Convert.ToInt16(StartMinimized) + ",");
-            _StringBuilder.Append(Convert.ToInt16(AlternateRowColors) + ",");
-            return WriteReg("General", FixStringToWrite(_StringBuilder));
-        } catch (Exception e) { Shared.DebugTrap(e); return false; }
-    }
-    public bool SaveHighlights() {
-        _StringBuilder.Clear();
-        try {
-            _StringBuilder.Append(Convert.ToInt16(Highlights.NewItems) + ",");
-            _StringBuilder.Append(Highlights.NewColor.ToArgb() + ",");
-            _StringBuilder.Append(Convert.ToInt16(Highlights.ChangingItems) + ",");
-            _StringBuilder.Append(Highlights.ChangingColor.ToArgb() + ",");
-            _StringBuilder.Append(Convert.ToInt16(Highlights.RemovedItems) + ",");
-            _StringBuilder.Append(Highlights.RemovedColor.ToArgb() + ",");
-            _StringBuilder.Append(Convert.ToInt16(Highlights.FrozenItems) + ",");
-            _StringBuilder.Append(Highlights.FrozenColor.ToArgb() + ",");
-            return WriteReg("Highlights", FixStringToWrite(_StringBuilder));
-        } catch (Exception e) { Shared.DebugTrap(e); return false; }
-    }
-    public bool SavePerformance() {
-        _StringBuilder.Clear();
-        try {
-            _StringBuilder.Append(Convert.ToInt16(Performance.Solid) + ",");
-            _StringBuilder.Append(Convert.ToInt16(Performance.AntiAlias) + ",");
-            _StringBuilder.Append(Convert.ToInt16(Performance.ShadeBackground) + ",");
-            _StringBuilder.Append(Convert.ToInt16(Performance.DisplayAverages) + ",");
-            _StringBuilder.Append(Convert.ToInt16(Performance.DisplayIndexes) + ",");
-            _StringBuilder.Append(Convert.ToInt16(Performance.DisplayLegends) + ",");
-            _StringBuilder.Append(Convert.ToInt16(Performance.DisplayOnHover) + ",");
-            _StringBuilder.Append(Convert.ToInt16(Performance.LightColors) + ",");
-            _StringBuilder.Append(Performance.ValueSpacing + ",");
-            _StringBuilder.Append(Performance.GridSize + ",");
-            _StringBuilder.Append(Performance.VerticalGridStyle + ",");
-            _StringBuilder.Append(Performance.VerticalGridColor.ToArgb() + ",");
-            _StringBuilder.Append(Performance.HorizontalGridStyle + ",");
-            _StringBuilder.Append(Performance.HorizontalGridColor.ToArgb() + ",");
-            _StringBuilder.Append(Performance.AverageLineStyle + ",");
-            _StringBuilder.Append(Performance.AverageLineColor.ToArgb() + ",");
-            _StringBuilder.Append(Convert.ToInt16(Performance.ShowKernelTime) + ",");
-            _StringBuilder.Append(Convert.ToInt16(Performance.SeparateCPUs) + ",");
-            return WriteReg("Performance", FixStringToWrite(_StringBuilder));
-        } catch (Exception e) { Shared.DebugTrap(e); return false; }
-    }
-    public bool SaveNetworking() {
-        _StringBuilder.Clear();
-        try {
-            _StringBuilder.Append(Convert.ToInt16(Networking.Solid) + ",");
-            _StringBuilder.Append(Convert.ToInt16(Networking.AntiAlias) + ",");
-            _StringBuilder.Append(Convert.ToInt16(Networking.ShadeBackground) + ",");
-            _StringBuilder.Append(Convert.ToInt16(Networking.DisplayAverages) + ",");
-            _StringBuilder.Append(Convert.ToInt16(Networking.DisplayIndexes) + ",");
-            _StringBuilder.Append(Convert.ToInt16(Networking.DisplayLegends) + ",");
-            _StringBuilder.Append(Convert.ToInt16(Networking.LightColors) + ",");
-            _StringBuilder.Append(Networking.ValueSpacing + ",");
-            _StringBuilder.Append(Networking.GridSize + ",");
-            _StringBuilder.Append(Networking.VerticalGridStyle + ",");
-            _StringBuilder.Append(Networking.VerticalGridColor.ToArgb() + ",");
-            _StringBuilder.Append(Networking.HorizontalGridStyle + ",");
-            _StringBuilder.Append(Networking.HorizontalGridColor.ToArgb() + ",");
-            _StringBuilder.Append(Networking.AverageLineStyle + ",");
-            _StringBuilder.Append(Networking.AverageLineColor.ToArgb() + ",");
-            _StringBuilder.Append(Networking.UploadColor.ToArgb() + ",");
-            _StringBuilder.Append(Networking.DownloadColor.ToArgb() + ",");
-            _StringBuilder.Append(Convert.ToInt16(Networking.KeepUpdating) + ",");
-            return WriteReg("Networking", FixStringToWrite(_StringBuilder));
-        } catch (Exception e) { Shared.DebugTrap(e); return false; }
-    }
-    public bool SaveTray() {
-        _StringBuilder.Clear();
-        try {
-            _StringBuilder.Append(Convert.ToInt16(Tray.ShowCPU) + ",");
-            _StringBuilder.Append(Convert.ToInt16(Tray.ShowMemory) + ",");
-            _StringBuilder.Append(Convert.ToInt16(Tray.ShowIO) + ",");
-            _StringBuilder.Append(Convert.ToInt16(Tray.Combine) + ",");
-            _StringBuilder.Append(Tray.Background + ",");
-            _StringBuilder.Append(Tray.Border + ",");
-            return WriteReg("Tray", FixStringToWrite(_StringBuilder));
-        } catch (Exception e) { Shared.DebugTrap(e); return false; }
-    }
-    public bool SaveInterfaces() {
-        _StringBuilder.Clear();
-        try {
-            foreach (string s in CheckedInterfaces) {
-                _StringBuilder.Append(s + ",");
-            }
-            return WriteReg("Selected Nics", FixStringToWrite(_StringBuilder));
-        } catch (Exception e) { Shared.DebugTrap(e); return false; }
-    }
-    public bool SaveSummaryColumns(ref sMkSummaryView SV) {
-        _StringBuilder.Clear();
-        try {
-            foreach (string l in SV.RowsChunk) {
-                _StringBuilder.AppendLine(l);
-            }
-            return WriteReg("colsSummary", _Encoding.GetBytes(_StringBuilder.ToString()));
-        } catch (Exception e) { Shared.DebugTrap(e); return false; }
-    }
-    public bool SaveProcDetails() {
-        _StringBuilder.Clear();
-        try {
-            _StringBuilder.Append(ProcessDetails.Size.Width + "," + ProcessDetails.Size.Height + ",");
-            _StringBuilder.Append(ProcessDetails.Location.X + "," + ProcessDetails.Location.Y + ",");
-            _StringBuilder.Append(ProcessDetails.UpdateSpeed + ",");
-            _StringBuilder.Append(ProcessDetails.LastTab + ",");
-            return WriteReg("winProcess", FixStringToWrite(_StringBuilder));
-        } catch (Exception e) { Shared.DebugTrap(e); return false; }
-    }
-    public bool SaveMainWindow() {
-        _StringBuilder.Clear();
-        try {
-            _StringBuilder.Append(MainWindow.Size.Width + "," + MainWindow.Size.Height + ",");
-            _StringBuilder.Append(MainWindow.Location.X + "," + MainWindow.Location.Y + ",");
-            _StringBuilder.Append(Convert.ToInt32(MainWindow.Maximized) + ",");
-            return WriteReg("winMain", FixStringToWrite(_StringBuilder));
-        } catch (Exception e) { Shared.DebugTrap(e); return false; }
-    }
-    public bool SaveCustomColors() {
-        _StringBuilder.Clear();
-        try {
-            foreach (int c in CustomColors) {
-                if (c == 16777215) continue;
-                if (c == 0) continue;
-                _StringBuilder.Append(c + ",");
-            }
-            return WriteReg("Custom Colors", _StringBuilder.ToString().TrimEnd(','));
-        } catch (Exception e) { Shared.DebugTrap(e); return false; }
-    }
-    */
-    #endregion
-
-    #region "Load Methods..."
     public static bool LoadAll() {
-        return LoadGeneral() && LoadHighlights() && LoadPerformance() && LoadNetworking() & LoadTray();
+        return LoadGeneral() && LoadHighlights() && LoadPerformance() && LoadNetworking();
     }
     public static bool LoadGeneral() {
         try {
@@ -304,6 +287,16 @@ internal static class Settings {
             return true;
         } catch (Exception e) { Shared.DebugTrap(e); return false; }
 
+    }
+    public static bool LoadMainWindow() {
+        try {
+            string[] ChunkValues = ReadReg("winMain", "").Split(',');
+            if (ChunkValues.Length < 3) return false;
+            MainWindow.Size = new Size(int.Parse(ChunkValues[0]), int.Parse(ChunkValues[1]));
+            MainWindow.Location = new Point(int.Parse(ChunkValues[2]), int.Parse(ChunkValues[3]));
+            MainWindow.Maximized = ChunkValues[4] != "0";
+            return true;
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public static bool LoadHighlights() {
         try {
@@ -370,33 +363,82 @@ internal static class Settings {
             return true;
         } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
-    public static bool LoadTray() {
+    public static bool LoadInterfaces() {
         try {
-            string[] ChunkValues = ReadReg("Tray", "").Split(',');
-            if (ChunkValues.Length < 3) return false;
-            Tray.ShowCPU = ChunkValues[0] != "0";
-            Tray.ShowMemory = ChunkValues[1] != "0";
-            Tray.ShowIO = ChunkValues[2] != "0";
-            Tray.Combine = ChunkValues[3] != "0";
-            Tray.Background = int.Parse(ChunkValues[4]);
-            Tray.Border = int.Parse(ChunkValues[5]);
+            string[] ChunkValues = ReadReg("Selected Nics", "").Split(',');
+            CheckedInterfaces.Clear();
+            foreach (string s in ChunkValues) {
+                CheckedInterfaces.Add(s);
+            }
             return true;
         } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
-    public static bool LoadMainWindow() {
+    public static bool LoadCustomColors() {
         try {
-            string[] ChunkValues = ReadReg("winMain", "").Split(',');
-            if (ChunkValues.Length < 3) return false;
-            MainWindow.Size = new Size(int.Parse(ChunkValues[0]), int.Parse(ChunkValues[1]));
-            MainWindow.Location = new Point(int.Parse(ChunkValues[2]), int.Parse(ChunkValues[3]));
-            MainWindow.Maximized = ChunkValues[4] != "0";
+            string[] ChunkValues = ReadReg("Custom Colors", "9498256,8421616,12180223,14053594").Split(",".ToCharArray());
+            CustomColors.Clear();
+            for (int i = 0; i < ChunkValues.Length; i++) {
+                CustomColors.Add(int.Parse(ChunkValues[i]));
+            }
             return true;
         } catch (Exception e) { Shared.DebugTrap(e); return false; }
+    }
+    public static bool LoadProcDetails() {
+        try {
+            string[] ChunkValues = ReadReg("winProcess", "").Split(',');
+            if (ChunkValues.Length < 3) return false;
+            ProcessDetails.Size = new Size(int.Parse(ChunkValues[0]), int.Parse(ChunkValues[1]));
+            ProcessDetails.Location = new Point(int.Parse(ChunkValues[2]), int.Parse(ChunkValues[3]));
+            ProcessDetails.UpdateSpeed = int.Parse(ChunkValues[4]);
+            ProcessDetails.LastTab = int.Parse(ChunkValues[5]);
+            return true;
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
+    }
+    public static bool LoadSummaryColumns(ref object sv) {
+        return false;
+        //try {
+        //    byte[] bt = ReadReg("colsSummary", new[] { 0 });
+        //    string allValues = null;
+        //    if (bt.Length > 10) {
+        //        allValues = _Encoding.GetString(bt);
+        //    } else {
+        //        allValues = GetInitialValues("colsSummary");
+        //    }
+        //    string[] spValues = null;
+        //    SV.SuspendLayout();
+        //    SV.ClearRows();
+        //    SV.Columns = 1;
+        //    foreach (string colValues in allValues.Split(Environment.NewLine)) {
+        //        if (colValues.Trim().Length < 5) {
+        //            continue;
+        //        }
+        //        spValues = colValues.Split('|');
+        //        if (spValues.Count() < 3) {
+        //            continue;
+        //        }
+        //        if (!NumericHelper.IsNumeric(spValues[0])) {
+        //            continue;
+        //        }
+        //        if (int.Parse(spValues[0]) < 1) {
+        //            spValues[0] = 1.ToString();
+        //        }
+        //        if (int.Parse(spValues[0]) > 3) {
+        //            spValues[0] = 3.ToString();
+        //        }
+        //        SV.Columns = Math.Max(SV.Columns, int.Parse(spValues[0]));
+        //        SV.AddRow(int.Parse(spValues[0]), spValues[1], spValues[2]);
+        //    }
+        //    SV.ResumeLayout();
+        //    spValues = null;
+        //    allValues = null;
+        //    bt = null;
+        //} catch (Exception e) { Shared.DebugTrap(e); return false; }
+        //return true;
     }
     public static bool LoadColsInformation(TaskManagerColumnTypes Type, sMkListView lv, ref HashSet<string> destinationTable) {
         string strName;
         switch (Type) {
-            case TaskManagerColumnTypes.Process: strName = "colsProcess";  break;
+            case TaskManagerColumnTypes.Process: strName = "colsProcess"; break;
             case TaskManagerColumnTypes.Services: strName = "colsServices"; break;
             case TaskManagerColumnTypes.Connections: strName = "colsConnections"; break;
             default: return false;
@@ -438,138 +480,6 @@ internal static class Settings {
             foreach (ColumnHeader c in lv.Columns) { destinationTable.Add(c.Tag!.ToString()!); }
         }
         return true;
-    }
-    public static bool LoadInterfaces() {
-        try {
-            string[] ChunkValues = ReadReg("Selected Nics", "").Split(',');
-            CheckedInterfaces.Clear();
-            foreach (string s in ChunkValues) {
-                CheckedInterfaces.Add(s);
-            }
-            return true;
-        } catch (Exception e) { Shared.DebugTrap(e); return false; }
-    }
-    public static bool LoadCustomColors() {
-        try {
-            string[] ChunkValues = ReadReg("Custom Colors", "9498256,8421616,12180223,14053594").Split(",".ToCharArray());
-            CustomColors.Clear();
-            for (int i = 0; i < ChunkValues.Length; i++) {
-                CustomColors.Add(int.Parse(ChunkValues[i]));
-            }
-            return true;
-        } catch (Exception e) { Shared.DebugTrap(e); return false; }
-    }
-
-
-    /*
-    public bool LoadSummaryColumns(ref sMkSummaryView SV) {
-        try {
-            byte[] bt = ReadReg("colsSummary", new[] { 0 });
-            string allValues = null;
-            if (bt.Length > 10) {
-                allValues = m_Encoding.GetString(bt);
-            } else {
-                allValues = GetInitialValues("colsSummary");
-            }
-            string[] spValues = null;
-            SV.SuspendLayout();
-            SV.ClearRows();
-            SV.Columns = 1;
-            foreach (string colValues in allValues.Split(Environment.NewLine)) {
-                if (colValues.Trim().Length < 5) {
-                    continue;
-                }
-                spValues = colValues.Split('|');
-                if (spValues.Count() < 3) {
-                    continue;
-                }
-                if (!NumericHelper.IsNumeric(spValues[0])) {
-                    continue;
-                }
-                if (int.Parse(spValues[0]) < 1) {
-                    spValues[0] = 1.ToString();
-                }
-                if (int.Parse(spValues[0]) > 3) {
-                    spValues[0] = 3.ToString();
-                }
-                SV.Columns = Math.Max(SV.Columns, int.Parse(spValues[0]));
-                SV.AddRow(int.Parse(spValues[0]), spValues[1], spValues[2]);
-            }
-            SV.ResumeLayout();
-            spValues = null;
-            allValues = null;
-            bt = null;
-        } catch (Exception e) { Shared.DebugTrap(e); return false; }
-        return true;
-    }
-    public bool LoadProcDetails() {
-        try {
-            string[] ChunkValues = ReadReg("winProcess", "").Split(',');
-            if (ChunkValues.Length < 3) return false;
-            ProcessDetails.Size = new Size(int.Parse(ChunkValues[0]), int.Parse(ChunkValues[1]));
-            ProcessDetails.Location = new Point(int.Parse(ChunkValues[2]), int.Parse(ChunkValues[3]));
-            ProcessDetails.UpdateSpeed = int.Parse(ChunkValues[4]);
-            ProcessDetails.LastTab = int.Parse(ChunkValues[5]);
-            return true;
-        } catch (Exception e) { Shared.DebugTrap(e); return false; }
-    }
-    */
-    #endregion
-
-    public static string GetInitialValuesOld(string strName) {
-        System.Text.StringBuilder retValue = new();
-        if (strName == "colsProcess") {
-            retValue.AppendLine("|PID,PID,51,0,1,0,0|");
-            retValue.AppendLine("|Name,Name,117,0,0,1,0|");
-            retValue.AppendLine("|CPU,CpuUsage,40,2,0,2,0|");
-            retValue.AppendLine("|Description,Description,164,0,0,3,0|");
-            retValue.AppendLine("|Priority,Priority,60,0,0,4,0|");
-            retValue.AppendLine("|Username,Username,91,0,0,5,0|");
-            retValue.AppendLine("|Mem Usage,WorkingSet,71,1,0,6,0|");
-            retValue.AppendLine("|Mem Peak,WorkingSetPeak,75,1,0,7,0|");
-            retValue.AppendLine("|Virtual Memory,VirtualMemory,86,1,0,8,0|");
-            retValue.AppendLine("|PF Memory,PagedMemory,71,1,0,9,0|");
-            retValue.AppendLine("|Handles,Handles,55,1,0,10,0|");
-            retValue.AppendLine("|Threads,Threads,55,1,0,11,0|");
-            retValue.AppendLine("|GDI Objects,GDIObjects,70,1,0,12,0|");
-            retValue.AppendLine("|User Objects,UserObjects,75,1,0,13,0|");
-            retValue.AppendLine("|Page Faults,PageFaults,71,1,0,14,0|");
-            retValue.AppendLine("|Run Time,RunTime,81,1,0,15,0|");
-            retValue.AppendLine("|Image Path,ImagePath,150,0,0,16,0|");
-        } else if (strName == "colsServices") {
-            retValue.AppendLine("|Name,Name,188,0,1,0,0|");
-            retValue.AppendLine("|Status,Status,52,0,0,1,0|");
-            retValue.AppendLine("|PID,PID,36,0,0,2,0|");
-            retValue.AppendLine("|Startup,Startup,59,0,0,3,0|");
-            retValue.AppendLine("|Logon As,Logon,91,0,0,4,0|");
-            retValue.AppendLine("|Command Line,CommandLine,230,0,0,5,0|");
-            retValue.AppendLine("|Internal,Ident,162,0,0,6,0|");
-        } else if (strName == "colsConnections") {
-            retValue.AppendLine("|PID,PID,60,0,1,0,0|");
-            retValue.AppendLine("|Process,ProcessName,75,0,0,1,0|");
-            retValue.AppendLine("|Proto,Protocol,55,0,1,2,0|");
-            retValue.AppendLine("|Local Address,LocalAddr,94,0,0,3,0|");
-            retValue.AppendLine("|Local Port,LocalPort,60,0,0,4,0|");
-            retValue.AppendLine("|Remote Address,RemoteAddr,102,0,0,5,0|");
-            retValue.AppendLine("|Remote Port,RemotePort,75,0,0,6,0|");
-            retValue.AppendLine("|State,StateString,70,0,0,7,0|");
-            retValue.AppendLine("|Sent,Sent,57,1,0,8,0|");
-            retValue.AppendLine("|Received,Received,67,1,0,9,0|");
-        } else if (strName == "colsSummary") {
-            retValue.AppendLine("1|Threads|Threads");
-            retValue.AppendLine("1|Handles|Handles");
-            retValue.AppendLine("1|GDI Objects|GDIObjects");
-            retValue.AppendLine("1|User Objects|UserObjects");
-            retValue.AppendLine("2|DiskRead|DiskRead");
-            retValue.AppendLine("2|dRead Delta|DiskReadDelta");
-            retValue.AppendLine("2|DiskWrite|DiskWrite");
-            retValue.AppendLine("2|dWrite Delta|DiskWriteDelta");
-            retValue.AppendLine("3|Net Sent|NetSent");
-            retValue.AppendLine("3|nSent Delta|NetSentDelta");
-            retValue.AppendLine("3|Net Rec|NetReceived");
-            retValue.AppendLine("3|nRec Delta|NetReceivedDelta");
-        }
-        return retValue.ToString();
     }
 
     #region "Registry Write Methods..."
@@ -634,7 +544,6 @@ internal static class Settings {
         }
         return retValue;
     }
-
 
     private static string oldReadReg(string ValueName, string DefaultValue) {
         string retValue = DefaultValue;

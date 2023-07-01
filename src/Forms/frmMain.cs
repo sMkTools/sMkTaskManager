@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
@@ -6,10 +5,8 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Timers;
-using System.Linq;
 using sMkTaskManager.Classes;
 using sMkTaskManager.Forms;
-using System.Collections;
 
 namespace sMkTaskManager;
 
@@ -46,26 +43,22 @@ public partial class frmMain : Form {
 
     private void OnLoadEventHandler(object sender, EventArgs e) {
         Extensions.StartMeasure(_StopWatch1);
+
+        _MonitorTriggerTimer = new() { Enabled = false };
+        _MonitorTriggerTimer.Elapsed += MonitorTriggerExecutor;
+        _ParallelTimer = new() { Interval = 1, AutoReset = false };
+        _ParallelTimer.Elapsed += OnLoadParallelInit;
+
         Settings.LoadAll();
         OnLoadSetFixedValues();
         OnLoadLoadSettings();
         OnLoadAddHandlers();
         Settings_Apply();
-        // This Timer is used to trigger the Monitor Refresh
-        _MonitorTriggerTimer = new() { Interval = Settings.UpdateSpeed, Enabled = false };
-        _MonitorTriggerTimer.Elapsed += MonitorTriggerExecutor;
-        // Parallel Init by using a Timer
-        _ParallelTimer = new() { Interval = 1, AutoReset = false };
-        _ParallelTimer.Elapsed += OnLoadParallelInit;
-        _ParallelTimer.Start();
 
+        // At this point, we can follow with Parallel Init;
+        _ParallelTimer.Start();
         _LoadComplete = true;
         Extensions.StopMeasure(_StopWatch1);
-
-
-        var t1 = tabProcs.lv.Columns.Cast<ColumnHeader>().Select(x => x.Name).ToArray();
-
-
     }
     private void OnLoadParallelInit(object? sender, ElapsedEventArgs e) {
         _ParallelTimer.Stop();
@@ -98,16 +91,27 @@ public partial class frmMain : Form {
             ShowInTaskbar = !Settings.ToTrayWhenMinimized;
             if (Settings.ToTrayWhenMinimized) Hide();
         }
+        // Acurately set Update Timer
+        switch (Settings.UpdateSpeed) {
+            case <= 500: mnuView_SpeedHigh.PerformClick(); break;
+            case > 2000: mnuView_SpeedLow.PerformClick(); break;
+            default: mnuView_SpeedNormal.PerformClick(); break;
+        }
+
+
         // Load Column definitions for all the listviews
         Settings.LoadColsInformation(TaskManagerColumnTypes.Process, tabProcs.lv, ref Tables.ColsProcesses);
         tabProcs.btnAllUsers.Checked = Settings.ShowAllProcess;
 
     }
     private void OnLoadAddHandlers() {
-        Tables.System.MetricValueChanged += perf_MetricValueChangedEventHandler;
-        Tables.System.RefreshCompleted += perf_RefreshCompletedEventHandler;
-        tabPerf.MouseDoubleClick += perf_MouseDoubleClickEventHandler;
-        tabProcs.ForceRefreshClicked += proc_ForceRefreshEventHandler;
+        Tables.System.MetricValueChanged += evPerf_MetricValueChanged;
+        Tables.System.RefreshCompleted += evPerf_RefreshCompleted;
+        tabPerf.MouseDoubleClick += evPerf_MouseDoubleClick;
+        tabProcs.ForceRefreshClicked += evProc_ForceRefresh;
+        ssBtnState.DropDownOpening += evStatusBarStateOpening;
+        ssBtnState.DropDownClosed += evStatusBarStateClosed;
+        ssBtnState.ButtonDoubleClick += evStatusBarStateDoubleClick;
     }
     private void OnLoadSetFixedValues() {
         // TODO: We should get rid of this function and move these somewherre else.
@@ -121,7 +125,6 @@ public partial class frmMain : Form {
 
 
     }
-
     private void OnSizeChangedEventHandler(object sender, EventArgs e) {
         if (!_LoadComplete) return;
         ToolStripMenuItem mnuItm = (ToolStripMenuItem)mnuOptions.DropDownItems["mnuOptions_HideMinimize"];
@@ -138,14 +141,24 @@ public partial class frmMain : Form {
         }
     }
     private void OnStatusTimerEventHandler(object sender, EventArgs e) {
-        SetStatusText(null);
+        SetStatusText();
         StatusTimer.Stop();
     }
 
-    private void perf_MouseDoubleClickEventHandler(object? sender, MouseEventArgs e) {
+    private void evStatusBarStateOpening(object? sender, EventArgs e) {
+        while (mnuView.DropDownItems.Count > 0) ssBtnState.DropDownItems.Add(mnuView.DropDownItems[0]);
+    }
+    private void evStatusBarStateClosed(object? sender, EventArgs e) {
+        while (ssBtnState.DropDownItems.Count > 0) mnuView.DropDownItems.Add(ssBtnState.DropDownItems[0]);
+    }
+    private void evStatusBarStateDoubleClick(object? sender, EventArgs e) {
+        MonitorRunning = !MonitorRunning;
+    }
+
+    private void evPerf_MouseDoubleClick(object? sender, MouseEventArgs e) {
         if (e.Button == MouseButtons.Left && e.Clicks > 1) { FullScreen = !FullScreen; }
     }
-    private void perf_MetricValueChangedEventHandler(object sender, Metric metric, MetricChangedEventArgs e) {
+    private void evPerf_MetricValueChanged(object sender, Metric metric, MetricChangedEventArgs e) {
         switch (e.MetricName) {
             case "PhysicalTotal": tabPerf.gbMemory_Total.Text = Tables.System.PhysicalTotal.ValueFmt; break;
             case "PhysicalAvail": tabPerf.gbMemory_Avail.Text = Tables.System.PhysicalAvail.ValueFmt; break;
@@ -177,7 +190,7 @@ public partial class frmMain : Form {
 
         }
     }
-    private void perf_RefreshCompletedEventHandler(object? sender, EventArgs e) {
+    private void evPerf_RefreshCompleted(object? sender, EventArgs e) {
         // Always set these values. regardless we are visible or not.
         tabPerf.gbSystem_UpTime.Text = Tables.System.UpTime;
         tabPerf.meterCpu.SetValue(Tables.System.CpuUsage.Value);
@@ -198,7 +211,7 @@ public partial class frmMain : Form {
         ETW.Flush();
     }
 
-    private void proc_ForceRefreshEventHandler(object? sender, EventArgs e) {
+    private void evProc_ForceRefresh(object? sender, EventArgs e) {
         tabProcs.lv.SuspendLayout();
         Tables.Processes.Clear();
         tabProcs.lv.Items.Clear();
@@ -324,7 +337,7 @@ public partial class frmMain : Form {
         TimmingStop();
     }
 
-    public bool FullScreen {
+    internal bool FullScreen {
         get { return Settings.inFullScreen; }
         set {
             if (value) { tc.SelectTab(tpPerformance); }
@@ -367,8 +380,18 @@ public partial class frmMain : Form {
             OnSizeChangedEventHandler(this, new EventArgs());
         }
     }
-    private void Settings_Apply() {
-        //Performance Graphs Settings
+    internal void Settings_Apply() {
+        // General Settings 
+        ((ToolStripMenuItem)mnuOptions.DropDownItems["mnuOptions_OnTop"]).Checked = Settings.AlwaysOnTop;
+        ((ToolStripMenuItem)mnuOptions.DropDownItems["mnuOptions_HideMinimize"]).Checked = Settings.ToTrayWhenMinimized;
+        ((ToolStripMenuItem)mnuOptions.DropDownItems["mnuOptions_MinimizeClose"]).Checked = Settings.MinimizeWhenClosing;
+        TopMost = Settings.AlwaysOnTop;
+        ssBusyTime.Visible = Settings.TimmingInStatus;
+        ssServices.Visible = Settings.ServicesInStatus;
+        tabProcs.lv.AlternateRowColors = Settings.AlternateRowColors;
+        tabProcs.lv.SpaceFirstValue = Settings.IconsInProcess;
+
+        // Performance Graphs Settings
         tabPerf.chartCpu.SetIndexes("Total", Settings.Performance.ShowKernelTime ? "Kernel" : null);
         tabPerf.chartCpu.BackSolid = Settings.Performance.Solid;
         tabPerf.chartCpu.AntiAliasing = Settings.Performance.AntiAlias;
@@ -386,11 +409,6 @@ public partial class frmMain : Form {
         tabPerf.chartCpu.PenAverage.DashStyle = (DashStyle)Settings.Performance.AverageLineStyle;
         tabPerf.chartCpu.PenAverage.Color = Settings.Performance.AverageLineColor;
         tabPerf.chartCpu.LightColors = Settings.Performance.LightColors;
-        // TODO: Force for now, remove later
-        tabPerf.chartCpu.DisplayAverage = true;
-        tabPerf.chartCpu.DisplayLegends = true;
-        tabPerf.chartCpu.DisplayIndexes = true;
-
         tabPerf.chartMem.CopySettings(tabPerf.chartCpu);
         tabPerf.chartIO.CopySettings(tabPerf.chartCpu);
         tabPerf.chartDisk.CopySettings(tabPerf.chartCpu);
@@ -403,25 +421,33 @@ public partial class frmMain : Form {
 
     }
 
-    internal bool MonitorRunning;
     internal bool MonitorBusy;
+    internal bool MonitorRunning {
+        get { return _MonitorTriggerTimer.Enabled; }
+        set { MonitorToggle(); }
+    }
     internal double MonitorSpeed {
         get { return _MonitorTriggerTimer.Interval; }
-        set { _MonitorTriggerTimer.Interval = value; }
+        set {
+            _MonitorTriggerTimer.Interval = value;
+            if (MonitorRunning) MonitorUpdateBtnStatus();
+        }
     }
     internal void MonitorStart(bool firstTime = false) {
-        MonitorRunning = true;
+        if (MonitorRunning) return;
         MonitorRefreshParallel(firstTime);
         _MonitorTriggerTimer.Start();
         SetStatusText();
+        MonitorUpdateBtnStatus();
     }
     internal void MonitorStop() {
+        if (!MonitorRunning) return;
         _MonitorTriggerTimer.Stop();
-        MonitorRunning = false;
         SetStatusText();
+        MonitorUpdateBtnStatus();
     }
     internal void MonitorToggle() {
-        if (MonitorRunning) { MonitorStop(); } else { MonitorStart(); }
+        if (_MonitorTriggerTimer.Enabled) { MonitorStop(); } else { MonitorStart(); }
     }
     internal void MonitorRefresh(bool firstTime = false) {
         if (MonitorBusy) return;
@@ -438,7 +464,7 @@ public partial class frmMain : Form {
         Refresh_Users(firstTime);
         MonitorBusy = false;
         _StopWatch1.Stop();
-        SetStatusText(ssBusyTime, _StopWatch1.ElapsedMilliseconds + "ms.");
+        SetStatusText(_StopWatch1.ElapsedMilliseconds + "ms.", ssBusyTime);
         TimmingDisplay();
     }
     internal async void MonitorRefreshParallel(bool firstTime = false) {
@@ -458,11 +484,19 @@ public partial class frmMain : Form {
         await Task.WhenAll(_MonitorTasks);
         MonitorBusy = false;
         _StopWatch1.Stop();
-        SetStatusText(ssBusyTime, _StopWatch1.ElapsedMilliseconds + "ms.");
+        SetStatusText(_StopWatch1.ElapsedMilliseconds + "ms.", ssBusyTime);
         TimmingDisplay();
     }
     private void MonitorTriggerExecutor(object? sender, ElapsedEventArgs e) {
         if (MonitorRunning) { MonitorRefreshParallel(); }
+    }
+    private void MonitorUpdateBtnStatus() {
+        if (ss.InvokeRequired) { ss.Invoke(MonitorUpdateBtnStatus); return; }
+        if (MonitorRunning) {
+            if (_MonitorTriggerTimer.Interval is <= 500) ssBtnState.Text = "High";
+            if (_MonitorTriggerTimer.Interval is > 500 and <= 2000) ssBtnState.Text = "Normal";
+            if (_MonitorTriggerTimer.Interval is > 2000) ssBtnState.Text = "Low";
+        } else { ssBtnState.Text = "Paused"; }
     }
 
     private bool TimmingVisible {
@@ -524,9 +558,9 @@ public partial class frmMain : Form {
 
     }
 
-    public void SetStatusText(ToolStripLabel? obj = null, string value = "") {
+    public void SetStatusText(string value = "", ToolStripLabel? obj = null) {
         obj ??= ssText;
-        if (ss.InvokeRequired) { ss.Invoke(SetStatusText, new object[] { obj, value }); return; }
+        if (ss.InvokeRequired) { ss.Invoke(SetStatusText, new object[] { value, obj }); return; }
         if (value == "") { value = MonitorRunning ? "Running ..." : "Paused ..."; }
         if (value != obj.Text) {
             obj.Text = value;
