@@ -875,25 +875,23 @@ internal unsafe static partial class API {
     }
     #endregion
 
-    [LibraryImport("ntdll.dll", SetLastError = true)]
-    internal static partial NTSTATUS NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInformationClass, ref SYSTEM_PERFORMANCE_INFORMATION SystemInformation, int SystemInformationLength, out int returnLength);
-    [System.Security.SuppressUnmanagedCodeSecurity()]
-    [DllImport("ntdll.dll", SetLastError = true)]
-    internal static extern NTSTATUS NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInformationClass, IntPtr SystemInformation, int SystemInformationLength, out int returnLength);
-
-    [LibraryImport("psapi.dll", SetLastError = true, EntryPoint = "EnumPageFilesW")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    public static partial bool EnumPageFiles(EnumPageFilesProc proc, IntPtr lpContext);
-    public delegate bool EnumPageFilesProc(IntPtr lpContext, ref PAGE_FILE_INFORMATION Info, string Name);
-
-    [LibraryImport("psapi.dll", SetLastError = true)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    public static partial bool GetPerformanceInfo(ref PERFORMANCE_INFORMATION pPerformanceInformation, uint cb);
-
-    [LibraryImport("kernel32.dll", SetLastError = true)]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    public static partial bool GetSystemTimes(ref FILETIME lpIdleTime, ref FILETIME lpKernelTime, ref FILETIME lpUserTime);
-
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    internal static extern unsafe int RegisterWindowMessage(string pString);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    internal static extern unsafe int BroadcastSystemMessage(int dwFlags, ref int pdwRecipients, int uiMessage, int wParam, int lParam);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    internal static extern unsafe bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    internal static extern unsafe IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("ntdll.dll", SetLastError = true)]
+    internal static extern unsafe NTSTATUS NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInformationClass, ref SYSTEM_PERFORMANCE_INFORMATION SystemInformation, int SystemInformationLength, out int returnLength);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("ntdll.dll", SetLastError = true)]
+    internal static extern unsafe NTSTATUS NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInformationClass, IntPtr SystemInformation, int SystemInformationLength, out int returnLength);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("psapi.dll", CharSet = CharSet.Auto, SetLastError = true)] 
+    internal static extern unsafe bool EnumPageFiles(EnumPageFilesProc proc, IntPtr lpContext);
+    internal delegate bool EnumPageFilesProc(IntPtr lpContext, ref PAGE_FILE_INFORMATION Info, string Name);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("psapi.dll", SetLastError = true)]
+    internal static extern unsafe bool GetPerformanceInfo(ref PERFORMANCE_INFORMATION pPerformanceInformation, uint cb);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     internal static extern unsafe bool ConvertStringSidToSid(string StringSid, ref IntPtr Sid);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
@@ -902,6 +900,8 @@ internal unsafe static partial class API {
     internal static extern unsafe bool GetTokenInformation(IntPtr TokenHandle, TOKEN_INFORMATION_CLASS tokenInfoClass, IntPtr TokenInformation, int TokenInformationLength, ref uint ReturnLength);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     internal static extern unsafe bool LookupAccountSid(string lpSystemName, IntPtr pSid, StringBuilder Account, ref int cbName, StringBuilder DomainName, ref int cbDomainName, ref int peUse);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", SetLastError = true)]
+    internal static extern unsafe bool GetSystemTimes(ref FILETIME lpIdleTime, ref FILETIME lpKernelTime, ref FILETIME lpUserTime);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", SetLastError = true)]
     internal static extern unsafe bool GetSystemTimes(ref TimeSpan lpIdleTime, ref TimeSpan lpKernelTime, ref TimeSpan lpUserTime);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", SetLastError = true)]

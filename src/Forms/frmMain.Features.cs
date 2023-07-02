@@ -1,3 +1,4 @@
+using System.Reflection.Metadata.Ecma335;
 using sMkTaskManager.Classes;
 using sMkTaskManager.Forms;
 
@@ -5,6 +6,19 @@ namespace sMkTaskManager;
 
 partial class frmMain {
 
+    internal void Feature_RealExit() {
+        if (InvokeRequired) { BeginInvoke(Feature_RealExit); return; }
+        _RealExit = true;
+        Close();
+    }
+    internal void Feature_ActivateMainWindow() {
+        Show();
+        ShowInTaskbar = true;
+        if (WindowState == FormWindowState.Minimized) {
+            WindowState = Settings.MainWindow.Maximized ? FormWindowState.Maximized : FormWindowState.Normal;
+        }
+        Activate();
+    }
     internal void Feature_Preferences(int section = 0) {
         using frmPreferences frm = new();
         frm.StartPosition = FormStartPosition.CenterParent;

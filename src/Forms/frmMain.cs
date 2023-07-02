@@ -35,26 +35,38 @@ public partial class frmMain : Form {
     private List<Task> _MonitorTasks = new();
     private System.Timers.Timer _ParallelTimer, _MonitorTriggerTimer;
     private System.Windows.Forms.Timer StatusTimer = new();
-    private bool _InitComplete = false, _LoadComplete = false;
+    private bool _InitComplete = false, _LoadComplete = false, _RealExit = true;
     private readonly Stopwatch _StopWatch1 = new(), _StopWatch2 = new(), _StopWatch3 = new();
     private Size? _prevSize, _prevMinSize; Point? _prevLocation;
     private Size? _fullScreenSize; Point? _fullScreenLocation;
 
+    protected override void WndProc(ref Message m) {
+        if (m.Msg == 0x112) { // WM_SYSCOMMAND
+            if (m.WParam == 61536) { _RealExit = false; }
+            if (m.WParam == 1001) { mnuHelp_About.PerformClick(); }
+        } else if (m.Msg == Shared.PrivateMsgID) { // Private Communication Channel? :)
+            Debug.WriteLine($"Got PrivateMsg with wParm: {m.WParam}");
+            // We use this to activate the window from external apps or a diff instance.
+            if (m.WParam == 1) { Feature_ActivateMainWindow(); }
+        }
+        base.WndProc(ref m);
+    }
 
     private void OnLoadEventHandler(object sender, EventArgs e) {
         Extensions.StartMeasure(_StopWatch1);
-
+        // Initialize any remaining object
         _MonitorTriggerTimer = new() { Enabled = false };
         _MonitorTriggerTimer.Elapsed += MonitorTriggerExecutor;
         _ParallelTimer = new() { Interval = 1, AutoReset = false };
         _ParallelTimer.Elapsed += OnLoadParallelInit;
-
+        // Generate a PrivateMsgID for use to send/recv private messages
+        Shared.PrivateMsgID = API.RegisterWindowMessage(Application.ExecutablePath.Replace("\\", "_"));
+        // Load Settings and then Fork
         Settings.LoadAll();
         OnLoadSetFixedValues();
         OnLoadLoadSettings();
         OnLoadAddHandlers();
         Settings_Apply();
-
         // At this point, we can follow with Parallel Init;
         _ParallelTimer.Start();
         _LoadComplete = true;
@@ -125,6 +137,10 @@ public partial class frmMain : Form {
 
 
     }
+    private void OnStatusTimerEventHandler(object sender, EventArgs e) {
+        SetStatusText();
+        StatusTimer.Stop();
+    }
     private void OnSizeChangedEventHandler(object sender, EventArgs e) {
         if (!_LoadComplete) return;
         ToolStripMenuItem mnuItm = (ToolStripMenuItem)mnuOptions.DropDownItems["mnuOptions_HideMinimize"];
@@ -140,9 +156,60 @@ public partial class frmMain : Form {
             Visible = true;
         }
     }
-    private void OnStatusTimerEventHandler(object sender, EventArgs e) {
-        SetStatusText();
-        StatusTimer.Stop();
+    private void OnKeyDownEventHandler(object sender, KeyEventArgs e) {
+        if (e.Handled) return;
+        if (e.KeyCode == Keys.Escape && !(e.Alt || e.Control || e.Shift)) {
+            e.SuppressKeyPress = true;
+            e.Handled = true;
+            _RealExit = false;
+            Close();
+        } else if (e.KeyCode == Keys.F3 && !(e.Alt || e.Control || e.Shift)) {
+            e.Handled = true;
+            Feature_Preferences(1);
+        } else if (e.KeyCode == Keys.F4 && !(e.Alt || e.Control || e.Shift)) {
+            e.Handled = true;
+            Feature_Preferences(2);
+        }
+    }
+    private void OnClosingEventHandler(object sender, FormClosingEventArgs e) {
+
+        if (e.CloseReason == CloseReason.UserClosing && !_RealExit) {
+            Debug.WriteLine("1");
+            if (mnuOptions_MinimizeClose.Checked & !_RealExit) {
+                Debug.WriteLine("2");
+                WindowState = FormWindowState.Minimized;
+                e.Cancel = true;
+            }
+            if (Settings.ToTrayWhenClosed & !_RealExit) {
+                Visible = false;
+                e.Cancel = true;
+            }
+        }
+
+        if (!e.Cancel) {
+            Extensions.StartMeasure(_StopWatch2);
+            // If monitor is running we must stop it right now...
+            if (MonitorRunning) MonitorToggle();
+            if (ETW.Running) ETW.Stop();
+            // Save Window Position & Tab...
+            if (Settings.RememberPositions) {
+                if (WindowState == FormWindowState.Normal) {
+                    Settings.MainWindow.Size = Size;
+                    Settings.MainWindow.Location = Location;
+                }
+                Settings.MainWindow.Maximized = WindowState == FormWindowState.Maximized;
+                Settings.SaveMainWindow();
+            }
+            Settings.ActiveTab = tc.SelectedIndex;
+            // Save Settings and Columns Information...
+            Settings.SaveAll();
+            // Settings.SaveColsInformation("colsProcess", proc_ListView);
+            // Settings.SaveColsInformation("colsServices", serv_ListView);
+            // Settings.SaveColsInformation("colsConnections", conn_ListView);
+            // Hide Tray Icons
+            // TODO: Tray Not implemented yet
+            Extensions.StopMeasure(_StopWatch2, "Close Time");
+        }
     }
 
     private void evStatusBarStateOpening(object? sender, EventArgs e) {

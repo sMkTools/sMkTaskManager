@@ -14,6 +14,7 @@ internal static class Shared {
     internal static List<string> skipProcess = new List<string>(new[] { "audiodg" });
     internal static List<string> skipServices = new();
     internal static int CurrentSessionID = Process.GetCurrentProcess().SessionId;
+    internal static int PrivateMsgID = 0;
     internal static string TotalProcessorsBin = "".PadLeft(Environment.ProcessorCount, '1');
     internal static void OpenProcessForm(int PID) { }
 

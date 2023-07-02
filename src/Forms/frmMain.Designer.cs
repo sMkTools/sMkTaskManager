@@ -143,9 +143,9 @@
             // ssBtnState
             // 
             ssBtnState.AutoSize = false;
+            ssBtnState.DoubleClickEnabled = true;
             ssBtnState.Image = (Image)resources.GetObject("ssBtnState.Image");
             ssBtnState.ImageTransparentColor = Color.Magenta;
-            ssBtnState.DoubleClickEnabled = true;
             ssBtnState.Name = "ssBtnState";
             ssBtnState.Size = new Size(80, 22);
             ssBtnState.Text = "High";
@@ -295,11 +295,14 @@
             Controls.Add(mnu);
             MainMenuStrip = mnu;
             Margin = new Padding(6);
+            KeyPreview = true;
             MinimumSize = new Size(480, 400);
             Name = "frmMain";
             Text = "sMk Task Manager - Next Gen";
+            FormClosing += OnClosingEventHandler;
             Load += OnLoadEventHandler;
             SizeChanged += OnSizeChangedEventHandler;
+            KeyDown += OnKeyDownEventHandler;
             mnu.ResumeLayout(false);
             mnu.PerformLayout();
             ss.ResumeLayout(false);

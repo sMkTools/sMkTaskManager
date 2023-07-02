@@ -126,6 +126,7 @@ partial class frmMain {
     private void mnu_DropDownItemClicked(object? sender, ToolStripItemClickedEventArgs e) {
         if (e.ClickedItem == null) return;
         switch (e.ClickedItem.Name) {
+            case nameof(mnuFile_Exit): BeginInvoke(Feature_RealExit); return;
             case nameof(mnuOptions_Preferences): Feature_Preferences(); break;
             case nameof(mnuOptions_OnTop): Feature_ToggleAlwaysOnTop(); break;
             case nameof(mnuOptions_Highlight): Feature_ToggleHighlightChanges(); break;
