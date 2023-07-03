@@ -7,41 +7,50 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AssemblyName>sMKTaskManager</AssemblyName>
+    <Title>sMk TaskManager</Title>
+    <AssemblyName>sMkTaskManager</AssemblyName>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/creizlein/sMkTaskManager</RepositoryUrl>
     <IsPublishable>true</IsPublishable>
     <Authors>Smoke</Authors>
     <Company>sMkDesigns</Company>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryType>git</RepositoryType>
     <SignAssembly>False</SignAssembly>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath> 
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <ProduceReferenceAssemblyInOutDir>false</ProduceReferenceAssemblyInOutDir>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateSerializationAssemblies>off</GenerateSerializationAssemblies>
     <BuildProjectReferences>true</BuildProjectReferences>
     <UseCommonOutputDirectory>false</UseCommonOutputDirectory>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Copyright>Copyright © sMk Designs</Copyright>
-    <Version>3.0</Version>
+    <Copyright>Copyright © sMkDesigns</Copyright>
+    <Version>3.0.0</Version>
+    <!--
     <FileVersion>3.0.0</FileVersion>
     <AssemblyVersion>3.0.0.*</AssemblyVersion>
+    -->
     <Deterministic>false</Deterministic>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>sMkTaskManager.ico</ApplicationIcon>
-    <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
-    <StartupObject></StartupObject>
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+    <StartupObject>sMkTaskManager.Program</StartupObject>
     <NoWarn>CS8618</NoWarn>
   </PropertyGroup>
 
+  <!--
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="echo $([System.DateTime]::UtcNow.ToString())" />
+  </Target>
+  -->
+
   <ItemGroup>
-    <Content Include="sMkTaskManager.ico" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="7.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-
     <None Include="..\README.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
@@ -50,25 +59,19 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-
+    <None Update="sMkTaskManager.ico">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <Content Include="sMkTaskManager.ico" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.ServiceProcess.ServiceController" Version="7.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Controls\sMkPerfChartOld.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

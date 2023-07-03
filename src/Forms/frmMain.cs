@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
@@ -20,15 +21,6 @@ public partial class frmMain : Form {
         Extensions.CascadingDoubleBuffer(this);
         // Extensions.UseImmersiveDarkMode(Handle, true);
         // Extensions.UseImmersiveRoundCorner(Handle, 3);
-
-        //Tester tt = new();
-        //tt.Handles.SetValue(1024);
-        //tt.Handles.SetValue(4096);
-        //tt.Handles.SetFormat(MetricFormats.Kb);
-        //tt.Handles.FormatString = "{0:#,0.0} Kb.";
-        //Debug.WriteLine($"{tt} Value: {tt.Handles.Value} - Delta:{tt.Handles.Delta}");
-        //Debug.WriteLine($"{tt} Value: {tt.Handles.ValueFmt} - Delta:{tt.Handles.DeltaFmt}");
-
     }
 
     // Local variables...

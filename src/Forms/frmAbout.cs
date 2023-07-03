@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Imaging;
+using System.Globalization;
+using System.Reflection;
 using System.Runtime.Versioning;
 using sMkTaskManager.Properties;
 namespace sMkTaskManager.Forms;
@@ -22,10 +24,11 @@ public partial class frmAbout : Form {
         ilAnimation.Images.Clear();
         ilAnimation.Images.Add(Resources.AnimIcon_Cyan);
         ilAnimation.Images.Add(Resources.AnimIcon_Red);
-        Version AssemblyVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version!;
+        Version AssemblyVersion = Assembly.GetExecutingAssembly().GetName().Version!;
+        var buildTime = long.Parse(Assembly.GetExecutingAssembly().GetCustomAttribute<BuildMarkAttribute>()?.BuildMark!);
         lblVersion.Text = "v" + AssemblyVersion?.Major + "." + AssemblyVersion?.Minor + "." + AssemblyVersion?.Build;
         lblBuild.Text = lblBuild.Text.Replace("xxxx1", AssemblyVersion?.Revision.ToString());
-        lblBuild.Text = lblBuild.Text.Replace("xxxx2", AssemblyBuildDate(AssemblyVersion!).ToString());
+        lblBuild.Text = lblBuild.Text.Replace("xxxx2", new DateTime(buildTime).ToLocalTime().ToString());
 
         try {
             m_AnimationImage = ilAnimation.Images[1];
@@ -63,17 +66,4 @@ public partial class frmAbout : Form {
         }
         pbIcon.Invalidate();
     }
-
-    private static DateTime AssemblyBuildDate(Version AssemblyVersion) {
-        DateTime dt = DateTime.Now;
-        try {
-            dt = DateTime.Parse("01/01/2000").AddDays(AssemblyVersion.Build).AddSeconds(AssemblyVersion.Revision * 2);
-            if (dt > DateTime.Now || AssemblyVersion.Build < 730 || AssemblyVersion.Revision == 0) {
-                dt = File.GetLastWriteTime(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            }
-        } catch { }
-        return dt;
-    }
-
-
 }
