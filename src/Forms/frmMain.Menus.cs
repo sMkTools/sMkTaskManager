@@ -133,6 +133,7 @@ partial class frmMain {
             case nameof(mnuOptions_HideMinimize): Feature_ToggleHideOnMinimize(); break;
             case nameof(mnuOptions_MinimizeClose): Feature_ToggleMinimizeOnClose(); break;
             case nameof(mnuOptions_SelectColumns): Feature_SelectColumns(); break;
+            case nameof(mnuHelp_About): Feature_AboutDialog(); break;
             case nameof(mnuHelp_Timmings): TimmingVisible = !TimmingVisible; break;
             default: break;
         }

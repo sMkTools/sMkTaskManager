@@ -19,6 +19,10 @@ partial class frmMain {
         }
         Activate();
     }
+    internal void Feature_AboutDialog() {
+        using frmAbout d = new();
+        d.ShowDialog(this);
+    }
     internal void Feature_Preferences(int section = 0) {
         using frmPreferences frm = new();
         frm.StartPosition = FormStartPosition.CenterParent;
