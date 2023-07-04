@@ -4,6 +4,7 @@ using System.Runtime.Versioning;
 using sMkTaskManager.Classes;
 using sMkTaskManager.Controls;
 using System.Runtime.InteropServices;
+using System.Linq.Expressions;
 
 namespace sMkTaskManager.Forms;
 
@@ -215,6 +216,7 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         ((ToolStripMenuItem)cms.Items["Priority"]).DropDownItems.AddMenuItem("Below Normal").Name = "Priority5";
         ((ToolStripMenuItem)cms.Items["Priority"]).DropDownItems.AddMenuItem("Low").Name = "Priority6";
         ((ToolStripMenuItem)cms.Items["Priority"]).DropDownOpening += OnContextPriorityOpening;
+        ((ToolStripMenuItem)cms.Items["Priority"]).DropDownItemClicked += OnContextItemClicked;
         cms.Opening += OnContextOpening;
         cms.ItemClicked += OnContextItemClicked;
     }
@@ -275,17 +277,11 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         foreach (ListViewItem itm in lv.SelectedItems) {
             try {
                 if (itm.Name == "" || !Shared.IsInteger(itm.Name)) continue;
-                if (curPriority == 0) {
-                    // This will trigger for the first item, so we save it
-                    curPriority = Process.GetProcessById(int.Parse(itm.Name)).PriorityClass;
-                    continue;
-                }
-                if (curPriority != Process.GetProcessById(int.Parse(itm.Name)).PriorityClass) {
-                    // If any of the other process is diffferent, we set it to 0 and leave, they are not all equal.
-                    curPriority = 0;
-                    break;
-                }
-            } catch { Debug.WriteLine("Error Code 008b"); }
+                // This will trigger for the first item, so we save it
+                if (curPriority == 0) { curPriority = Process.GetProcessById(int.Parse(itm.Name)).PriorityClass; continue; }
+                // If any of the other process is diffferent, we set it to 0 and leave, they are not all equal.
+                if (curPriority != Process.GetProcessById(int.Parse(itm.Name)).PriorityClass) { curPriority = 0; break; }
+            } catch { }
         }
         try {
             ((ToolStripMenuItem)((ToolStripMenuItem)sender!).DropDownItems["Priority1"]).Checked = curPriority == ProcessPriorityClass.RealTime;
@@ -294,7 +290,7 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
             ((ToolStripMenuItem)((ToolStripMenuItem)sender!).DropDownItems["Priority4"]).Checked = curPriority == ProcessPriorityClass.Normal;
             ((ToolStripMenuItem)((ToolStripMenuItem)sender!).DropDownItems["Priority5"]).Checked = curPriority == ProcessPriorityClass.BelowNormal;
             ((ToolStripMenuItem)((ToolStripMenuItem)sender!).DropDownItems["Priority6"]).Checked = curPriority == ProcessPriorityClass.Idle;
-        } catch { Debug.WriteLine("Error Code 008c"); }
+        } catch { }
     }
 
     private void OnContextItemClicked(object? sender, ToolStripItemClickedEventArgs e) {
@@ -310,12 +306,12 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
             case "Debug": BeginInvoke(Feature_ProcessDebug); break;
             case "Dump": BeginInvoke(Feature_ProcessDump); break;
             case "Affinity": BeginInvoke(Feature_ProcessAffinity); break;
-            case "Priority1": Feature_ProcessSetPriority(ProcessPriorityClass.RealTime); break;
-            case "Priority2": Feature_ProcessSetPriority(ProcessPriorityClass.High); break;
-            case "Priority3": Feature_ProcessSetPriority(ProcessPriorityClass.AboveNormal); break;
-            case "Priority4": Feature_ProcessSetPriority(ProcessPriorityClass.Normal); break;
-            case "Priority5": Feature_ProcessSetPriority(ProcessPriorityClass.BelowNormal); break;
-            case "Priority6": Feature_ProcessSetPriority(ProcessPriorityClass.Idle); break;
+            case "Priority1": BeginInvoke(Feature_ProcessSetPriority, ProcessPriorityClass.RealTime); break;
+            case "Priority2": BeginInvoke(Feature_ProcessSetPriority, ProcessPriorityClass.High); break;
+            case "Priority3": BeginInvoke(Feature_ProcessSetPriority, ProcessPriorityClass.AboveNormal); break;
+            case "Priority4": BeginInvoke(Feature_ProcessSetPriority, ProcessPriorityClass.Normal); break;
+            case "Priority5": BeginInvoke(Feature_ProcessSetPriority, ProcessPriorityClass.BelowNormal); break;
+            case "Priority6": BeginInvoke(Feature_ProcessSetPriority, ProcessPriorityClass.Idle); break;
             case "Online": BeginInvoke(Feature_OpenOnline); break;
             case "Windows": BeginInvoke(Feature_RevealWindows); break;
             case "Files": BeginInvoke(Feature_OpenLockedFiles); break;
@@ -428,7 +424,9 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         pf.StartPosition = FormStartPosition.CenterParent;
         pf.ShowDialog(this);
     }
-    public void Feature_RevealWindows() { Shared.NotImplemented(); }
+    public void Feature_RevealWindows() {
+        Shared.NotImplemented();
+    }
     public void Feature_OpenOnline() {
         if (lv.SelectedItems.Count < 1) return;
         try {
@@ -482,11 +480,84 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         if (lv.SelectedItems.Count > 1) Shared.SetStatusText("Selected Processes Resumed...");
         Refresher();
     }
-    public void Feature_ProcessDebug() { Shared.NotImplemented(); }
-    public void Feature_ProcessDump() { Shared.NotImplemented(); }
-    public void Feature_ProcessAffinity() { Shared.NotImplemented(); }
-    public void Feature_ProcessSetPriority(ProcessPriorityClass newPriority) { Shared.NotImplemented(); }
-    public ProcessPriorityClass Feature_ProcessGetPriority() { return ProcessPriorityClass.Normal; }
+    public void Feature_ProcessDebug() {
+        if (lv.SelectedItems.Count < 1) return;
+        if (string.IsNullOrEmpty(lv.SelectedItems[0].Name)) return;
+        if (int.Parse(lv.SelectedItems[0].Name) < Shared.bpi) return;
+        if (Shared.DebuggerCmd == "") { Shared.GetDebuggerCmd(); }
+        if (Shared.DebuggerCmd == "") { MessageBox.Show("Unable to locate debugger", "Debug Process", MessageBoxButtons.OK, MessageBoxIcon.Information); return; }
+        if (MessageBox.Show("WARNING: Debugging this process may result in loss of data." + Environment.NewLine + "Are you sure you wish to attach the debugger?", "Debug Process", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == DialogResult.OK) {
+            ProcessStartInfo psi = new() {
+                FileName = Shared.DebuggerCmd,
+                Arguments = "-p " + lv.SelectedItems[0].Name,
+                UseShellExecute = true,
+                WindowStyle = ProcessWindowStyle.Normal
+            };
+            Process.Start(psi);
+        }
+    }
+    public void Feature_ProcessDump() {
+        if (lv.SelectedItems.Count < 1) return;
+        if (string.IsNullOrEmpty(lv.SelectedItems[0].Name)) return;
+        if (int.Parse(lv.SelectedItems[0].Name) < Shared.bpi) return;
+
+        TaskManagerProcess p = Processes.GetProcess(int.Parse(lv.SelectedItems[0].Name))!;
+        if (p == null) return;
+        SaveFileDialog fsd = new() {
+            DefaultExt = "dmp",
+            FileName = p.Name.Replace(".exe", ""),
+            Filter = "Dump File (*.dmp)|*.dmp",
+            OverwritePrompt = true,
+            ValidateNames = true
+        };
+        if (fsd.ShowDialog() == DialogResult.OK) {
+            Cursor = Cursors.AppStarting;
+            if (p.DumpFile(fsd.FileName)) {
+                Shared.SetStatusText("Process Dump Complete: " + fsd.FileName + " ... ");
+            } else {
+                Shared.SetStatusText("Process Dump Failed ... ");
+            }
+            Cursor = Cursors.Default;
+        }
+    }
+    public void Feature_ProcessAffinity() {
+        using frmProcess_Affinity pa = new();
+        pa.BitMask = Convert.ToInt64(Process.GetProcessById(int.Parse(lv.SelectedItems[0].Name)).ProcessorAffinity);
+        pa.StartPosition = FormStartPosition.CenterParent;
+        pa.ShowDialog(this);
+        if (pa.DialogResult == DialogResult.OK) {
+            int total = 0;
+            var theBitMask = pa.BitMask;
+            foreach (ListViewItem itm in lv.SelectedItems) {
+                try {
+                    if (int.Parse(itm.Name) < Shared.bpi) continue;
+                    Process p = Process.GetProcessById(int.Parse(itm.Name));
+                    if (p.ProcessorAffinity.ToString() == theBitMask.ToString()) { continue; }
+                    p.ProcessorAffinity = (nint)theBitMask;
+                    p.Dispose(); total++;
+                } catch (Exception ex) {
+                    MessageBox.Show("Error setting process affinity for PID " + int.Parse(itm.Name) + Environment.NewLine + ex.Message, "Unable to set process affinity", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            if (total > 0) Shared.SetStatusText($"Process{(total > 1 ? "es" : "")} affinity set to: {theBitMask} ...");
+        }
+    }
+    public void Feature_ProcessSetPriority(ProcessPriorityClass newPriority) {
+        if (lv.SelectedItems.Count < 1) return;
+        int total = 0;
+        foreach (ListViewItem itm in lv.SelectedItems) {
+            try {
+                if (string.IsNullOrEmpty(itm.Name)) continue;
+                if (int.Parse(itm.Name) < Shared.bpi) continue;
+                Process p = Process.GetProcessById(int.Parse(itm.Name));
+                if (p.PriorityClass != newPriority) { p.PriorityClass = newPriority; }
+                p.Dispose(); total++;
+            } catch (Exception ex) {
+                MessageBox.Show("Error setting process priority for PID " + int.Parse(itm.Name) + Environment.NewLine + ex.Message, "Unable to set process priority", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        if (total > 0) Shared.SetStatusText($"Process{(total > 1 ? "es" : "")} priority set to: {newPriority} ...");
+    }
 
     public sMkListView ListView => lv;
     public string Title { get; set; } = "Processes";

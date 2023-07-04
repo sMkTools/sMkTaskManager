@@ -357,8 +357,7 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
     public bool DumpFile(string dumpFilename) {
         try {
             FileStream ProcDumpFile = File.Open(dumpFilename, FileMode.OpenOrCreate);
-            if (_pHandle == IntPtr.Zero) { _pHandle = Process.GetProcessById(PID).Handle; }
-            bool res = API.MiniDumpWriteDump(_pHandle, PID, ProcDumpFile.SafeFileHandle.DangerousGetHandle(), API.DumpTypes.DumpWithFullMemory, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+            bool res = API.MiniDumpWriteDump(Process.GetProcessById(_PID).Handle, _PID, ProcDumpFile.SafeFileHandle.DangerousGetHandle(), API.DumpTypes.DumpWithFullMemory, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
             ProcDumpFile.Close();
             return res;
         } catch {

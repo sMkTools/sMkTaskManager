@@ -16,6 +16,7 @@ internal static class Shared {
     internal static int CurrentSessionID = Process.GetCurrentProcess().SessionId;
     internal static int PrivateMsgID = 0;
     internal static string TotalProcessorsBin = "".PadLeft(Environment.ProcessorCount, '1');
+    internal static string DebuggerCmd = "";
     internal static void OpenProcessForm(int PID) { }
 
     public static bool IsNumeric(string value) => double.TryParse(value, out _);
@@ -63,6 +64,29 @@ internal static class Shared {
 
         return _SystemAccount!;
     }
+    internal static void GetDebuggerCmd() {
+        string SubKey = "Software\\Microsoft\\Windows NT\\CurrentVersion\\AeDebug";
+        string _Debugger = "";
+        Microsoft.Win32.RegistryKey ParentKey = Microsoft.Win32.Registry.LocalMachine;
+        try {
+            Microsoft.Win32.RegistryKey? Key = ParentKey.OpenSubKey(SubKey, false);
+            if (Key != null && Key.GetValue("Debugger") != null && !string.IsNullOrEmpty(Key.GetValue("Debugger")!.ToString())) {
+                _Debugger = Key.GetValue("Debugger")!.ToString()!.Trim();
+            }
+            Key?.Close();
+        } catch { } finally { ParentKey.Close(); }
+
+        if (!string.IsNullOrEmpty(_Debugger)) {
+            try {
+                if (_Debugger.Contains('"')) {
+                    _Debugger = _Debugger.TrimStart('\"');
+                    _Debugger = _Debugger[.._Debugger.IndexOf('"')];
+                    _Debugger = _Debugger.Trim('"');
+                }
+            } catch { _Debugger = ""; }
+        }
+        DebuggerCmd = _Debugger.Trim();
+    }
 
     internal static void SetStatusText(string value = "", ToolStripLabel? obj = null) {
         if (_OwnerForm == null) {
@@ -72,6 +96,28 @@ internal static class Shared {
         }
         _OwnerForm?.SetStatusText(value, obj);
     }
+
+    public static void BitClear(ref long MyByte, long MyBit) {
+        long BitMask;
+        BitMask = Convert.ToInt64(Math.Pow(2, MyBit - 1));
+        MyByte &= ~BitMask;
+    }
+    public static void BitSet(ref long MyByte, long MyBit) {
+        long BitMask;
+        BitMask = Convert.ToInt64(Math.Pow(2, MyBit - 1));
+        MyByte |= BitMask;
+    }
+    public static void BitToggle(ref long MyByte, long MyBit) {
+        long BitMask;
+        BitMask = Convert.ToInt64(Math.Pow(2, MyBit - 1));
+        MyByte ^= BitMask;
+    }
+    public static bool BitExamine(long MyByte, long MyBit) {
+        long BitMask;
+        BitMask = Convert.ToInt64(Math.Pow(2, MyBit - 1));
+        return (MyByte & BitMask) > 0;
+    }
+
 }
 internal class CpuUsage {
     private Classes.API.FILETIME _idleTime, _kernTime, _userTime;
