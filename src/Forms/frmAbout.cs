@@ -1,10 +1,7 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing.Imaging;
-using System.Globalization;
 using System.Reflection;
 using System.Runtime.Versioning;
-using sMkTaskManager.Properties;
 namespace sMkTaskManager.Forms;
 
 [DesignerCategory("Component"), SupportedOSPlatform("windows")]
