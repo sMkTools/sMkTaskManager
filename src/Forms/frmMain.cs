@@ -446,10 +446,10 @@ public partial class frmMain : Form {
             if (_MonitorTriggerTimer.Interval is <= 500) ssBtnState.Text = "High";
             if (_MonitorTriggerTimer.Interval is > 500 and <= 2000) ssBtnState.Text = "Normal";
             if (_MonitorTriggerTimer.Interval is > 2000) ssBtnState.Text = "Low";
-            ssBtnState.Image = Resources.State_Play;
+            ssBtnState.Image = Resources.Resources.State_Play;
         } else {
             ssBtnState.Text = "Paused";
-            ssBtnState.Image = Resources.State_Stop;
+            ssBtnState.Image = Resources.Resources.State_Stop;
         }
     }
 

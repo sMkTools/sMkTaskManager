@@ -8,7 +8,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace sMkTaskManager;
+namespace sMkTaskManager.Resources {
+    using System;
+    
     
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
@@ -75,6 +77,66 @@ namespace sMkTaskManager;
             get {
                 object obj = ResourceManager.GetObject("AnimIcon_Red", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon frmMain {
+            get {
+                object obj = ResourceManager.GetObject("frmMain", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon frmPreferences {
+            get {
+                object obj = ResourceManager.GetObject("frmPreferences", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon frmProcess_Affinity {
+            get {
+                object obj = ResourceManager.GetObject("frmProcess_Affinity", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon frmProcess_Details {
+            get {
+                object obj = ResourceManager.GetObject("frmProcess_Details", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon frmProcess_Files {
+            get {
+                object obj = ResourceManager.GetObject("frmProcess_Files", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon frmService_Details {
+            get {
+                object obj = ResourceManager.GetObject("frmService_Details", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -178,3 +240,4 @@ namespace sMkTaskManager;
             }
         }
     }
+}

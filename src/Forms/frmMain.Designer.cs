@@ -299,6 +299,7 @@
             MainMenuStrip = mnu;
             Margin = new Padding(6);
             MinimumSize = new Size(480, 400);
+            Icon = Resources.Resources.frmMain;
             Name = "frmMain";
             Text = "sMk Task Manager - Next Gen";
             FormClosing += OnClosingEventHandler;

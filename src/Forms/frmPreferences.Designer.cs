@@ -801,6 +801,7 @@ partial class frmPreferences {
         HelpButton = true;
         MaximizeBox = false;
         MinimizeBox = false;
+        Icon = Resources.Resources.frmPreferences;
         Name = "frmPreferences";
         ShowInTaskbar = false;
         SizeGripStyle = SizeGripStyle.Hide;

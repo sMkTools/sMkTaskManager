@@ -96,6 +96,7 @@ partial class frmProcess_Affinity {
         Controls.Add(chkAll);
         Controls.Add(btnCancel);
         Controls.Add(btnOk);
+        Icon = Resources.Resources.frmProcess_Affinity;
         FormBorderStyle = FormBorderStyle.FixedToolWindow;
         Name = "frmProcess_Affinity";
         ShowInTaskbar = false;

@@ -19,8 +19,8 @@ public partial class frmAbout : Form {
 
     private void frmAbout_Load(object sender, EventArgs e) {
         ilAnimation.Images.Clear();
-        ilAnimation.Images.Add(Resources.AnimIcon_Cyan);
-        ilAnimation.Images.Add(Resources.AnimIcon_Red);
+        ilAnimation.Images.Add(Resources.Resources.AnimIcon_Cyan);
+        ilAnimation.Images.Add(Resources.Resources.AnimIcon_Red);
         Version AssemblyVersion = Assembly.GetExecutingAssembly().GetName().Version!;
         var buildTime = long.Parse(Assembly.GetExecutingAssembly().GetCustomAttribute<BuildMarkAttribute>()?.BuildMark!);
         lblVersion.Text = "v" + AssemblyVersion?.Major + "." + AssemblyVersion?.Minor + "." + AssemblyVersion?.Build;

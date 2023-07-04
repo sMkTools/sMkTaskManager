@@ -31,8 +31,8 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         InitializeContextMenu();
         Extensions.CascadingDoubleBuffer(this);
         il!.Images.Clear();
-        il!.Images.Add(Resources.Process_Empty);
-        il!.Images.Add(Resources.Process_Info);
+        il!.Images.Add(Resources.Resources.Process_Empty);
+        il!.Images.Add(Resources.Resources.Process_Info);
         lv!.ContentType = typeof(TaskManagerProcess);
         lv!.DataSource = Processes.DataExporter;
         lv!.SpaceFirstValue = Settings.IconsInProcess;
