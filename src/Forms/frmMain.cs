@@ -102,17 +102,13 @@ public partial class frmMain : Form {
             default: mnuView_SpeedNormal.PerformClick(); break;
         }
 
-
-        // Load Column definitions for all the listviews
-        Settings.LoadColsInformation(TaskManagerColumnTypes.Process, tabProcs.lv, ref Tables.ColsProcesses);
-        tabProcs.btnAllUsers.Checked = Settings.ShowAllProcess;
+        tabProcs?.LoadSettings();
 
     }
     private void OnLoadAddHandlers() {
         Tables.System.MetricValueChanged += evPerf_MetricValueChanged;
         Tables.System.RefreshCompleted += evPerf_RefreshCompleted;
         tabPerf.MouseDoubleClick += evPerf_MouseDoubleClick;
-        tabProcs.ForceRefreshClicked += evProc_ForceRefresh;
         ssBtnState.DropDownOpening += evStatusBarStateOpening;
         ssBtnState.DropDownClosed += evStatusBarStateClosed;
         ssBtnState.ButtonDoubleClick += evStatusBarStateDoubleClick;
@@ -120,14 +116,6 @@ public partial class frmMain : Form {
     private void OnLoadSetFixedValues() {
         // TODO: We should get rid of this function and move these somewherre else.
         // Processes ListView Settings
-        tabProcs.lv.ContentType = typeof(TaskManagerProcess);
-        tabProcs.lv.DataSource = Tables.Processes.DataExporter;
-        tabProcs.lv.SpaceFirstValue = Settings.IconsInProcess;
-        //proc_ImageList.Images.Clear();
-        //proc_ImageList.Images.Add(Properties.Process_xEmpty);
-        //proc_ImageList.Images.Add(Properties.Process_xInfo);
-
-
     }
     private void OnStatusTimerEventHandler(object sender, EventArgs e) {
         SetStatusText();
@@ -270,14 +258,6 @@ public partial class frmMain : Form {
         ETW.Flush();
     }
 
-    private void evProc_ForceRefresh(object? sender, EventArgs e) {
-        tabProcs.lv.SuspendLayout();
-        Tables.Processes.Clear();
-        tabProcs.lv.Items.Clear();
-        Refresh_Processes(true);
-        tabProcs.lv.ResumeLayout();
-    }
-
     private void Refresh_Applications(bool firstTime = false) {
         TimmingStart();
         Thread.Sleep(Extensions.RandomGenerator.Next(20, 50));
@@ -288,81 +268,6 @@ public partial class frmMain : Form {
         TimmingStart();
         // Call the Refresher, and cancel events cascading if we are not visible. 
         Tables.System.Refresh();
-        TimmingStop();
-    }
-    private void Refresh_Processes(bool firstTime = false) {
-        if (InvokeRequired) { BeginInvoke(() => Refresh_Processes(firstTime)); return; }
-        TimmingStart();
-
-        // Check if we are the active tab or its firstTime
-        if (tc.SelectedTab != tpProcesses && !firstTime) return;
-        if (tabProcs.lv.Items.Count == 0) firstTime = true;
-        // Store last round items and initialize new ones
-        HashSet<int> LastRun = new();
-        LastRun.UnionWith(Tables.HashProcesses);
-        Tables.HashProcesses.Clear();
-
-
-        // Allocate Main Pointer and offset
-        long lastOffset = 0;
-        IntPtr hmain = IntPtr.Zero;
-        if (TaskManagerProcess.GetProcessesPointer(ref hmain)) {
-            API.SYSTEM_PROCESS_INFORMATION spi;
-            spi = (API.SYSTEM_PROCESS_INFORMATION)Marshal.PtrToStructure(hmain, typeof(API.SYSTEM_PROCESS_INFORMATION))!;
-            Array.Resize(ref spi.Threads, (int)spi.NumberOfThreads);
-            lastOffset = hmain;
-            while (spi.NextEntryOffset >= 0) {
-                if (tabProcs.AllUsers || spi.SessionId == Shared.CurrentSessionID || spi.UniqueProcessId == 0) {
-                    TaskManagerProcess? thisProcess;
-                    Tables.HashProcesses.Add(spi.UniqueProcessId.ToInt32());
-                    if (Tables.Processes.Contains(spi.UniqueProcessId)) {
-                        thisProcess = Tables.Processes.GetProcess(spi.UniqueProcessId)!;
-                        if (thisProcess.BackColor == Settings.Highlights.NewColor) thisProcess.BackColor = Color.Empty;
-                        try {
-                            thisProcess.Update(spi, Tables.ColsProcesses);
-                        } catch (Exception ex) { Shared.DebugTrap(ex, 021); }
-                    } else {
-                        thisProcess = new TaskManagerProcess(spi.UniqueProcessId);
-                        try {
-                            thisProcess.Load(spi, Tables.ColsProcesses);
-                        } catch (Exception ex) { Shared.DebugTrap(ex, 022); }
-                        if (Settings.Highlights.NewItems && !firstTime) thisProcess.BackColor = Settings.Highlights.NewColor;
-                        thisProcess.ImageIndex = (spi.UniqueProcessId == 0) ? 0 : 1;
-                        //if (spi.UniqueProcessId.ToInt32() > Shared.bpi && tabProcs.lv.SmallImageList != null && GetProcessIcon(thisProcess.ID, thisProcess.Name, thisProcess.ImagePath)) {
-                        //    thisProcess.ImageKey = thisProcess.ID + "-" + thisProcess.Name;
-                        //    thisProcess.ImageIndex = -1;
-                        //}
-                        Tables.Processes.Add(thisProcess);
-                    }
-                }
-                if (spi.NextEntryOffset > 0) {
-                    lastOffset += spi.NextEntryOffset;
-                    spi = (API.SYSTEM_PROCESS_INFORMATION)Marshal.PtrToStructure((IntPtr)lastOffset, typeof(API.SYSTEM_PROCESS_INFORMATION))!;
-                    Array.Resize(ref spi.Threads, (int)spi.NumberOfThreads);
-                } else {
-                    break;
-                }
-            }
-            Marshal.FreeHGlobal(hmain);
-        }
-        // Clean old Items
-        LastRun.ExceptWith(Tables.HashProcesses);
-        foreach (var pid in LastRun) {
-            TaskManagerProcess? thisProcess = Tables.Processes.GetProcess(pid);
-            if (thisProcess == null) continue;
-            if (thisProcess.BackColor == Settings.Highlights.RemovedColor || Settings.Highlights.RemovedItems == false) {
-                tabProcs.lv.RemoveItemByKey(thisProcess.ID);
-                Tables.Processes.Remove(thisProcess);
-            } else {
-                thisProcess.BackColor = Settings.Highlights.RemovedColor;
-                Tables.HashProcesses.Add(thisProcess.PID);
-            }
-            thisProcess = null;
-
-        }
-        // Set LV First Column Width, only if firstTime
-        if (firstTime) tabProcs.lv.Columns[0].Width = -1;
-
         TimmingStop();
     }
     private void Refresh_Services(bool firstTime = false) {
@@ -514,7 +419,7 @@ public partial class frmMain : Form {
         MonitorBusy = true;
         Refresh_Applications(firstTime);
         Refresh_Performance(firstTime);
-        Refresh_Processes(firstTime);
+        tabProcs?.Refresher(firstTime);
         Refresh_Services(firstTime);
         Refresh_Connections(firstTime);
         Refresh_Ports(firstTime);
@@ -533,7 +438,7 @@ public partial class frmMain : Form {
         _MonitorTasks.Clear();
         _MonitorTasks.Add(Task.Run(() => Refresh_Applications(firstTime)));
         _MonitorTasks.Add(Task.Run(() => Refresh_Performance(firstTime)));
-        _MonitorTasks.Add(Task.Run(() => Refresh_Processes(firstTime)));
+        _MonitorTasks.Add(Task.Run(() => tabProcs?.Refresher(firstTime)));
         _MonitorTasks.Add(Task.Run(() => Refresh_Services(firstTime)));
         _MonitorTasks.Add(Task.Run(() => Refresh_Connections(firstTime)));
         _MonitorTasks.Add(Task.Run(() => Refresh_Ports(firstTime)));
@@ -614,7 +519,6 @@ public partial class frmMain : Form {
             itm.Text = itm.AccessibleName + string.Format("{0:N0}", t.Value.ElapsedMilliseconds) + "ms.";
             itm.ToolTipText = $"Average: {string.Format("{0:N2}", itm.Tag)}ms ";
         };
-
     }
 
     public void SetStatusText(string value = "", ToolStripLabel? obj = null) {

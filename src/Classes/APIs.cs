@@ -630,6 +630,17 @@ internal unsafe static partial class API {
         QueryInformation = 0x400,
         Synchronize = 0x100000
     }
+    [Flags()] public enum ExitWindows : uint {
+        LogOff = 0x0,
+        ShutDown = 0x1,
+        Reboot = 0x2,
+        PowerOff = 0x8,
+        RestartApps = 0x40,
+        // plus AT MOST ONE of the following two:
+        Force = 0x4,
+        ForceIfHung = 0x10
+    }
+
     #endregion
 
     #region "API Structs..."
@@ -768,6 +779,23 @@ internal unsafe static partial class API {
     [StructLayout(LayoutKind.Sequential)] public struct SID_AND_ATTRIBUTES {
         public IntPtr SID;
         public int Attributes;
+    }
+    [StructLayout(LayoutKind.Sequential)] public struct SHELLEXECUTEINFO {
+        public int cbSize;
+        public int fMask;
+        public IntPtr hwnd;
+        [MarshalAs(UnmanagedType.LPTStr)] public string lpVerb;
+        [MarshalAs(UnmanagedType.LPTStr)] public string lpFile;
+        [MarshalAs(UnmanagedType.LPTStr)] public string lpParameters;
+        [MarshalAs(UnmanagedType.LPTStr)] public string lpDirectory;
+        public int nShow;
+        public IntPtr hInstApp;
+        public IntPtr lpIDList;
+        [MarshalAs(UnmanagedType.LPTStr)] public string lpClass;
+        public IntPtr hkeyClass;
+        public int dwHotKey;
+        public IntPtr hIcon;
+        public IntPtr hProcess;
     }
 
     [StructLayout(LayoutKind.Sequential)] public struct ThreadEntry32 {
@@ -956,5 +984,20 @@ internal unsafe static partial class API {
     internal static extern unsafe bool Module32First(IntPtr hSnapshot, ref ModuleEntry32 lpme);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     internal static extern unsafe bool Module32Next(IntPtr hSnapshot, ref ModuleEntry32 lpme);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    internal static extern unsafe int ExtractIconEx(string lpszFile, int nIconIndex, [Out] IntPtr[]? phIconLarge, [Out] IntPtr[]? phIconSmall, int nIcons);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    internal static extern unsafe bool DestroyIcon(IntPtr handle);
+
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe long ShellExecute(IntPtr hwnd, string lpOperation, string lpFile, string lpParameters, string lpDirectory, long nShowCmd);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe bool ShellExecuteEx(ref SHELLEXECUTEINFO lpExecInfo);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    public static extern unsafe bool ExitWindowsEx(ExitWindows uFlags, int dwReason);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    public static extern unsafe bool LockWorkStation();
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true, EntryPoint = "#61")]
+    public static extern unsafe bool RunFileDlg(IntPtr owner, IntPtr hIcon, string lpszDirectory, string lpszTitle, string lpszDescription, long uFlags);
 
 }

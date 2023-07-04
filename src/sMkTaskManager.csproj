@@ -38,13 +38,12 @@
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
     <StartupObject>sMkTaskManager.Program</StartupObject>
     <NoWarn>CS8618</NoWarn>
+    <BuildMark>$([System.DateTime]::UtcNow.Ticks)</BuildMark>
   </PropertyGroup>
 
-  <!--
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="echo $([System.DateTime]::UtcNow.ToString())" />
+    <Exec Command="echo BuildMark Ticks: $(BuildMark)" />
   </Target>
-  -->
 
   <ItemGroup>
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="7.0.1" />

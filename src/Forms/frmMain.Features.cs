@@ -57,7 +57,7 @@ partial class frmMain {
             frmcols.LoadCheckedColumns(tabProcs.lv.Columns);
             if (frmcols.ShowDialog(this) == DialogResult.OK) {
                 tabProcs.lv.SetColumns(frmcols.ColItems);
-                Tables.ColsProcesses = tabProcs.lv.Columns.Cast<ColumnHeader>().Select(x => x.Name).ToHashSet()!;
+                tabProcs.ColsProcesses = tabProcs.lv.Columns.Cast<ColumnHeader>().Select(x => x.Name).ToHashSet()!;
                 tabProcs.btnForceRefresh.PerformClick();
             }
         } else if (Type == TaskManagerColumnTypes.Services) {

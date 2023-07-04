@@ -202,12 +202,15 @@
             // 
             // tabProcs
             // 
+            tabProcs.Active = true;
+            tabProcs.Description = "Processes";
             tabProcs.Dock = DockStyle.Fill;
             tabProcs.InfoText = "";
             tabProcs.Location = new Point(0, 0);
             tabProcs.Name = "tabProcs";
             tabProcs.Size = new Size(569, 480);
             tabProcs.TabIndex = 0;
+            tabProcs.Title = "Processes";
             // 
             // tpServices
             // 
@@ -293,9 +296,9 @@
             Controls.Add(tc);
             Controls.Add(ss);
             Controls.Add(mnu);
+            KeyPreview = true;
             MainMenuStrip = mnu;
             Margin = new Padding(6);
-            KeyPreview = true;
             MinimumSize = new Size(480, 400);
             Name = "frmMain";
             Text = "sMk Task Manager - Next Gen";

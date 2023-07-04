@@ -32,6 +32,7 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
     public int ImageIndex { get; set; } = -1;
     public string ImageKey { get; set; } = "";
     public bool IgnoreBackColor { get; set; } = false;
+    public Icon? Icon { get; private set; } = null;
 
     private bool _Suspended;
     public bool Suspended { get => _Suspended; set { SetField(ref _Suspended, value); BackColor = value ? Settings.Highlights.FrozenColor : Color.Empty; } }
@@ -403,6 +404,18 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
         API.CloseHandle(hSnapShot);
         Suspended = imSuspended(Process.GetProcessById(_PID).Threads);
     }
+    public Icon? GetIcon() {
+        if (Icon != null) return Icon;
+        ImagePath ??= Process.GetProcessById(_PID)!.MainModule!.FileName;
+        if (File.Exists(ImagePath)) {
+            IntPtr[] IconPtr = new IntPtr[1];
+            if (API.ExtractIconEx(ImagePath, 0, null, IconPtr, 1) > 0) {
+                Icon = (Icon?)Icon.FromHandle(IconPtr[0]).Clone();
+                API.DestroyIcon(IconPtr[0]);
+            }
+        }
+        return Icon;
+    }
 
     /* Private Methods */
     private void OnPropertyChanged(PropertyChangedEventArgs e) { PropertyChanged?.Invoke(this, e); }
@@ -469,12 +482,12 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
         return true;
     }
     private ulong CalculateRateValue(in ulong DeltaValue) {
-            if (DeltaValue == 0) return 0;
-            if ((LastUpdated - PreviousUpdate) <= 0) return DeltaValue;
-            return DeltaValue / (ulong)(LastUpdated - PreviousUpdate) / TimeSpan.TicksPerSecond;
+        if (DeltaValue == 0) return 0;
+        if ((LastUpdated - PreviousUpdate) <= 0) return DeltaValue;
+        return DeltaValue / (ulong)(LastUpdated - PreviousUpdate) / TimeSpan.TicksPerSecond;
     }
     /* Internal Static Methods */
-    internal static void GetSpecificSPI(int PID, out API.SYSTEM_PROCESS_INFORMATION spi) {
+    public static void GetSpecificSPI(int PID, out API.SYSTEM_PROCESS_INFORMATION spi) {
         spi = new();
         IntPtr hmain = IntPtr.Zero;
         if (GetProcessesPointer(ref hmain)) {
@@ -495,7 +508,7 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
             Marshal.FreeHGlobal(hmain);
         }
     }
-    internal static bool GetProcessesPointer(ref IntPtr Handle) {
+    public static bool GetProcessesPointer(ref IntPtr Handle) {
         int hMainInfoSize = 1000000;
         Handle = Marshal.AllocHGlobal(hMainInfoSize);
         API.NTSTATUS NTstatus = API.NtQuerySystemInformation(API.SYSTEM_INFORMATION_CLASS.SystemExtendedProcessInformation, Handle, hMainInfoSize, out int nLength);
@@ -507,7 +520,7 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
         }
         return (NTstatus == 0);
     }
-    internal static string GetAffinitiesString(IntPtr bitMask) {
+    public static string GetAffinitiesString(IntPtr bitMask) {
         // Example: 111001 return 1,2,3,6 - the position of the numbers 1
         StringBuilder m_StringBuilder = new();
         string binMask = Convert.ToString(bitMask.ToInt32(), 2);

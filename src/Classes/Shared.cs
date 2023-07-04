@@ -2,13 +2,13 @@
 using System.Runtime.Versioning;
 using System.Runtime.CompilerServices;
 using System.Globalization;
-using System.Runtime.InteropServices;
 
 namespace sMkTaskManager;
 
 [SupportedOSPlatform("windows")]
 internal static class Shared {
     private static string _SystemAccount = "";
+    private static frmMain _OwnerForm;
 
     internal static int bpi = 20; // Base PID Ignore
     internal static List<string> skipProcess = new List<string>(new[] { "audiodg" });
@@ -22,9 +22,7 @@ internal static class Shared {
     public static bool IsNumeric(this object value) => double.TryParse(Convert.ToString(value), out _);
     public static bool IsInteger(string value) => value.All(char.IsNumber);
     public static bool IsInteger(this object value) => Convert.ToString(value)!.All(char.IsNumber);
-    public static bool IsBetween<T>(this T value, T min, T max) where T : IComparable<T> {
-        return (min.CompareTo(value) <= 0) && (value.CompareTo(max) <= 0);
-    }
+    public static bool IsBetween<T>(this T value, T min, T max) where T : IComparable<T> => (min.CompareTo(value) <= 0) && (value.CompareTo(max) <= 0);
 
     public static string ToTitleCase(string text) => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(text.ToLower());
     public static string TimeSpanToElapsed(TimeSpan lpTimeSpan) {
@@ -66,8 +64,15 @@ internal static class Shared {
         return _SystemAccount!;
     }
 
+    internal static void SetStatusText(string value = "", ToolStripLabel? obj = null) {
+        if (_OwnerForm == null) {
+            foreach (Form f in Application.OpenForms) {
+                if (f.Name == "frmMain") { _OwnerForm = (frmMain)f; break; }
+            }
+        }
+        _OwnerForm?.SetStatusText(value, obj);
+    }
 }
-
 internal class CpuUsage {
     private Classes.API.FILETIME _idleTime, _kernTime, _userTime;
     private long _oldCpuUsage = 0, _oldKernUsage = 0, _oldUserUsage = 0;

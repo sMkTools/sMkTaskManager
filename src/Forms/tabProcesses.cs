@@ -3,12 +3,22 @@ using System.ComponentModel;
 using System.Runtime.Versioning;
 using sMkTaskManager.Classes;
 using sMkTaskManager.Controls;
+using System.Runtime.InteropServices;
+
 namespace sMkTaskManager.Forms;
 
 [DesignerCategory("Component"), SupportedOSPlatform("windows")]
-public class tabProcesses : UserControl {
+internal class tabProcesses : UserControl, ITaskManagerTab {
 
+    private readonly Stopwatch _stopWatch = new();
+    internal HashSet<string> ColsProcesses = new();
+    internal HashSet<int> HashProcesses = new();
+    internal TaskManagerProcessCollection Processes = new();
+
+    public event EventHandler? RefreshStarts;
+    public event EventHandler? RefreshComplete;
     public event EventHandler? ForceRefreshClicked;
+
     private IContainer? components = null;
     protected override void Dispose(bool disposing) {
         if (disposing && (components != null)) { components.Dispose(); }
@@ -19,6 +29,12 @@ public class tabProcesses : UserControl {
         InitializeComponent();
         InitializeContextMenu();
         Extensions.CascadingDoubleBuffer(this);
+        il!.Images.Clear();
+        il!.Images.Add(Properties.Resources.Process_Empty);
+        il!.Images.Add(Properties.Resources.Process_Info);
+        lv!.ContentType = typeof(TaskManagerProcess);
+        lv!.DataSource = Processes.DataExporter;
+        lv!.SpaceFirstValue = Settings.IconsInProcess;
     }
     private void InitializeComponent() {
         components = new Container();
@@ -26,6 +42,7 @@ public class tabProcesses : UserControl {
         lvc_PID = new ColumnHeader();
         lvc_Name = new ColumnHeader();
         cms = new ContextMenuStrip(components);
+        il = new ImageList(components);
         btnDetails = new Button();
         btnProperties = new Button();
         btnKill = new Button();
@@ -48,6 +65,7 @@ public class tabProcesses : UserControl {
         lv.Name = "lv";
         lv.ShowGroups = false;
         lv.Size = new Size(588, 559);
+        lv.SmallImageList = il;
         lv.Sortable = true;
         lv.SortColumn = 0;
         lv.Sorting = SortOrder.Ascending;
@@ -75,6 +93,12 @@ public class tabProcesses : UserControl {
         // 
         cms.Name = "cms";
         cms.Size = new Size(61, 4);
+        // 
+        // il
+        // 
+        il.ColorDepth = ColorDepth.Depth32Bit;
+        il.ImageSize = new Size(16, 16);
+        il.TransparentColor = Color.Transparent;
         // 
         // btnDetails
         // 
@@ -161,8 +185,10 @@ public class tabProcesses : UserControl {
         Controls.Add(lv);
         Name = "tabProcesses";
         Size = new Size(600, 600);
+        KeyPress += OnKeyPress;
         ResumeLayout(false);
     }
+
     private void InitializeContextMenu() {
         cms.Items.Clear();
         cms.Items.AddMenuItem("&More Details").Name = "Details";
@@ -193,17 +219,22 @@ public class tabProcesses : UserControl {
         cms.ItemClicked += OnContextItemClicked;
     }
 
-    internal Button btnDetails;
-    internal Button btnProperties;
-    internal Button btnKill;
+    private Button btnDetails;
+    private Button btnProperties;
+    private Button btnKill;
     internal Button btnForceRefresh;
-    internal Label lblText;
-    internal ColumnHeader lvc_PID;
-    internal ColumnHeader lvc_Name;
-    internal ContextMenuStrip cms;
+    private Label lblText;
+    private ColumnHeader lvc_PID;
+    private ColumnHeader lvc_Name;
+    private ContextMenuStrip cms;
+    private ImageList il;
     internal CheckBox btnAllUsers;
     internal sMkListView lv;
 
+    private void OnKeyPress(object? sender, KeyPressEventArgs e) {
+        lv.Focus();
+        OnListViewKeyPress(lv, e);
+    }
     private void OnContextOpening(object? sender, CancelEventArgs e) {
         e.Cancel = lv.SelectedItems.Count == 0;
 
@@ -270,34 +301,37 @@ public class tabProcesses : UserControl {
         if (e.ClickedItem == null) return;
         if (!e.ClickedItem.Enabled) return;
         switch (e.ClickedItem.Name) {
-            case "Details": Feature_OpenDetails(); break;
-            case "Properties": Feature_OpenFileProperties(); break;
-            case "Location": Feature_OpenFileLocation(); break;
-            case "Kill": Feature_ProcessKill(); break;
-            case "Pause": Feature_ProcessPause(); break;
-            case "Resume": Feature_ProcessResume(); break;
-            case "Debug": Feature_ProcessDebug(); break;
-            case "Dump": Feature_ProcessDump(); break;
-            case "Affinity": Feature_ProcessAffinity(); break;
+            case "Details": BeginInvoke(Feature_OpenDetails); break;
+            case "Properties": BeginInvoke(Feature_OpenFileProperties); break;
+            case "Location": BeginInvoke(Feature_OpenFileLocation); break;
+            case "Kill": BeginInvoke(Feature_ProcessKill); break;
+            case "Pause": BeginInvoke(Feature_ProcessPause); break;
+            case "Resume": BeginInvoke(Feature_ProcessResume); break;
+            case "Debug": BeginInvoke(Feature_ProcessDebug); break;
+            case "Dump": BeginInvoke(Feature_ProcessDump); break;
+            case "Affinity": BeginInvoke(Feature_ProcessAffinity); break;
             case "Priority1": Feature_ProcessSetPriority(ProcessPriorityClass.RealTime); break;
             case "Priority2": Feature_ProcessSetPriority(ProcessPriorityClass.High); break;
             case "Priority3": Feature_ProcessSetPriority(ProcessPriorityClass.AboveNormal); break;
             case "Priority4": Feature_ProcessSetPriority(ProcessPriorityClass.Normal); break;
             case "Priority5": Feature_ProcessSetPriority(ProcessPriorityClass.BelowNormal); break;
             case "Priority6": Feature_ProcessSetPriority(ProcessPriorityClass.Idle); break;
-            case "Online": Feature_OpenOnline(); break;
-            case "Windows": Feature_RevealWindows(); break;
-            case "Files": Feature_OpenLockedFiles(); break;
+            case "Online": BeginInvoke(Feature_OpenOnline); break;
+            case "Windows": BeginInvoke(Feature_RevealWindows); break;
+            case "Files": BeginInvoke(Feature_OpenLockedFiles); break;
             default: break;
         }
     }
     private void OnButtonClicked(object? sender, EventArgs e) {
         if (sender == null) return;
-        if (sender == btnDetails) { Feature_OpenDetails(); }
-        if (sender == btnProperties) { Feature_OpenFileProperties(); }
-        if (sender == btnKill) { Feature_ProcessKill(); }
-        if (sender == btnForceRefresh) { Feature_ForceRefresh(); }
-        if (sender == btnAllUsers) { Settings.ShowAllProcess = btnAllUsers.Checked; }
+        switch (sender) {
+            case nameof(btnDetails): { Feature_OpenDetails(); break; }
+            case nameof(btnProperties): { Feature_OpenFileProperties(); break; }
+            case nameof(btnKill): { Feature_ProcessKill(); break; }
+            case nameof(btnForceRefresh): { Feature_ForceRefresh(); break; }
+            case nameof(btnAllUsers): { Settings.ShowAllProcess = btnAllUsers.Checked; break; }
+
+        }
     }
     private void OnListViewKeyDown(object? sender, KeyEventArgs e) {
         if (e.Control && e.KeyCode == Keys.A) {
@@ -340,6 +374,12 @@ public class tabProcesses : UserControl {
     }
 
     public void Feature_ForceRefresh() {
+        lv.SuspendLayout();
+        Processes.Clear();
+        lv.Items.Clear();
+        Refresher(true);
+        lv.ResumeLayout();
+
         ForceRefreshClicked?.Invoke(this, EventArgs.Empty);
         OnListViewSelectedIndexChanged(lv, new EventArgs());
     }
@@ -349,20 +389,111 @@ public class tabProcesses : UserControl {
             Shared.OpenProcessForm(int.Parse(lv.SelectedItems[0].Name));
         }
     }
-    public void Feature_OpenFileProperties() { Shared.NotImplemented(); }
-    public void Feature_OpenFileLocation() { Shared.NotImplemented(); }
-    public void Feature_OpenLockedFiles() { Shared.NotImplemented(); }
+    public void Feature_OpenFileProperties() {
+        if (lv.SelectedItems.Count < 1) return;
+        if (string.IsNullOrEmpty(lv.SelectedItems[0].Name)) return;
+        if (int.Parse(lv.SelectedItems[0].Name) < Shared.bpi) return;
+        try {
+            string file = Process.GetProcessById(int.Parse(lv.SelectedItems[0].Name)).Modules[0].FileName;
+            if (File.Exists(file)) {
+                API.SHELLEXECUTEINFO sei = new();
+                sei.cbSize = Marshal.SizeOf(sei);
+                sei.lpVerb = "properties";
+                sei.lpFile = file;
+                sei.nShow = 5;
+                sei.fMask = 12;
+                API.ShellExecuteEx(ref sei);
+            }
+        } catch (Exception ex) { Shared.DebugTrap(ex, 009); }
+
+
+    }
+    public void Feature_OpenFileLocation() {
+        if (lv.SelectedItems.Count < 1) return;
+        if (string.IsNullOrEmpty(lv.SelectedItems[0].Name)) return;
+        if (int.Parse(lv.SelectedItems[0].Name) < Shared.bpi) return;
+        try {
+            string file = Process.GetProcessById(int.Parse(lv.SelectedItems[0].Name)).Modules[0].FileName;
+            if (File.Exists(file)) API.ShellExecute(Handle, "open", Path.GetDirectoryName(file)!, "", "", 1);
+        } catch (Exception ex) { Shared.DebugTrap(ex, 010); }
+
+    }
+    public void Feature_OpenLockedFiles() {
+        if (lv.SelectedItems.Count < 1) return;
+        if (string.IsNullOrEmpty(lv.SelectedItems[0].Name)) return;
+        if (int.Parse(lv.SelectedItems[0].Name) < Shared.bpi) return;
+
+        using frmProcess_Files pf = new();
+        pf.PID = int.Parse(lv.SelectedItems[0].Name);
+        pf.StartPosition = FormStartPosition.CenterParent;
+        pf.ShowDialog(this);
+    }
     public void Feature_RevealWindows() { Shared.NotImplemented(); }
-    public void Feature_OpenOnline() { Shared.NotImplemented(); }
-    public void Feature_ProcessKill() { Shared.NotImplemented(); }
-    public void Feature_ProcessPause() { Shared.NotImplemented(); }
-    public void Feature_ProcessResume() { Shared.NotImplemented(); }
+    public void Feature_OpenOnline() {
+        if (lv.SelectedItems.Count < 1) return;
+        try {
+            string QueryAddress = "http://www.google.com/search?q=" + Processes.GetProcess(int.Parse(lv.SelectedItems[0].Name))?.Name;
+            Process.Start(QueryAddress);
+        } catch { }
+    }
+    public void Feature_ProcessKill() {
+        if (lv.SelectedItems.Count < 1) return;
+        if (lv.SelectedItems.Count > 1) {
+            if (!(MessageBox.Show("Are you sure you want to kill all selected processes?", ProductName, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning) == DialogResult.Yes)) {
+                return;
+            }
+        }
+        foreach (ListViewItem itm in lv.SelectedItems) {
+            try {
+                if (int.Parse(itm.Name) < Shared.bpi) continue;
+                Processes.GetProcess(int.Parse(itm.Name))?.Kill();
+                Shared.SetStatusText("Process " + itm.Name + " Terminated...");
+            } catch { }
+        }
+        if (lv.SelectedItems.Count > 1) Shared.SetStatusText("Selected Processes Terminated...");
+        Refresher();
+    }
+    public void Feature_ProcessPause() {
+        if (lv.SelectedItems.Count < 1) return;
+        if (lv.SelectedItems.Count > 1) {
+            if (!(MessageBox.Show("Are you sure you want to freeze multiple selected processes?", ProductName, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) == DialogResult.Yes)) {
+                return;
+            }
+        }
+        foreach (ListViewItem itm in lv.SelectedItems) {
+            try {
+                if (int.Parse(itm.Name) < Shared.bpi) continue;
+                Processes.GetProcess(int.Parse(itm.Name))?.Pause();
+                Shared.SetStatusText("Process " + itm.Name + " Paused...");
+            } catch { }
+        }
+        if (lv.SelectedItems.Count > 1) Shared.SetStatusText("Selected Processes Paused...");
+        Refresher();
+    }
+    public void Feature_ProcessResume() {
+        if (lv.SelectedItems.Count < 1) return;
+        foreach (ListViewItem itm in lv.SelectedItems) {
+            try {
+                if (int.Parse(itm.Name) < Shared.bpi) continue;
+                Processes.GetProcess(int.Parse(itm.Name))?.Pause();
+                Shared.SetStatusText("Process " + itm.Name + " Resumed...");
+            } catch { }
+        }
+        if (lv.SelectedItems.Count > 1) Shared.SetStatusText("Selected Processes Resumed...");
+        Refresher();
+    }
     public void Feature_ProcessDebug() { Shared.NotImplemented(); }
     public void Feature_ProcessDump() { Shared.NotImplemented(); }
     public void Feature_ProcessAffinity() { Shared.NotImplemented(); }
     public void Feature_ProcessSetPriority(ProcessPriorityClass newPriority) { Shared.NotImplemented(); }
     public ProcessPriorityClass Feature_ProcessGetPriority() { return ProcessPriorityClass.Normal; }
 
+    public sMkListView ListView => lv;
+    public string Title { get; set; } = "Processes";
+    public string Description { get; set; } = "Processes";
+    public string TimmingKey { get; } = "Procs";
+    public long TimmingValue => _stopWatch.ElapsedMilliseconds;
+    public bool Active { get; set; } = true;
     public bool AllUsers => btnAllUsers.Checked;
     public void RefreshInfoText() {
         lblText.Text = string.Format("Total: {0}, Selected: {1}", lv.Items.Count, lv.SelectedItems.Count);
@@ -371,4 +502,97 @@ public class tabProcesses : UserControl {
         get { return lblText.Text; }
         set { lblText.Text = value; }
     }
+
+    public void Refresher(bool firstTime = false) {
+        if (InvokeRequired) { BeginInvoke(() => Refresher(firstTime)); return; }
+        _stopWatch.Restart();
+        RefreshStarts?.Invoke(this, EventArgs.Empty);
+
+        // Check if we are the active tab or its firstTime
+        if (!Active && !firstTime) return;
+        if (lv.Items.Count == 0) firstTime = true;
+        // Store last round items and initialize new ones
+        HashSet<int> LastRun = new();
+        LastRun.UnionWith(HashProcesses);
+        HashProcesses.Clear();
+
+        // Allocate Main Pointer and offset
+        long lastOffset = 0;
+        IntPtr hmain = IntPtr.Zero;
+        if (TaskManagerProcess.GetProcessesPointer(ref hmain)) {
+            API.SYSTEM_PROCESS_INFORMATION spi;
+            spi = (API.SYSTEM_PROCESS_INFORMATION)Marshal.PtrToStructure(hmain, typeof(API.SYSTEM_PROCESS_INFORMATION))!;
+            Array.Resize(ref spi.Threads, (int)spi.NumberOfThreads);
+            lastOffset = hmain;
+            while (spi.NextEntryOffset >= 0) {
+                if (AllUsers || spi.SessionId == Shared.CurrentSessionID || spi.UniqueProcessId == 0) {
+                    TaskManagerProcess? thisProcess;
+                    HashProcesses.Add(spi.UniqueProcessId.ToInt32());
+                    if (Processes.Contains(spi.UniqueProcessId)) {
+                        thisProcess = Processes.GetProcess(spi.UniqueProcessId)!;
+                        if (thisProcess.BackColor == Settings.Highlights.NewColor) thisProcess.BackColor = Color.Empty;
+                        try {
+                            thisProcess.Update(spi, ColsProcesses);
+                        } catch (Exception ex) { Shared.DebugTrap(ex, 021); }
+                    } else {
+                        thisProcess = new TaskManagerProcess(spi.UniqueProcessId);
+                        try {
+                            thisProcess.Load(spi, ColsProcesses);
+                        } catch (Exception ex) { Shared.DebugTrap(ex, 022); }
+                        if (Settings.Highlights.NewItems && !firstTime) thisProcess.BackColor = Settings.Highlights.NewColor;
+                        thisProcess.ImageIndex = (spi.UniqueProcessId == 0) ? 0 : 1;
+                        if (spi.UniqueProcessId > Shared.bpi && lv.SmallImageList != null) {
+                            if (!il.Images.ContainsKey(thisProcess.PID + "-" + thisProcess.Name)) {
+                                try {
+                                    if (thisProcess.GetIcon() != null && thisProcess.Icon != null) {
+                                        il.Images.Add(thisProcess.PID + "-" + thisProcess.Name, thisProcess.Icon);
+                                        thisProcess.ImageKey = thisProcess.ID + "-" + thisProcess.Name;
+                                        thisProcess.ImageIndex = -1;
+                                    }
+                                } catch (Exception ex) { Shared.DebugTrap(ex, 0212); }
+                            }
+                        }
+                        Processes.Add(thisProcess);
+                    }
+                }
+                if (spi.NextEntryOffset > 0) {
+                    lastOffset += spi.NextEntryOffset;
+                    spi = (API.SYSTEM_PROCESS_INFORMATION)Marshal.PtrToStructure((IntPtr)lastOffset, typeof(API.SYSTEM_PROCESS_INFORMATION))!;
+                    Array.Resize(ref spi.Threads, (int)spi.NumberOfThreads);
+                } else {
+                    break;
+                }
+            }
+            Marshal.FreeHGlobal(hmain);
+        }
+        // Clean old Items
+        LastRun.ExceptWith(HashProcesses);
+        foreach (var pid in LastRun) {
+            TaskManagerProcess? thisProcess = Processes.GetProcess(pid);
+            if (thisProcess == null) continue;
+            if (thisProcess.BackColor == Settings.Highlights.RemovedColor || Settings.Highlights.RemovedItems == false) {
+                lv.RemoveItemByKey(thisProcess.ID);
+                Processes.Remove(thisProcess);
+            } else {
+                thisProcess.BackColor = Settings.Highlights.RemovedColor;
+                HashProcesses.Add(thisProcess.PID);
+            }
+            thisProcess = null;
+
+        }
+        // Set LV First Column Width, only if firstTime
+        if (firstTime) lv.Columns[0].Width = -1;
+
+        _stopWatch.Stop();
+        RefreshComplete?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void LoadSettings() {
+        Settings.LoadColsInformation(TaskManagerColumnTypes.Process, lv, ref ColsProcesses);
+        btnAllUsers.Checked = Settings.ShowAllProcess;
+    }
+    public bool SaveSettings() {
+        return false;
+    }
+
 }
