@@ -144,7 +144,6 @@
             // 
             ssBtnState.AutoSize = false;
             ssBtnState.DoubleClickEnabled = true;
-            ssBtnState.Image = (Image)resources.GetObject("ssBtnState.Image");
             ssBtnState.ImageTransparentColor = Color.Magenta;
             ssBtnState.Name = "ssBtnState";
             ssBtnState.Size = new Size(80, 22);
