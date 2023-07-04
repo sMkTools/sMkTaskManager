@@ -663,7 +663,7 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         btnAllUsers.Checked = Settings.ShowAllProcess;
     }
     public bool SaveSettings() {
-        return false;
+        return Settings.SaveColsInformation("colsProcess", lv);
     }
 
 }

@@ -5,6 +5,7 @@ namespace sMkTaskManager.Forms;
 
 [DesignerCategory("Component"), SupportedOSPlatform("windows")]
 public partial class frmProcess_Files : Form {
+    private Process? p = null;
 
     public frmProcess_Files() {
         InitializeComponent();

@@ -55,7 +55,6 @@ public partial class frmMain : Form {
         Shared.PrivateMsgID = API.RegisterWindowMessage(Application.ExecutablePath.Replace("\\", "_"));
         // Load Settings and then Fork
         Settings.LoadAll();
-        OnLoadSetFixedValues();
         OnLoadLoadSettings();
         OnLoadAddHandlers();
         Settings_Apply();
@@ -101,9 +100,7 @@ public partial class frmMain : Form {
             case > 2000: mnuView_SpeedLow.PerformClick(); break;
             default: mnuView_SpeedNormal.PerformClick(); break;
         }
-
         tabProcs?.LoadSettings();
-
     }
     private void OnLoadAddHandlers() {
         Tables.System.MetricValueChanged += evPerf_MetricValueChanged;
@@ -112,10 +109,6 @@ public partial class frmMain : Form {
         ssBtnState.DropDownOpening += evStatusBarStateOpening;
         ssBtnState.DropDownClosed += evStatusBarStateClosed;
         ssBtnState.ButtonDoubleClick += evStatusBarStateDoubleClick;
-    }
-    private void OnLoadSetFixedValues() {
-        // TODO: We should get rid of this function and move these somewherre else.
-        // Processes ListView Settings
     }
     private void OnStatusTimerEventHandler(object sender, EventArgs e) {
         SetStatusText();
@@ -152,11 +145,8 @@ public partial class frmMain : Form {
         }
     }
     private void OnClosingEventHandler(object sender, FormClosingEventArgs e) {
-
         if (e.CloseReason == CloseReason.UserClosing && !_RealExit) {
-            Debug.WriteLine("1");
             if (mnuOptions_MinimizeClose.Checked & !_RealExit) {
-                Debug.WriteLine("2");
                 WindowState = FormWindowState.Minimized;
                 e.Cancel = true;
             }
@@ -165,7 +155,6 @@ public partial class frmMain : Form {
                 e.Cancel = true;
             }
         }
-
         if (!e.Cancel) {
             Extensions.StartMeasure(_StopWatch2);
             // If monitor is running we must stop it right now...
@@ -176,13 +165,14 @@ public partial class frmMain : Form {
                 if (WindowState == FormWindowState.Normal) {
                     Settings.MainWindow.Size = Size;
                     Settings.MainWindow.Location = Location;
+                    Settings.MainWindow.Maximized = WindowState == FormWindowState.Maximized;
                 }
-                Settings.MainWindow.Maximized = WindowState == FormWindowState.Maximized;
                 Settings.SaveMainWindow();
             }
             Settings.ActiveTab = tc.SelectedIndex;
             // Save Settings and Columns Information...
             Settings.SaveAll();
+            tabProcs.SaveSettings();
             // Settings.SaveColsInformation("colsProcess", proc_ListView);
             // Settings.SaveColsInformation("colsServices", serv_ListView);
             // Settings.SaveColsInformation("colsConnections", conn_ListView);
@@ -316,9 +306,7 @@ public partial class frmMain : Form {
                     _prevMinSize = MinimumSize;
                     _prevSize = Size;
                 }
-                FormBorderStyle = FormBorderStyle.SizableToolWindow;
                 MinimumSize = new(100, 300);
-                ControlBox = false;
                 TopMost = true;
                 if (WindowState == FormWindowState.Normal) {
                     _fullScreenSize ??= Size;
@@ -332,8 +320,6 @@ public partial class frmMain : Form {
                     _fullScreenSize = Size;
                     _fullScreenLocation = Location;
                 }
-                FormBorderStyle = FormBorderStyle.Sizable;
-                ControlBox = true;
                 TopMost = Settings.AlwaysOnTop;
                 if (WindowState == FormWindowState.Normal) {
                     Size = (Size)_prevSize!;

@@ -103,4 +103,6 @@ partial class frmProcess_Files {
     private Button btnClose;
     private Label lblTotal;
     private ListView lv;
+    private ColumnHeader colName;
+    private ColumnHeader colPath;
 }

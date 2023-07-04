@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.Versioning;
 using sMkTaskManager.Classes;
 using sMkTaskManager.Controls;
@@ -6,6 +7,12 @@ namespace sMkTaskManager.Forms;
 
 [DesignerCategory("Component"), SupportedOSPlatform("windows")]
 public partial class tabPerformance : UserControl {
+
+    private IContainer? components = null;
+    protected override void Dispose(bool disposing) {
+        if (disposing && (components != null)) { components.Dispose(); }
+        base.Dispose(disposing);
+    }
 
     internal TableLayoutPanel tlpMain;
     internal Label lblCpuMeter;
@@ -84,12 +91,6 @@ public partial class tabPerformance : UserControl {
     internal Label gbSystem_UpTime;
     internal Label gbSystem_Devices;
     internal Label gbSystem_Services;
-
-    private IContainer? components = null;
-    protected override void Dispose(bool disposing) {
-        if (disposing && (components != null)) { components.Dispose(); }
-        base.Dispose(disposing);
-    }
 
     public tabPerformance() {
         InitializeComponent();
@@ -1255,7 +1256,7 @@ public partial class tabPerformance : UserControl {
     private void OnResizeEventHandler(object? sender, EventArgs e) {
         if (ParentForm == null) return;
         if (ParentForm.WindowState == FormWindowState.Minimized) return;
-        if (!ParentForm.Visible) return;
+        if (!ParentForm.Visible || !Visible) return;
         // Accomodate the Table Details columns
         if (Width >= 660 && !gbIOops.Visible) {
             tlpDetails.ColumnStyles[0].Width = 25;
@@ -1273,11 +1274,11 @@ public partial class tabPerformance : UserControl {
             tlpDetails.ColumnStyles[3].Width = 32;
         }
         // Accomodate the Graphs to be displayed
-        setMeterVisible(PerformanceMeters.CPU, tlpMain.Height > 270 | FullScreen);
-        setMeterVisible(PerformanceMeters.Mem, tlpMain.Height > 270 | FullScreen);
-        setMeterVisible(PerformanceMeters.IO, tlpMain.Height > 370 | FullScreen);
-        setMeterVisible(PerformanceMeters.Disk, (tlpMain.Height > 470) & ETW.Running);
-        setMeterVisible(PerformanceMeters.Net, (tlpMain.Height > 570) & ETW.Running);
+        setMeterVisible(PerformanceMeters.CPU, tlpMain.Height > 270 || FullScreen);
+        setMeterVisible(PerformanceMeters.Mem, tlpMain.Height > 270 || FullScreen);
+        setMeterVisible(PerformanceMeters.IO, tlpMain.Height > 370 || FullScreen);
+        setMeterVisible(PerformanceMeters.Disk, (tlpMain.Height > 470) || (FullScreen && tlpMain.Height > 370));
+        setMeterVisible(PerformanceMeters.Net, (tlpMain.Height > 570) || (FullScreen && tlpMain.Height > 470));
     }
     private void OnMouseDoubleClickEventHandler(object? sender, MouseEventArgs e) {
         FullScreen = !FullScreen;

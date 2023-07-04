@@ -104,137 +104,129 @@ internal static class Settings {
         return SaveGeneral() && SaveHighlights() && SavePerformance() && SaveNetworking();
     }
     public static bool SaveGeneral() {
-        return false;
-        //_StringBuilder.Clear();
-        //try {
-        //    _StringBuilder.Append(Convert.ToInt16(RememberPositions) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(RememberActiveTab) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(AlwaysOnTop) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(IconsInProcess) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(TimmingInStatus) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(ServicesInStatus) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(ShowSummaryView) + ",");
-        //    _StringBuilder.Append(UpdateMethod + ",");
-        //    _StringBuilder.Append(UpdateSpeed + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(inFullScreen) + ",");
-        //    _StringBuilder.Append(ActiveTab + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(MinimizeWhenClosing) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(ToTrayWhenMinimized) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(ToTrayWhenClosed) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(DblClickToRestore) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(ShowAllProcess) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(StartMinimized) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(AlternateRowColors) + ",");
-        //    return WriteReg("General", FixStringToWrite(_StringBuilder));
-        //} catch (Exception e) { Shared.DebugTrap(e); return false; }
+        _StringBuilder.Clear();
+        try {
+            _StringBuilder.Append(Convert.ToInt16(RememberPositions) + ",");
+            _StringBuilder.Append(Convert.ToInt16(RememberActiveTab) + ",");
+            _StringBuilder.Append(Convert.ToInt16(AlwaysOnTop) + ",");
+            _StringBuilder.Append(Convert.ToInt16(IconsInProcess) + ",");
+            _StringBuilder.Append(Convert.ToInt16(TimmingInStatus) + ",");
+            _StringBuilder.Append(Convert.ToInt16(ServicesInStatus) + ",");
+            _StringBuilder.Append(Convert.ToInt16(ShowSummaryView) + ",");
+            _StringBuilder.Append(UpdateMethod + ",");
+            _StringBuilder.Append(UpdateSpeed + ",");
+            _StringBuilder.Append(Convert.ToInt16(inFullScreen) + ",");
+            _StringBuilder.Append(ActiveTab + ",");
+            _StringBuilder.Append(Convert.ToInt16(MinimizeWhenClosing) + ",");
+            _StringBuilder.Append(Convert.ToInt16(ToTrayWhenMinimized) + ",");
+            _StringBuilder.Append(Convert.ToInt16(ToTrayWhenClosed) + ",");
+            _StringBuilder.Append(Convert.ToInt16(DblClickToRestore) + ",");
+            _StringBuilder.Append(Convert.ToInt16(ShowAllProcess) + ",");
+            _StringBuilder.Append(Convert.ToInt16(StartMinimized) + ",");
+            _StringBuilder.Append(Convert.ToInt16(AlternateRowColors) + ",");
+            return WriteReg("General", FixStringToWrite(_StringBuilder));
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public static bool SaveMainWindow() {
-        return false;
-        //_StringBuilder.Clear();
-        //try {
-        //    _StringBuilder.Append(MainWindow.Size.Width + "," + MainWindow.Size.Height + ",");
-        //    _StringBuilder.Append(MainWindow.Location.X + "," + MainWindow.Location.Y + ",");
-        //    _StringBuilder.Append(Convert.ToInt32(MainWindow.Maximized) + ",");
-        //    return WriteReg("winMain", FixStringToWrite(_StringBuilder));
-        //} catch (Exception e) { Shared.DebugTrap(e); return false; }
+        _StringBuilder.Clear();
+        try {
+            _StringBuilder.Append(MainWindow.Size.Width + "," + MainWindow.Size.Height + ",");
+            _StringBuilder.Append(MainWindow.Location.X + "," + MainWindow.Location.Y + ",");
+            _StringBuilder.Append(Convert.ToInt32(MainWindow.Maximized) + ",");
+            return WriteReg("winMain", FixStringToWrite(_StringBuilder));
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public static bool SaveHighlights() {
-        return false;
-        //_StringBuilder.Clear();
-        //try {
-        //    _StringBuilder.Append(Convert.ToInt16(Highlights.NewItems) + ",");
-        //    _StringBuilder.Append(Highlights.NewColor.ToArgb() + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(Highlights.ChangingItems) + ",");
-        //    _StringBuilder.Append(Highlights.ChangingColor.ToArgb() + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(Highlights.RemovedItems) + ",");
-        //    _StringBuilder.Append(Highlights.RemovedColor.ToArgb() + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(Highlights.FrozenItems) + ",");
-        //    _StringBuilder.Append(Highlights.FrozenColor.ToArgb() + ",");
-        //    return WriteReg("Highlights", FixStringToWrite(_StringBuilder));
-        //} catch (Exception e) { Shared.DebugTrap(e); return false; }
+        _StringBuilder.Clear();
+        try {
+            _StringBuilder.Append(Convert.ToInt16(Highlights.NewItems) + ",");
+            _StringBuilder.Append(Highlights.NewColor.ToArgb() + ",");
+            _StringBuilder.Append(Convert.ToInt16(Highlights.ChangingItems) + ",");
+            _StringBuilder.Append(Highlights.ChangingColor.ToArgb() + ",");
+            _StringBuilder.Append(Convert.ToInt16(Highlights.RemovedItems) + ",");
+            _StringBuilder.Append(Highlights.RemovedColor.ToArgb() + ",");
+            _StringBuilder.Append(Convert.ToInt16(Highlights.FrozenItems) + ",");
+            _StringBuilder.Append(Highlights.FrozenColor.ToArgb() + ",");
+            return WriteReg("Highlights", FixStringToWrite(_StringBuilder));
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public static bool SavePerformance() {
-        return false;
-        //_StringBuilder.Clear();
-        //try {
-        //    _StringBuilder.Append(Convert.ToInt16(Performance.Solid) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(Performance.AntiAlias) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(Performance.ShadeBackground) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(Performance.DisplayAverages) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(Performance.DisplayIndexes) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(Performance.DisplayLegends) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(Performance.DisplayOnHover) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(Performance.LightColors) + ",");
-        //    _StringBuilder.Append(Performance.ValueSpacing + ",");
-        //    _StringBuilder.Append(Performance.GridSize + ",");
-        //    _StringBuilder.Append(Performance.VerticalGridStyle + ",");
-        //    _StringBuilder.Append(Performance.VerticalGridColor.ToArgb() + ",");
-        //    _StringBuilder.Append(Performance.HorizontalGridStyle + ",");
-        //    _StringBuilder.Append(Performance.HorizontalGridColor.ToArgb() + ",");
-        //    _StringBuilder.Append(Performance.AverageLineStyle + ",");
-        //    _StringBuilder.Append(Performance.AverageLineColor.ToArgb() + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(Performance.ShowKernelTime) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(Performance.SeparateCPUs) + ",");
-        //    return WriteReg("Performance", FixStringToWrite(_StringBuilder));
-        //} catch (Exception e) { Shared.DebugTrap(e); return false; }
+        _StringBuilder.Clear();
+        try {
+            _StringBuilder.Append(Convert.ToInt16(Performance.Solid) + ",");
+            _StringBuilder.Append(Convert.ToInt16(Performance.AntiAlias) + ",");
+            _StringBuilder.Append(Convert.ToInt16(Performance.ShadeBackground) + ",");
+            _StringBuilder.Append(Convert.ToInt16(Performance.DisplayAverages) + ",");
+            _StringBuilder.Append(Convert.ToInt16(Performance.DisplayIndexes) + ",");
+            _StringBuilder.Append(Convert.ToInt16(Performance.DisplayLegends) + ",");
+            _StringBuilder.Append(Convert.ToInt16(Performance.DisplayOnHover) + ",");
+            _StringBuilder.Append(Convert.ToInt16(Performance.LightColors) + ",");
+            _StringBuilder.Append(Performance.ValueSpacing + ",");
+            _StringBuilder.Append(Performance.GridSize + ",");
+            _StringBuilder.Append(Performance.VerticalGridStyle + ",");
+            _StringBuilder.Append(Performance.VerticalGridColor.ToArgb() + ",");
+            _StringBuilder.Append(Performance.HorizontalGridStyle + ",");
+            _StringBuilder.Append(Performance.HorizontalGridColor.ToArgb() + ",");
+            _StringBuilder.Append(Performance.AverageLineStyle + ",");
+            _StringBuilder.Append(Performance.AverageLineColor.ToArgb() + ",");
+            _StringBuilder.Append(Convert.ToInt16(Performance.ShowKernelTime) + ",");
+            _StringBuilder.Append(Convert.ToInt16(Performance.SeparateCPUs) + ",");
+            return WriteReg("Performance", FixStringToWrite(_StringBuilder));
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public static bool SaveNetworking() {
-        return false;
-        //_StringBuilder.Clear();
-        //try {
-        //    _StringBuilder.Append(Convert.ToInt16(Networking.Solid) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(Networking.AntiAlias) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(Networking.ShadeBackground) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(Networking.DisplayAverages) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(Networking.DisplayIndexes) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(Networking.DisplayLegends) + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(Networking.LightColors) + ",");
-        //    _StringBuilder.Append(Networking.ValueSpacing + ",");
-        //    _StringBuilder.Append(Networking.GridSize + ",");
-        //    _StringBuilder.Append(Networking.VerticalGridStyle + ",");
-        //    _StringBuilder.Append(Networking.VerticalGridColor.ToArgb() + ",");
-        //    _StringBuilder.Append(Networking.HorizontalGridStyle + ",");
-        //    _StringBuilder.Append(Networking.HorizontalGridColor.ToArgb() + ",");
-        //    _StringBuilder.Append(Networking.AverageLineStyle + ",");
-        //    _StringBuilder.Append(Networking.AverageLineColor.ToArgb() + ",");
-        //    _StringBuilder.Append(Networking.UploadColor.ToArgb() + ",");
-        //    _StringBuilder.Append(Networking.DownloadColor.ToArgb() + ",");
-        //    _StringBuilder.Append(Convert.ToInt16(Networking.KeepUpdating) + ",");
-        //    return WriteReg("Networking", FixStringToWrite(_StringBuilder));
-        //} catch (Exception e) { Shared.DebugTrap(e); return false; }
+        _StringBuilder.Clear();
+        try {
+            _StringBuilder.Append(Convert.ToInt16(Networking.Solid) + ",");
+            _StringBuilder.Append(Convert.ToInt16(Networking.AntiAlias) + ",");
+            _StringBuilder.Append(Convert.ToInt16(Networking.ShadeBackground) + ",");
+            _StringBuilder.Append(Convert.ToInt16(Networking.DisplayAverages) + ",");
+            _StringBuilder.Append(Convert.ToInt16(Networking.DisplayIndexes) + ",");
+            _StringBuilder.Append(Convert.ToInt16(Networking.DisplayLegends) + ",");
+            _StringBuilder.Append(Convert.ToInt16(Networking.LightColors) + ",");
+            _StringBuilder.Append(Networking.ValueSpacing + ",");
+            _StringBuilder.Append(Networking.GridSize + ",");
+            _StringBuilder.Append(Networking.VerticalGridStyle + ",");
+            _StringBuilder.Append(Networking.VerticalGridColor.ToArgb() + ",");
+            _StringBuilder.Append(Networking.HorizontalGridStyle + ",");
+            _StringBuilder.Append(Networking.HorizontalGridColor.ToArgb() + ",");
+            _StringBuilder.Append(Networking.AverageLineStyle + ",");
+            _StringBuilder.Append(Networking.AverageLineColor.ToArgb() + ",");
+            _StringBuilder.Append(Networking.UploadColor.ToArgb() + ",");
+            _StringBuilder.Append(Networking.DownloadColor.ToArgb() + ",");
+            _StringBuilder.Append(Convert.ToInt16(Networking.KeepUpdating) + ",");
+            return WriteReg("Networking", FixStringToWrite(_StringBuilder));
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public static bool SaveInterfaces() {
-        return false;
-        //_StringBuilder.Clear();
-        //try {
-        //    foreach (string s in CheckedInterfaces) {
-        //        _StringBuilder.Append(s + ",");
-        //    }
-        //    return WriteReg("Selected Nics", FixStringToWrite(_StringBuilder));
-        //} catch (Exception e) { Shared.DebugTrap(e); return false; }
+        _StringBuilder.Clear();
+        try {
+            foreach (string s in CheckedInterfaces) {
+                _StringBuilder.Append(s + ",");
+            }
+            return WriteReg("Selected Nics", FixStringToWrite(_StringBuilder));
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public static bool SaveCustomColors() {
-        return false;
-        //_StringBuilder.Clear();
-        //try {
-        //    foreach (int c in CustomColors) {
-        //        if (c == 16777215) continue;
-        //        if (c == 0) continue;
-        //        _StringBuilder.Append(c + ",");
-        //    }
-        //    return WriteReg("Custom Colors", _StringBuilder.ToString().TrimEnd(','));
-        //} catch (Exception e) { Shared.DebugTrap(e); return false; }
+        _StringBuilder.Clear();
+        try {
+            foreach (int c in CustomColors) {
+                if (c == 16777215) continue;
+                if (c == 0) continue;
+                _StringBuilder.Append(c + ",");
+            }
+            return WriteReg("Custom Colors", _StringBuilder.ToString().TrimEnd(','));
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public static bool SaveProcDetails() {
-        return false;
-        //_StringBuilder.Clear();
-        //try {
-        //    _StringBuilder.Append(ProcessDetails.Size.Width + "," + ProcessDetails.Size.Height + ",");
-        //    _StringBuilder.Append(ProcessDetails.Location.X + "," + ProcessDetails.Location.Y + ",");
-        //    _StringBuilder.Append(ProcessDetails.UpdateSpeed + ",");
-        //    _StringBuilder.Append(ProcessDetails.LastTab + ",");
-        //    return WriteReg("winProcess", FixStringToWrite(_StringBuilder));
-        //} catch (Exception e) { Shared.DebugTrap(e); return false; }
+        _StringBuilder.Clear();
+        try {
+            _StringBuilder.Append(ProcessDetails.Size.Width + "," + ProcessDetails.Size.Height + ",");
+            _StringBuilder.Append(ProcessDetails.Location.X + "," + ProcessDetails.Location.Y + ",");
+            _StringBuilder.Append(ProcessDetails.UpdateSpeed + ",");
+            _StringBuilder.Append(ProcessDetails.LastTab + ",");
+            return WriteReg("winProcess", FixStringToWrite(_StringBuilder));
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public static bool SaveSummaryColumns(ref object sv) {
         return false;
@@ -247,16 +239,15 @@ internal static class Settings {
         //} catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public static bool SaveColsInformation(string strName, in sMkListView lv) {
-        return false;
-        //_StringBuilder.Clear();
-        //try {
-        //    foreach (ColumnHeader c in lv.Columns) {
-        //        TaskManagerColumn cc = new(c);
-        //        if (lv.Sortable && lv.SortColumn == c.Index) cc.SortOrder = lv.Sorting;
-        //        _StringBuilder.AppendLine(cc.GetChunk());
-        //    }
-        //    return WriteReg(strName, _Encoding.GetBytes(_StringBuilder.ToString()));
-        //} catch (Exception e) { Shared.DebugTrap(e); return false; }
+        _StringBuilder.Clear();
+        try {
+            foreach (ColumnHeader c in lv.Columns) {
+                TaskManagerColumn cc = new(c);
+                if (lv.Sortable && lv.SortColumn == c.Index) cc.SortOrder = lv.Sorting;
+                _StringBuilder.AppendLine(cc.GetChunk());
+            }
+            return WriteReg(strName, _Encoding.GetBytes(_StringBuilder.ToString()), RegistryValueKind.Binary);
+        } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
 
     public static bool LoadAll() {
@@ -482,47 +473,6 @@ internal static class Settings {
         return true;
     }
 
-    #region "Registry Write Methods..."
-    /*
-    private bool WriteReg(string ValueName, bool Value) {
-        return ActualWriteReg(ValueName, (Value ? -1 : 0), Microsoft.Win32.RegistryValueKind.String);
-    }
-    private bool WriteReg(string ValueName, string Value) {
-        return ActualWriteReg(ValueName, Value, Microsoft.Win32.RegistryValueKind.String);
-    }
-    private bool WriteReg(string ValueName, int Value) {
-        return ActualWriteReg(ValueName, Value, Microsoft.Win32.RegistryValueKind.String);
-    }
-    private bool WriteReg(string ValueName, byte[] Value) {
-        return ActualWriteReg(ValueName, Value, Microsoft.Win32.RegistryValueKind.Binary);
-    }
-    private bool WriteReg(string ValueName, Array Value) {
-        return ActualWriteReg(ValueName, Value, Microsoft.Win32.RegistryValueKind.MultiString);
-    }
-    private bool ActualWriteReg(string ValueName, object Value, Microsoft.Win32.RegistryValueKind ValueKind = Microsoft.Win32.RegistryValueKind.String) {
-        Microsoft.Win32.RegistryKey ParentKey = Microsoft.Win32.Registry.CurrentUser;
-        Microsoft.Win32.RegistryKey Key;
-        try {
-            Key = ParentKey.OpenSubKey(RegKey, true);
-            Key ??= ParentKey.CreateSubKey(RegKey);
-            Key.SetValue(ValueName, Value, ValueKind);
-            Key.Close();
-            ParentKey.Close();
-            return true;
-        } catch {
-            // INSTANT C# TASK: Calls to the VB 'Err' function are not converted by Instant C#:
-            Debug.WriteLine("ActualWriteReg: " + Microsoft.VisualBasic.Information.Err().GetException.ToString());
-            ParentKey.Close();
-            return false;
-        }
-    }
-    private string FixStringToWrite(System.Text.StringBuilder Original) {
-        return Original.ToString().Replace("-1,", "1,").TrimEnd(',');
-    }
-
-    */
-    #endregion
-
     private static T ReadReg<T>(string valueName, T defaultValue) {
         T retValue = defaultValue;
         RegistryKey ParentKey = Registry.CurrentUser;
@@ -544,52 +494,23 @@ internal static class Settings {
         }
         return retValue;
     }
-
-    private static string oldReadReg(string ValueName, string DefaultValue) {
-        string retValue = DefaultValue;
+    private static bool WriteReg<T>(string ValueName, T Value, RegistryValueKind ValueKind = RegistryValueKind.String) {
         RegistryKey ParentKey = Registry.CurrentUser;
         try {
-            var Key = ParentKey.OpenSubKey(RegKey, false);
-            if (Key == null || Key.GetValue(ValueName) == null) {
-                retValue = DefaultValue;
-            } else if (string.IsNullOrEmpty(Key.GetValue(ValueName)!.ToString()!.Trim())) {
-                retValue = DefaultValue;
-            } else {
-                retValue = Key.GetValue(ValueName)!.ToString()!;
-            }
-            Key?.Close();
-        } catch (Exception e) {
-            Shared.DebugTrap(e);
-            retValue = DefaultValue;
-        } finally {
+            RegistryKey? Key = ParentKey.OpenSubKey(RegKey, true);
+            Key ??= ParentKey.CreateSubKey(RegKey);
+            Key.SetValue(ValueName, Value!, ValueKind);
+            Key.Close();
             ParentKey.Close();
-        }
-        return retValue;
-
-    }
-    private static int oldReadReg(string ValueName, int DefaultValue) {
-        return int.Parse(ReadReg(ValueName, DefaultValue.ToString()));
-    }
-    private static bool oldReadReg(string ValueName, bool DefaultValue) {
-        return ReadReg(ValueName, DefaultValue ? "1" : "0") != "0";
-    }
-    private static byte[] oldReadReg(string ValueName, byte[] DefaultValue) {
-        byte[]? retValue = null;
-        RegistryKey ParentKey = Registry.CurrentUser;
-        try {
-            var Key = ParentKey.OpenSubKey(RegKey, true);
-            if (Key == null || Key.GetValue(ValueName) == null) {
-                retValue = DefaultValue;
-            } else {
-                retValue = (byte[])Key.GetValue(ValueName)!;
-            }
-            Key?.Close();
-        } catch {
-            retValue = DefaultValue;
-        } finally {
+            return true;
+        } catch (Exception ex) {
+            Debug.WriteLine("ActualWriteReg: " + ex.ToString());
             ParentKey.Close();
+            return false;
         }
-        return retValue;
+    }
+    private static string FixStringToWrite(System.Text.StringBuilder Original) {
+        return Original.ToString().Replace("-1,", "1,").TrimEnd(',');
     }
 
 }
