@@ -9,5 +9,7 @@ public partial class frmProcess_Details : Form {
         InitializeComponent();
     }
 
+    public int PID { get; set; }
+
 }
 

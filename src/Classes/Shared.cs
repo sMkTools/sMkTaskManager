@@ -17,7 +17,6 @@ internal static class Shared {
     internal static int PrivateMsgID = 0;
     internal static string TotalProcessorsBin = "".PadLeft(Environment.ProcessorCount, '1');
     internal static string DebuggerCmd = "";
-    internal static void OpenProcessForm(int PID) { }
 
     public static bool IsNumeric(string value) => double.TryParse(value, out _);
     public static bool IsNumeric(this object value) => double.TryParse(Convert.ToString(value), out _);
@@ -87,14 +86,41 @@ internal static class Shared {
         }
         DebuggerCmd = _Debugger.Trim();
     }
-
     internal static void SetStatusText(string value = "", ToolStripLabel? obj = null) {
+        if (_OwnerForm == null) FindOwnerForm();
+        _OwnerForm?.SetStatusText(value, obj);
+    }
+    internal static void FindOwnerForm() {
         if (_OwnerForm == null) {
             foreach (Form f in Application.OpenForms) {
                 if (f.Name == "frmMain") { _OwnerForm = (frmMain)f; break; }
             }
         }
-        _OwnerForm?.SetStatusText(value, obj);
+    }
+    internal static void OpenProcessForm(int PID) {
+        if (_OwnerForm == null) FindOwnerForm();
+        if (_OwnerForm == null) return;
+        bool xFound = false;
+        _OwnerForm.Cursor = Cursors.WaitCursor;
+        foreach (Form child in _OwnerForm!.OwnedForms) {
+            if (child == null || child.Name == null) continue;
+            if (child.Name.Equals("frmProc-" + PID)) {
+                xFound = true;
+                child.Focus(); child.Show();
+                if (child.WindowState == FormWindowState.Minimized) child.WindowState = FormWindowState.Normal;
+                break;
+            }
+        }
+        if (!xFound) {
+            Forms.frmProcess_Details frm = new() {
+                Owner = _OwnerForm,
+                Name = "frmProc-" + PID,
+                Tag = PID,
+                PID = PID
+            };
+            frm.Show();
+        }
+        _OwnerForm.Cursor = Cursors.Default;
     }
 
     public static void BitClear(ref long MyByte, long MyBit) {
