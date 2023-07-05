@@ -581,7 +581,7 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         HashProcesses.Clear();
 
         // Allocate Main Pointer and offset
-        long lastOffset = 0;
+        nint lastOffset = 0;
         IntPtr hmain = IntPtr.Zero;
         if (TaskManagerProcess.GetProcessesPointer(ref hmain)) {
             API.SYSTEM_PROCESS_INFORMATION spi;
@@ -620,8 +620,8 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
                     }
                 }
                 if (spi.NextEntryOffset > 0) {
-                    lastOffset += spi.NextEntryOffset;
-                    spi = (API.SYSTEM_PROCESS_INFORMATION)Marshal.PtrToStructure((nint)lastOffset, typeof(API.SYSTEM_PROCESS_INFORMATION))!;
+                    lastOffset += (nint)spi.NextEntryOffset;
+                    spi = (API.SYSTEM_PROCESS_INFORMATION)Marshal.PtrToStructure(lastOffset, typeof(API.SYSTEM_PROCESS_INFORMATION))!;
                     Array.Resize(ref spi.Threads, (int)spi.NumberOfThreads);
                 } else { break; }
             }

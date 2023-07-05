@@ -940,17 +940,17 @@ internal unsafe static partial class API {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 250, ArraySubType = UnmanagedType.Struct)] public SYSTEM_EXTENDED_THREAD_INFORMATION[] Threads;
     }
     [StructLayout(LayoutKind.Sequential)] public struct SYSTEM_THREAD_INFORMATION {
-        public ulong KernelTime;
-        public ulong UserTime;
-        public ulong CreateTime;
+        public long KernelTime;
+        public long UserTime;
+        public long CreateTime;
         public uint WaitTime;
-        public IntPtr StartAddress;
+        public UIntPtr StartAddress;
         public CLIENT_ID ClientId;
         public int Priority;
         public int BasePriority;
         public uint ContextSwitchCount;
-        public int State;
-        public int WaitReason;
+        public uint State;
+        public uint WaitReason;
     }
     [StructLayout(LayoutKind.Sequential)] public struct SYSTEM_EXTENDED_THREAD_INFORMATION {
         public SYSTEM_THREAD_INFORMATION ThreadInfo;
@@ -1116,7 +1116,7 @@ internal unsafe static partial class API {
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern unsafe bool ControlService(IntPtr hService, SERVICE_CONTROL dwControl, [Out] SERVICE_STATUS lpServiceStatus);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    public static extern unsafe bool ChangeServiceConfig(IntPtr hService, uint dwServiceType, System.ServiceProcess.ServiceStartMode dwStartType, uint dwErrorControl, string? lpBinaryPathName, string? lpLoadOrderGroup, int? lpdwTagId, string? lpDependencies, string? lpServiceStartName, string? lpPassword, string? lpDisplayName);
+    public static extern unsafe bool ChangeServiceConfig(IntPtr hService, uint dwServiceType, System.ServiceProcess.ServiceStartMode dwStartType, uint dwErrorControl, string? lpBinaryPathName, string? lpLoadOrderGroup, int lpdwTagId, string? lpDependencies, string? lpServiceStartName, string? lpPassword, string? lpDisplayName);
 
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", EntryPoint = "SetLastError")]
     public static extern unsafe bool SetLastError(int dwErrCode);

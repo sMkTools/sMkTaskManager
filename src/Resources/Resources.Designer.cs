@@ -173,9 +173,39 @@ namespace sMkTaskManager.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Service {
+            get {
+                object obj = ResourceManager.GetObject("Service", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Service_Device {
+            get {
+                object obj = ResourceManager.GetObject("Service_Device", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Service_Disabled {
             get {
                 object obj = ResourceManager.GetObject("Service_Disabled", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Service_Gear {
+            get {
+                object obj = ResourceManager.GetObject("Service_Gear", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
