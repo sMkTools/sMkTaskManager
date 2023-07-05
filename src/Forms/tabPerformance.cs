@@ -1,18 +1,10 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.Versioning;
-using sMkTaskManager.Classes;
 using sMkTaskManager.Controls;
 namespace sMkTaskManager.Forms;
 
 [DesignerCategory("Component"), SupportedOSPlatform("windows")]
 public partial class tabPerformance : UserControl {
-
-    private IContainer? components = null;
-    protected override void Dispose(bool disposing) {
-        if (disposing && (components != null)) { components.Dispose(); }
-        base.Dispose(disposing);
-    }
 
     internal TableLayoutPanel tlpMain;
     internal Label lblCpuMeter;
@@ -91,6 +83,12 @@ public partial class tabPerformance : UserControl {
     internal Label gbSystem_UpTime;
     internal Label gbSystem_Devices;
     internal Label gbSystem_Services;
+
+    private IContainer? components = null;
+    protected override void Dispose(bool disposing) {
+        if (disposing && (components != null)) { components.Dispose(); }
+        base.Dispose(disposing);
+    }
 
     public tabPerformance() {
         InitializeComponent();
@@ -1301,7 +1299,6 @@ public partial class tabPerformance : UserControl {
             ParentForm.Top = ParentForm.Top + (e.Location.Y - LastMousePoint.Y);
         }
     }
-
     private void CascadeDoubleClickHandlers(Control MainControl) {
         foreach (Control c in MainControl.Controls) {
             c.MouseDoubleClick += OnMouseDoubleClickEventHandler;
@@ -1379,7 +1376,6 @@ public partial class tabPerformance : UserControl {
 
     }
     private Point LastMousePoint = new(0, 0);
-
 
     private enum PerformanceMeters {
         CPU = 1,

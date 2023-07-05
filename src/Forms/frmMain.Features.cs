@@ -8,7 +8,7 @@ partial class frmMain {
 
     internal void Feature_RealExit() {
         if (InvokeRequired) { BeginInvoke(Feature_RealExit); return; }
-        _RealExit = true;
+        Shared.RealExit = true;
         Close();
     }
     internal void Feature_ActivateMainWindow() {

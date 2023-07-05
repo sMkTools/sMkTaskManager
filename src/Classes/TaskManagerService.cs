@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.ServiceProcess;
-using System.Text;
-using System.Threading.Tasks;
+using sMkTaskManager.Forms;
 namespace sMkTaskManager.Classes;
 
 [SupportedOSPlatform("windows")]
@@ -100,6 +95,91 @@ internal class TaskManagerService : IEquatable<TaskManagerService>, INotifyPrope
         } catch (Exception ex) { Shared.DebugTrap(ex); }
 
     }
+    public bool Stop() {
+        if (!CanStop) return false;
+        bool res = true;
+        using (frmService_Control frmControl = new(_Ident)) {
+            frmControl.WaitFor = API.SERVICE_STATE.SERVICE_STOPPED;
+            frmControl.ServiceAction = "stop";
+            frmControl.ServiceName = _Name;
+            frmControl.StartPosition = FormStartPosition.CenterParent;
+            try {
+                if (!ServiceStop(_Ident)) { frmControl.ErrorString = API.GetLastErrorStr(); res = false; }
+                frmControl.ShowDialog();
+            } catch (Exception ex) {
+                res = false; Shared.DebugTrap(ex);
+            } finally { Update(); }
+        }
+        return res;
+    }
+    public bool Start(string Params = "") {
+        if (!CanStart) return false;
+        if (StatusCode == ServiceControllerStatus.Paused) return Resume();
+        bool res = true;
+        using (frmService_Control frmControl = new(this.Ident)) {
+            frmControl.WaitFor = API.SERVICE_STATE.SERVICE_RUNNING;
+            frmControl.ServiceAction = "start";
+            frmControl.ServiceName = _Name;
+            frmControl.StartPosition = FormStartPosition.CenterParent;
+            try {
+                if (!ServiceStart(_Ident, Params)) { frmControl.ErrorString = API.GetLastErrorStr(); res = false; }
+                frmControl.ShowDialog();
+            } catch (Exception ex) {
+                res = false; Shared.DebugTrap(ex);
+            } finally { Update(); }
+        }
+        return res;
+    }
+    public bool Restart() {
+        if (!CanStop) { return true; }
+        return Stop() && Start();
+    }
+    public bool Pause() {
+        if (!CanPause) return false;
+        bool res = true;
+        using (frmService_Control frmControl = new(_Ident)) {
+            frmControl.WaitFor = API.SERVICE_STATE.SERVICE_PAUSED;
+            frmControl.ServiceAction = "pause";
+            frmControl.ServiceName = _Name;
+            frmControl.StartPosition = FormStartPosition.CenterParent;
+            try {
+                if (!ServicePause(_Ident)) { frmControl.ErrorString = API.GetLastErrorStr(); res = false; }
+                frmControl.ShowDialog();
+            } catch (Exception ex) {
+                res = false; Shared.DebugTrap(ex);
+            } finally { Update(); }
+        }
+        return res;
+    }
+    public bool Resume() {
+        if (!(StatusCode == ServiceControllerStatus.Paused)) return false;
+        bool res = true;
+        using (frmService_Control frmControl = new(_Ident)) {
+            frmControl.WaitFor = API.SERVICE_STATE.SERVICE_RUNNING;
+            frmControl.ServiceAction = "continue";
+            frmControl.ServiceName = _Name;
+            frmControl.StartPosition = FormStartPosition.CenterParent;
+            try {
+                if (!ServiceContinue(_Ident)) { frmControl.ErrorString = API.GetLastErrorStr(); res = false; }
+                frmControl.ShowDialog();
+            } catch (Exception ex) {
+                res = false; Shared.DebugTrap(ex);
+            } finally { Update(); }
+        }
+        return res;
+    }
+    public bool ChangeStartUp(ServiceStartMode mewMode) {
+        const uint SERVICE_NO_CHANGE = 0xFFFFFFFFU;
+        IntPtr hscManager = API.OpenSCManager(".", null, API.SERVICE_ACCESS.SERVICE_GENERIC_ALL);
+        if (hscManager == IntPtr.Zero) { throw API.GetLastError(); }
+        IntPtr hService = API.OpenService(hscManager, _Ident, API.SERVICE_ACCESS.SERVICE_QUERY_CONFIG | API.SERVICE_ACCESS.SERVICE_CHANGE_CONFIG);
+        if (hService == IntPtr.Zero) { API.CloseServiceHandle(hscManager); throw API.GetLastError(); }
+        bool result = API.ChangeServiceConfig(hService, SERVICE_NO_CHANGE, mewMode, SERVICE_NO_CHANGE, null, null, 0, null, null, null, null);
+        API.CloseServiceHandle(hService);
+        API.CloseServiceHandle(hscManager);
+        if (result) { Update(); }
+        return result;
+    }
     public struct SERVICE_INFO {
         // Custom Structure to store all the values i really need
         public ServiceType ServiceType;
@@ -134,7 +214,7 @@ internal class TaskManagerService : IEquatable<TaskManagerService>, INotifyPrope
         IntPtr hscManager = API.OpenSCManager(".", null, API.SERVICE_ACCESS.SERVICE_GENERIC_ALL);
         if (hscManager == IntPtr.Zero) { throw API.GetLastError(); }
         IntPtr hService = API.OpenService(hscManager, serviceIdent, API.SERVICE_ACCESS.SERVICE_QUERY_CONFIG | API.SERVICE_ACCESS.SERVICE_QUERY_STATUS);
-        if (hService == IntPtr.Zero) { throw API.GetLastError(); }
+        if (hService == IntPtr.Zero) { API.CloseServiceHandle(hscManager); throw API.GetLastError(); }
         int bytesNeeded = 0;
         // Service Config
         API.QueryServiceConfig(hService, IntPtr.Zero, 0, ref bytesNeeded);
@@ -174,6 +254,81 @@ internal class TaskManagerService : IEquatable<TaskManagerService>, INotifyPrope
         API.CloseServiceHandle(hService);
         API.CloseServiceHandle(hscManager);
         return true;
+    }
+    private static bool ServiceStart(string serviceIdent, string Parameters = "") {
+        if (serviceIdent.Equals("")) return true;
+        API.SetLastError(0);
+        IntPtr hscManager = API.OpenSCManager(".", null, API.SERVICE_ACCESS.SERVICE_GENERIC_ALL);
+        if (hscManager == IntPtr.Zero) { throw API.GetLastError(); }
+        IntPtr hService = API.OpenService(hscManager, serviceIdent, API.SERVICE_ACCESS.SERVICE_ALL_ACCESS);
+        bool result;
+        if (hService != IntPtr.Zero) {
+            if (string.IsNullOrEmpty(Parameters.Trim())) {
+                result = API.StartService(hService, 0, null);
+            } else {
+                result = API.StartService(hService, 1, new[] { Parameters });
+            }
+            API.CloseServiceHandle(hService);
+            API.CloseServiceHandle(hscManager);
+        } else {
+            API.CloseServiceHandle(hscManager);
+            throw API.GetLastError();
+        }
+        return result;
+    }
+    private static bool ServiceStop(string serviceIdent) {
+        if (serviceIdent.Equals("")) return true;
+        API.SetLastError(0);
+        IntPtr hscManager = API.OpenSCManager(".", null, API.SERVICE_ACCESS.SERVICE_GENERIC_ALL);
+        if (hscManager == IntPtr.Zero) { throw API.GetLastError(); }
+        IntPtr hService = API.OpenService(hscManager, serviceIdent, API.SERVICE_ACCESS.SERVICE_ALL_ACCESS);
+        bool result;
+        if (hService != IntPtr.Zero) {
+            API.SERVICE_STATUS newStatus = new();
+            result = API.ControlService(hService, API.SERVICE_CONTROL.STOP, newStatus);
+            API.CloseServiceHandle(hService);
+            API.CloseServiceHandle(hscManager);
+        } else {
+            API.CloseServiceHandle(hscManager);
+            throw API.GetLastError();
+        }
+        return result;
+    }
+    private static bool ServicePause(string serviceIdent) {
+        if (serviceIdent.Equals("")) return true;
+        API.SetLastError(0);
+        IntPtr hscManager = API.OpenSCManager(".", null, API.SERVICE_ACCESS.SERVICE_GENERIC_ALL);
+        if (hscManager == IntPtr.Zero) { throw API.GetLastError(); }
+        IntPtr hService = API.OpenService(hscManager, serviceIdent, API.SERVICE_ACCESS.SERVICE_ALL_ACCESS);
+        bool result;
+        if (hService != IntPtr.Zero) {
+            API.SERVICE_STATUS newStatus = new();
+            result = API.ControlService(hService, API.SERVICE_CONTROL.PAUSE, newStatus);
+            API.CloseServiceHandle(hService);
+            API.CloseServiceHandle(hscManager);
+        } else {
+            API.CloseServiceHandle(hscManager);
+            throw API.GetLastError();
+        }
+        return result;
+    }
+    private static bool ServiceContinue(string serviceIdent) {
+        if (serviceIdent.Equals("")) return true;
+        API.SetLastError(0);
+        IntPtr hscManager = API.OpenSCManager(".", null, API.SERVICE_ACCESS.SERVICE_GENERIC_ALL);
+        if (hscManager == IntPtr.Zero) { throw API.GetLastError(); }
+        IntPtr hService = API.OpenService(hscManager, serviceIdent, API.SERVICE_ACCESS.SERVICE_ALL_ACCESS);
+        bool result;
+        if (hService != IntPtr.Zero) {
+            API.SERVICE_STATUS newStatus = new();
+            result = API.ControlService(hService, API.SERVICE_CONTROL.CONTINUE, newStatus);
+            API.CloseServiceHandle(hService);
+            API.CloseServiceHandle(hscManager);
+        } else {
+            API.CloseServiceHandle(hscManager);
+            throw API.GetLastError();
+        }
+        return result;
     }
 
 }

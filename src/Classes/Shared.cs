@@ -8,10 +8,13 @@ namespace sMkTaskManager;
 [SupportedOSPlatform("windows")]
 internal static class Shared {
     private static string _SystemAccount = "";
-    private static frmMain _OwnerForm;
 
+    internal static frmMain MainForm;
+    internal static bool InitComplete = false;
+    internal static bool LoadComplete = false;
+    internal static bool RealExit = true;
     internal static int bpi = 20; // Base PID Ignore
-    internal static List<string> skipProcess = new List<string>(new[] { "audiodg" });
+    internal static List<string> skipProcess = new(new[] { "audiodg" });
     internal static List<string> skipServices = new();
     internal static int CurrentSessionID = Process.GetCurrentProcess().SessionId;
     internal static int PrivateMsgID = 0;
@@ -87,22 +90,22 @@ internal static class Shared {
         DebuggerCmd = _Debugger.Trim();
     }
     internal static void SetStatusText(string value = "", ToolStripLabel? obj = null) {
-        if (_OwnerForm == null) FindOwnerForm();
-        _OwnerForm?.SetStatusText(value, obj);
+        if (MainForm == null) FindOwnerForm();
+        MainForm?.SetStatusText(value, obj);
     }
     internal static void FindOwnerForm() {
-        if (_OwnerForm == null) {
+        if (MainForm == null) {
             foreach (Form f in Application.OpenForms) {
-                if (f.Name == "frmMain") { _OwnerForm = (frmMain)f; break; }
+                if (f.Name == "frmMain") { MainForm = (frmMain)f; break; }
             }
         }
     }
     internal static void OpenProcessForm(int PID) {
-        if (_OwnerForm == null) FindOwnerForm();
-        if (_OwnerForm == null) return;
+        if (MainForm == null) FindOwnerForm();
+        if (MainForm == null) return;
         bool xFound = false;
-        _OwnerForm.Cursor = Cursors.WaitCursor;
-        foreach (Form child in _OwnerForm!.OwnedForms) {
+        MainForm.Cursor = Cursors.WaitCursor;
+        foreach (Form child in MainForm!.OwnedForms) {
             if (child == null || child.Name == null) continue;
             if (child.Name.Equals("frmProc-" + PID)) {
                 xFound = true;
@@ -113,14 +116,24 @@ internal static class Shared {
         }
         if (!xFound) {
             Forms.frmProcess_Details frm = new() {
-                Owner = _OwnerForm,
+                Owner = MainForm,
                 Name = "frmProc-" + PID,
                 Tag = PID,
                 PID = PID
             };
             frm.Show();
         }
-        _OwnerForm.Cursor = Cursors.Default;
+        MainForm.Cursor = Cursors.Default;
+    }
+    internal static bool BusyCursor {
+        get {
+            return !(MainForm?.Cursor == Cursors.Default);
+        }
+        set {
+            if (MainForm == null) FindOwnerForm();
+            if (MainForm == null) return;
+            MainForm.Cursor = value ? Cursors.AppStarting : Cursors.Default;
+        }
     }
 
     public static void BitClear(ref long MyByte, long MyBit) {

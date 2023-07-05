@@ -27,14 +27,13 @@ public partial class frmMain : Form {
     private List<Task> _MonitorTasks = new();
     private System.Timers.Timer _ParallelTimer, _MonitorTriggerTimer;
     private System.Windows.Forms.Timer StatusTimer = new();
-    private bool _InitComplete = false, _LoadComplete = false, _RealExit = true;
     private readonly Stopwatch _StopWatch1 = new(), _StopWatch2 = new(), _StopWatch3 = new();
     private Size? _prevSize, _prevMinSize; Point? _prevLocation;
     private Size? _fullScreenSize; Point? _fullScreenLocation;
 
     protected override void WndProc(ref Message m) {
         if (m.Msg == 0x112) { // WM_SYSCOMMAND
-            if (m.WParam == 61536) { _RealExit = false; }
+            if (m.WParam == 61536) { Shared.RealExit = false; }
             if (m.WParam == 1001) { mnuHelp_About.PerformClick(); }
         } else if (m.Msg == Shared.PrivateMsgID) { // Private Communication Channel? :)
             Debug.WriteLine($"Got PrivateMsg with wParm: {m.WParam}");
@@ -60,7 +59,7 @@ public partial class frmMain : Form {
         Settings_Apply();
         // At this point, we can follow with Parallel Init;
         _ParallelTimer.Start();
-        _LoadComplete = true;
+        Shared.LoadComplete = true;
         Extensions.StopMeasure(_StopWatch1);
     }
     private void OnLoadParallelInit(object? sender, ElapsedEventArgs e) {
@@ -69,7 +68,7 @@ public partial class frmMain : Form {
         Extensions.StartMeasure(sw);
         // We should use this to initialize something that is not really critical?
         ETW.Start();
-        _InitComplete = true;
+        Shared.InitComplete = true;
         Extensions.StopMeasure(sw);
         MonitorStart(true);
     }
@@ -116,7 +115,7 @@ public partial class frmMain : Form {
         StatusTimer.Stop();
     }
     private void OnSizeChangedEventHandler(object sender, EventArgs e) {
-        if (!_LoadComplete) return;
+        if (!Shared.LoadComplete) return;
         ToolStripMenuItem mnuItm = (ToolStripMenuItem)mnuOptions.DropDownItems["mnuOptions_HideMinimize"];
 
         if (WindowState == FormWindowState.Minimized && mnuItm.Checked) {
@@ -135,7 +134,7 @@ public partial class frmMain : Form {
         if (e.KeyCode == Keys.Escape && !(e.Alt || e.Control || e.Shift)) {
             e.SuppressKeyPress = true;
             e.Handled = true;
-            _RealExit = false;
+            Shared.RealExit = false;
             Close();
         } else if (e.KeyCode == Keys.F3 && !(e.Alt || e.Control || e.Shift)) {
             e.Handled = true;
@@ -146,12 +145,12 @@ public partial class frmMain : Form {
         }
     }
     private void OnClosingEventHandler(object sender, FormClosingEventArgs e) {
-        if (e.CloseReason == CloseReason.UserClosing && !_RealExit) {
-            if (mnuOptions_MinimizeClose.Checked & !_RealExit) {
+        if (e.CloseReason == CloseReason.UserClosing && !Shared.RealExit) {
+            if (mnuOptions_MinimizeClose.Checked & !Shared.RealExit) {
                 WindowState = FormWindowState.Minimized;
                 e.Cancel = true;
             }
-            if (Settings.ToTrayWhenClosed & !_RealExit) {
+            if (Settings.ToTrayWhenClosed & !Shared.RealExit) {
                 Visible = false;
                 e.Cancel = true;
             }
@@ -521,5 +520,16 @@ public partial class frmMain : Form {
         obj ??= ssText;
         return obj.Text;
     }
-
+    public void GoToProcess(string PID) {
+        tabProcs.Refresher(true);
+        if (tabProcs.lv.Items.ContainsKey(PID)) {
+            tabProcs.lv.SelectedItems.Clear();
+            tabProcs.lv.Items[PID].Selected = true;
+            tabProcs.lv.Items[PID].Focused = true;
+            tabProcs.lv.Items[PID].EnsureVisible();
+            tc.SelectTab(tpProcesses);
+        } else {
+            SetStatusText($"Sorry, PID {PID} not in Process List");
+        }
+    }
 }

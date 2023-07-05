@@ -4,17 +4,26 @@ using System.Runtime.Versioning;
 using sMkTaskManager.Classes;
 using sMkTaskManager.Controls;
 using System.Runtime.InteropServices;
-using System.Linq.Expressions;
-
 namespace sMkTaskManager.Forms;
 
 [DesignerCategory("Component"), SupportedOSPlatform("windows")]
 internal class tabProcesses : UserControl, ITaskManagerTab {
-
     private readonly Stopwatch _stopWatch = new();
     internal HashSet<string> ColsProcesses = new();
     internal HashSet<int> HashProcesses = new();
     internal TaskManagerProcessCollection Processes = new();
+
+    internal sMkListView lv;
+    internal CheckBox btnAllUsers;
+    internal Button btnForceRefresh;
+    private Button btnDetails;
+    private Button btnProperties;
+    private Button btnKill;
+    private Label lblText;
+    private ColumnHeader lvc_PID;
+    private ColumnHeader lvc_Name;
+    private ContextMenuStrip cms;
+    private ImageList il;
 
     public event EventHandler? RefreshStarts;
     public event EventHandler? RefreshComplete;
@@ -189,7 +198,6 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         KeyPress += OnKeyPress;
         ResumeLayout(false);
     }
-
     private void InitializeContextMenu() {
         cms.Items.Clear();
         cms.Items.AddMenuItem("&More Details").Name = "Details";
@@ -220,18 +228,6 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         cms.Opening += OnContextOpening;
         cms.ItemClicked += OnContextItemClicked;
     }
-
-    private Button btnDetails;
-    private Button btnProperties;
-    private Button btnKill;
-    internal Button btnForceRefresh;
-    private Label lblText;
-    private ColumnHeader lvc_PID;
-    private ColumnHeader lvc_Name;
-    private ContextMenuStrip cms;
-    private ImageList il;
-    internal CheckBox btnAllUsers;
-    internal sMkListView lv;
 
     private void OnKeyPress(object? sender, KeyPressEventArgs e) {
         lv.Focus();
@@ -292,7 +288,6 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
             ((ToolStripMenuItem)((ToolStripMenuItem)sender!).DropDownItems["Priority6"]).Checked = curPriority == ProcessPriorityClass.Idle;
         } catch { }
     }
-
     private void OnContextItemClicked(object? sender, ToolStripItemClickedEventArgs e) {
         if (e.ClickedItem == null) return;
         if (!e.ClickedItem.Enabled) return;
@@ -320,13 +315,12 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
     }
     private void OnButtonClicked(object? sender, EventArgs e) {
         if (sender == null) return;
-        switch (sender) {
-            case nameof(btnDetails): { Feature_OpenDetails(); break; }
-            case nameof(btnProperties): { Feature_OpenFileProperties(); break; }
-            case nameof(btnKill): { Feature_ProcessKill(); break; }
-            case nameof(btnForceRefresh): { Feature_ForceRefresh(); break; }
-            case nameof(btnAllUsers): { Settings.ShowAllProcess = btnAllUsers.Checked; break; }
-        }
+        if (sender == btnDetails) { Feature_OpenDetails(); return; }
+        if (sender == btnProperties) { Feature_OpenFileProperties(); return; }
+        if (sender == btnKill) { Feature_ProcessKill(); return; }
+        if (sender == btnForceRefresh) { Feature_ForceRefresh(); return; }
+        if (sender == btnAllUsers) { Settings.ShowAllProcess = btnAllUsers.Checked; return; }
+
     }
     private void OnListViewKeyDown(object? sender, KeyEventArgs e) {
         if (e.Control && e.KeyCode == Keys.A) {
@@ -627,11 +621,9 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
                 }
                 if (spi.NextEntryOffset > 0) {
                     lastOffset += spi.NextEntryOffset;
-                    spi = (API.SYSTEM_PROCESS_INFORMATION)Marshal.PtrToStructure((IntPtr)lastOffset, typeof(API.SYSTEM_PROCESS_INFORMATION))!;
+                    spi = (API.SYSTEM_PROCESS_INFORMATION)Marshal.PtrToStructure((nint)lastOffset, typeof(API.SYSTEM_PROCESS_INFORMATION))!;
                     Array.Resize(ref spi.Threads, (int)spi.NumberOfThreads);
-                } else {
-                    break;
-                }
+                } else { break; }
             }
             Marshal.FreeHGlobal(hmain);
         }
@@ -656,7 +648,6 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         _stopWatch.Stop();
         RefreshComplete?.Invoke(this, EventArgs.Empty);
     }
-
     public void LoadSettings() {
         Settings.LoadColsInformation(TaskManagerColumnTypes.Process, lv, ref ColsProcesses);
         btnAllUsers.Checked = Settings.ShowAllProcess;

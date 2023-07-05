@@ -1112,11 +1112,11 @@ internal unsafe static partial class API {
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern unsafe bool QueryServiceConfig2(IntPtr hService, int dwInfoLevel, IntPtr buffer, int cbBufSize, ref int pcbBytesNeeded);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    public static extern unsafe bool StartService(IntPtr hService, int dwNumServiceArgs, string[] lpServiceArgVectors);
+    public static extern unsafe bool StartService(IntPtr hService, int dwNumServiceArgs, string[]? lpServiceArgVectors);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    public static extern unsafe bool ControlService(IntPtr hService, SERVICE_CONTROL dwControl, ref SERVICE_STATUS lpServiceStatus);
+    public static extern unsafe bool ControlService(IntPtr hService, SERVICE_CONTROL dwControl, [Out] SERVICE_STATUS lpServiceStatus);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    public static extern unsafe bool ChangeServiceConfig(IntPtr hService, uint dwServiceType, System.ServiceProcess.ServiceStartMode dwStartType, uint dwErrorControl, string lpBinaryPathName, string lpLoadOrderGroup, int lpdwTagId, string lpDependencies, string lpServiceStartName, string lpPassword, string lpDisplayName);
+    public static extern unsafe bool ChangeServiceConfig(IntPtr hService, uint dwServiceType, System.ServiceProcess.ServiceStartMode dwStartType, uint dwErrorControl, string? lpBinaryPathName, string? lpLoadOrderGroup, int? lpdwTagId, string? lpDependencies, string? lpServiceStartName, string? lpPassword, string? lpDisplayName);
 
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", EntryPoint = "SetLastError")]
     public static extern unsafe bool SetLastError(int dwErrCode);
