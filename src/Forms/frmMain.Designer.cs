@@ -1,27 +1,11 @@
 ﻿namespace sMkTaskManager {
     partial class frmMain {
-        /// <summary>
-        ///  Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
-
-        /// <summary>
-        ///  Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing) {
-            if (disposing && (components != null)) {
-                components.Dispose();
-            }
+            if (disposing && (components != null)) { components.Dispose(); }
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
-
-        /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent() {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
@@ -41,7 +25,6 @@
             tc = new TabControl();
             tpApplications = new TabPage();
             tpProcesses = new TabPage();
-            tabProcs = new Forms.tabProcesses();
             tpServices = new TabPage();
             tpPerformance = new TabPage();
             tabPerf = new Forms.tabPerformance();
@@ -50,6 +33,8 @@
             tpPorts = new TabPage();
             tpUsers = new TabPage();
             timmingStrip = new StatusStrip();
+            tabProcs = new Forms.tabProcesses();
+            tabServs = new Forms.tabServices();
             mnu.SuspendLayout();
             ss.SuspendLayout();
             tc.SuspendLayout();
@@ -214,11 +199,23 @@
             // tpServices
             // 
             tpServices.BackColor = SystemColors.Control;
+            tpServices.Controls.Add(tabServs);
             tpServices.Location = new Point(4, 24);
             tpServices.Name = "tpServices";
             tpServices.Size = new Size(569, 480);
             tpServices.TabIndex = 3;
             tpServices.Text = "Services";
+            // 
+            // tabServs
+            // 
+            tabServs.Active = true;
+            tabServs.Description = "Services";
+            tabServs.Dock = DockStyle.Fill;
+            tabServs.Location = new Point(0, 0);
+            tabServs.Name = "tabServs";
+            tabServs.Size = new Size(569, 480);
+            tabServs.TabIndex = 0;
+            tabServs.Title = "Services";
             // 
             // tpPerformance
             // 
@@ -317,8 +314,6 @@
             PerformLayout();
         }
 
-        #endregion
-
         private MenuStrip mnu;
         private ToolStripMenuItem mnuFile;
         private ToolStripMenuItem mnuOptions;
@@ -344,5 +339,6 @@
         private TabPage tpUsers;
         private StatusStrip timmingStrip;
         private Forms.tabProcesses tabProcs;
+        private Forms.tabServices tabServs;
     }
 }

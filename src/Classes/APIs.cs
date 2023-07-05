@@ -598,6 +598,7 @@ internal unsafe static partial class API {
         DumpWithThreadInfo = 1000,
         DumpWithCodeSegs = 2000
     }
+
     [Flags()] public enum SnapshotFlags : int {
         HeapList = 0x1,
         Process = 0x2,
@@ -639,6 +640,66 @@ internal unsafe static partial class API {
         // plus AT MOST ONE of the following two:
         Force = 0x4,
         ForceIfHung = 0x10
+    }
+
+    public enum SERVICE_STATE : int {
+        SERVICE_STOPPED = 0x1,
+        SERVICE_START_PENDING = 0x2,
+        SERVICE_STOP_PENDING = 0x3,
+        SERVICE_RUNNING = 0x4,
+        SERVICE_CONTINUE_PENDING = 0x5,
+        SERVICE_PAUSE_PENDING = 0x6,
+        SERVICE_PAUSED = 0x7
+    }
+    public enum SERVICE_ACCESS : int {
+        SERVICE_GENERIC_ALL = 0x10000000,
+        STANDARD_RIGHTS_REQUIRED = 0xF0000,
+        SERVICE_QUERY_CONFIG = 0x1,
+        SERVICE_CHANGE_CONFIG = 0x2,
+        SERVICE_QUERY_STATUS = 0x4,
+        SERVICE_ENUMERATE_DEPENDENTS = 0x8,
+        SERVICE_START = 0x10,
+        SERVICE_STOP = 0x20,
+        SERVICE_PAUSE_CONTINUE = 0x40,
+        SERVICE_INTERROGATE = 0x80,
+        SERVICE_USER_DEFINED_CONTROL = 0x100,
+        SERVICE_ALL_ACCESS = STANDARD_RIGHTS_REQUIRED | SERVICE_QUERY_CONFIG | SERVICE_CHANGE_CONFIG | SERVICE_QUERY_STATUS | SERVICE_ENUMERATE_DEPENDENTS | SERVICE_START | SERVICE_STOP | SERVICE_PAUSE_CONTINUE | SERVICE_INTERROGATE | SERVICE_USER_DEFINED_CONTROL,
+        SERVICE_NO_CHANGE = 0xFFFF
+    }
+    public enum SERVICE_CONTROL : int {
+        STOP = 0x1,
+        PAUSE = 0x2,
+        CONTINUE = 0x3,
+        INTERROGATE = 0x4,
+        SHUTDOWN = 0x5,
+        PARAMCHANGE = 0x6,
+        NETBINDADD = 0x7,
+        NETBINDREMOVE = 0x8,
+        NETBINDENABLE = 0x9,
+        NETBINDDISABLE = 0xA,
+        DEVICEEVENT = 0xB,
+        HARDWAREPROFILECHANGE = 0xC,
+        POWEREVENT = 0xD,
+        SESSIONCHANGE = 0xE
+    }
+    [Flags()] public enum SCM_ACCESS : int {
+        SC_MANAGER_CONNECT = 0x1,
+        SC_MANAGER_CREATE_SERVICE = 0x2,
+        SC_MANAGER_ENUMERATE_SERVICE = 0x4,
+        SC_MANAGER_LOCK = 0x8,
+        SC_MANAGER_QUERY_LOCK_STATUS = 0x10,
+        SC_MANAGER_MODIFY_BOOT_CONFIG = 0x20,
+        SC_MANAGER_ALL_ACCESS = ACCESS_MASK.STANDARD_RIGHTS_REQUIRED | SC_MANAGER_CONNECT | SC_MANAGER_CREATE_SERVICE | SC_MANAGER_ENUMERATE_SERVICE | SC_MANAGER_LOCK | SC_MANAGER_QUERY_LOCK_STATUS | SC_MANAGER_MODIFY_BOOT_CONFIG,
+        GENERIC_READ = ACCESS_MASK.STANDARD_RIGHTS_READ | SC_MANAGER_ENUMERATE_SERVICE | SC_MANAGER_QUERY_LOCK_STATUS,
+        GENERIC_WRITE = ACCESS_MASK.STANDARD_RIGHTS_WRITE | SC_MANAGER_CREATE_SERVICE | SC_MANAGER_MODIFY_BOOT_CONFIG,
+        GENERIC_EXECUTE = ACCESS_MASK.STANDARD_RIGHTS_EXECUTE | SC_MANAGER_CONNECT | SC_MANAGER_LOCK,
+        GENERIC_ALL = SC_MANAGER_ALL_ACCESS
+    }
+    [Flags()] public enum ACCESS_MASK : int {
+        STANDARD_RIGHTS_REQUIRED = 0xF0000,
+        STANDARD_RIGHTS_READ = 0x20000,
+        STANDARD_RIGHTS_WRITE = 0x20000,
+        STANDARD_RIGHTS_EXECUTE = 0x20000
     }
 
     #endregion
@@ -901,6 +962,42 @@ internal unsafe static partial class API {
         public UIntPtr Reserved3;
         public UIntPtr Reserved4;
     }
+
+    [StructLayout(LayoutKind.Sequential)] public struct SERVICE_STATUS {
+        public int dwServiceType;
+        public int dwCurrentState;
+        public int dwControlsAccepted;
+        public int dwWin32ExitCode;
+        public int dwServiceSpecificExitCode;
+        public int dwCheckPoint;
+        public int dwWaitHint;
+    }
+    [StructLayout(LayoutKind.Sequential)] public struct QUERY_SERVICE_CONFIG {
+        [MarshalAs(UnmanagedType.U4)] public System.ServiceProcess.ServiceType dwServiceType;
+        [MarshalAs(UnmanagedType.U4)] public System.ServiceProcess.ServiceStartMode dwStartType;
+        [MarshalAs(UnmanagedType.U4)] public int dwErrorControl;
+        [MarshalAs(UnmanagedType.LPWStr)] public string lpBinaryPathName;
+        [MarshalAs(UnmanagedType.LPWStr)] public string lpLoadOrderGroup;
+        [MarshalAs(UnmanagedType.U4)] public int dwTagId;
+        [MarshalAs(UnmanagedType.LPWStr)] public string lpDependencies;
+        [MarshalAs(UnmanagedType.LPWStr)] public string lpServiceStartName;
+        [MarshalAs(UnmanagedType.LPWStr)] public string lpDisplayName;
+    }
+    [StructLayout(LayoutKind.Sequential)] public struct QUERY_SERVICE_DESCRIPTION {
+        [MarshalAs(UnmanagedType.LPWStr)] public string lpDescription;
+    }
+    [StructLayout(LayoutKind.Sequential)] public struct SERVICE_STATUS_PROCESS {
+        public uint serviceType;
+        public uint currentState;
+        public uint controlsAccepted;
+        public uint win32ExitCode;
+        public uint serviceSpecificExitCode;
+        public uint checkPoint;
+        public uint waitHint;
+        public uint processID;
+        public uint serviceFlags;
+    }
+
     #endregion
 
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
@@ -999,5 +1096,31 @@ internal unsafe static partial class API {
     public static extern unsafe bool LockWorkStation();
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true, EntryPoint = "#61")]
     public static extern unsafe bool RunFileDlg(IntPtr owner, IntPtr hIcon, string lpszDirectory, string lpszTitle, string lpszDescription, long uFlags);
+
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe IntPtr OpenSCManager(string lpMachineName, string? lpDatabaseName, SERVICE_ACCESS dwDesiredAccess);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe IntPtr OpenService(IntPtr hSCManager, string lpServiceName, SERVICE_ACCESS dwDesiredAccess);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe bool CloseServiceHandle(IntPtr serviceHandle);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = false)]
+    public static extern unsafe bool QueryServiceStatus(IntPtr hService, ref SERVICE_STATUS dwServiceStatus);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = false)]
+    public static extern unsafe bool QueryServiceStatusEx(IntPtr hService, int infoLevel, IntPtr buffer, int bufferSize, ref int bytesNeeded);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = false)]
+    public static extern unsafe bool QueryServiceConfig(IntPtr hService, IntPtr lpServiceConfig, int cbBufSize, ref int pcbBytesNeeded);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe bool QueryServiceConfig2(IntPtr hService, int dwInfoLevel, IntPtr buffer, int cbBufSize, ref int pcbBytesNeeded);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe bool StartService(IntPtr hService, int dwNumServiceArgs, string[] lpServiceArgVectors);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe bool ControlService(IntPtr hService, SERVICE_CONTROL dwControl, ref SERVICE_STATUS lpServiceStatus);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe bool ChangeServiceConfig(IntPtr hService, uint dwServiceType, System.ServiceProcess.ServiceStartMode dwStartType, uint dwErrorControl, string lpBinaryPathName, string lpLoadOrderGroup, int lpdwTagId, string lpDependencies, string lpServiceStartName, string lpPassword, string lpDisplayName);
+
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", EntryPoint = "SetLastError")]
+    public static extern unsafe bool SetLastError(int dwErrCode);
+    public static System.ComponentModel.Win32Exception GetLastError() => new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+    public static string GetLastErrorStr() => (Marshal.GetLastWin32Error() != 0) ? new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error()).Message : "";
 
 }

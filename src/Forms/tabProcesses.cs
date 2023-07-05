@@ -326,7 +326,6 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
             case nameof(btnKill): { Feature_ProcessKill(); break; }
             case nameof(btnForceRefresh): { Feature_ForceRefresh(); break; }
             case nameof(btnAllUsers): { Settings.ShowAllProcess = btnAllUsers.Checked; break; }
-
         }
     }
     private void OnListViewKeyDown(object? sender, KeyEventArgs e) {
@@ -356,7 +355,6 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         btnDetails.Enabled = lv.SelectedItems.Count == 1;
         btnProperties.Enabled = lv.SelectedItems.Count == 1;
         btnKill.Enabled = lv.SelectedItems.Count > 0;
-        // TODO: ShowProcessSummary Not implemented yet
         //if (ShowProcessSummary && lv.SelectedItems.Count > 0) {
         //    TaskManagerProcess thisProcess = m_Processes.GetProcess(int.Parse(lv.SelectedItems[0].Name));
         //    if (thisProcess != null) {
@@ -576,12 +574,13 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
 
     public void Refresher(bool firstTime = false) {
         if (InvokeRequired) { BeginInvoke(() => Refresher(firstTime)); return; }
-        _stopWatch.Restart();
-        RefreshStarts?.Invoke(this, EventArgs.Empty);
-
         // Check if we are the active tab or its firstTime
         if (!Active && !firstTime) return;
         if (lv.Items.Count == 0) firstTime = true;
+
+        _stopWatch.Restart();
+        RefreshStarts?.Invoke(this, EventArgs.Empty);
+
         // Store last round items and initialize new ones
         HashSet<int> LastRun = new();
         LastRun.UnionWith(HashProcesses);

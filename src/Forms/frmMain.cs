@@ -101,6 +101,7 @@ public partial class frmMain : Form {
             default: mnuView_SpeedNormal.PerformClick(); break;
         }
         tabProcs?.LoadSettings();
+        tabServs?.LoadSettings();
     }
     private void OnLoadAddHandlers() {
         Tables.System.MetricValueChanged += evPerf_MetricValueChanged;
@@ -173,8 +174,7 @@ public partial class frmMain : Form {
             // Save Settings and Columns Information...
             Settings.SaveAll();
             tabProcs.SaveSettings();
-            // Settings.SaveColsInformation("colsProcess", proc_ListView);
-            // Settings.SaveColsInformation("colsServices", serv_ListView);
+            tabServs.SaveSettings();
             // Settings.SaveColsInformation("colsConnections", conn_ListView);
             // Hide Tray Icons
             // TODO: Tray Not implemented yet
@@ -258,11 +258,6 @@ public partial class frmMain : Form {
         TimmingStart();
         // Call the Refresher, and cancel events cascading if we are not visible. 
         Tables.System.Refresh();
-        TimmingStop();
-    }
-    private void Refresh_Services(bool firstTime = false) {
-        TimmingStart();
-        Thread.Sleep(Extensions.RandomGenerator.Next(10, 30));
         TimmingStop();
     }
     private void Refresh_Connections(bool firstTime = false) {
@@ -406,7 +401,7 @@ public partial class frmMain : Form {
         Refresh_Applications(firstTime);
         Refresh_Performance(firstTime);
         tabProcs?.Refresher(firstTime);
-        Refresh_Services(firstTime);
+        tabServs?.Refresher(firstTime);
         Refresh_Connections(firstTime);
         Refresh_Ports(firstTime);
         Refresh_Nics(firstTime);
@@ -425,7 +420,7 @@ public partial class frmMain : Form {
         _MonitorTasks.Add(Task.Run(() => Refresh_Applications(firstTime)));
         _MonitorTasks.Add(Task.Run(() => Refresh_Performance(firstTime)));
         _MonitorTasks.Add(Task.Run(() => tabProcs?.Refresher(firstTime)));
-        _MonitorTasks.Add(Task.Run(() => Refresh_Services(firstTime)));
+        _MonitorTasks.Add(Task.Run(() => tabServs?.Refresher(firstTime)));
         _MonitorTasks.Add(Task.Run(() => Refresh_Connections(firstTime)));
         _MonitorTasks.Add(Task.Run(() => Refresh_Ports(firstTime)));
         _MonitorTasks.Add(Task.Run(() => Refresh_Nics(firstTime)));
