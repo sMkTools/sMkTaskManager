@@ -11,7 +11,5 @@ internal static class Tables {
 
     internal static TaskManagerSystem System = new();
 
-    internal static HashSet<string> ColsConnections = new();
-    internal static HashSet<string> ColsSummary = new();
 
 }

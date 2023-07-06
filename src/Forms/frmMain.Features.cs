@@ -62,19 +62,19 @@ partial class frmMain {
             }
         } else if (Type == TaskManagerColumnTypes.Services) {
             using frmColumns frmcols = new(TaskManagerColumnTypes.Services);
-            // frmcols.LoadCheckedColumns(tabServices.lv.Columns);
+            frmcols.LoadCheckedColumns(tabServs.lv.Columns);
             if (frmcols.ShowDialog(this) == DialogResult.OK) {
-                //tabServices.lv.SetColumns(frmcols.ColItems);
-                //RebuildActiveColumns(serv_ListView, m_ServsColumns);
-                //tabServices.btnForceRefresh.PerformClick();
+                tabServs.lv.SetColumns(frmcols.ColItems);
+                tabServs.ColsServices = tabServs.lv.Columns.Cast<ColumnHeader>().Select(x => x.Name).ToHashSet()!;
+                tabServs.btnForceRefresh.PerformClick();
             }
         } else if (Type == TaskManagerColumnTypes.Connections) {
             using frmColumns frmcols = new(TaskManagerColumnTypes.Connections);
-            // frmcols.LoadCheckedColumns(tabConns.lv.Columns);
+            frmcols.LoadCheckedColumns(tabConns.lv.Columns);
             if (frmcols.ShowDialog(this) == DialogResult.OK) {
-                //tabConns.lv.SetColumns(frmcols.ColItems);
-                //RebuildActiveColumns(conn_ListView, m_ConnsColumns);
-                //tabConns.btnForceRefresh.PerformClick();
+                tabConns.lv.SetColumns(frmcols.ColItems);
+                tabConns.ColsConnections = tabConns.lv.Columns.Cast<ColumnHeader>().Select(x => x.Name).ToHashSet()!;
+                tabConns.btnForceRefresh.PerformClick();
             }
         }
     }

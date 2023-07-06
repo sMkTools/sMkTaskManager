@@ -1,9 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing.Drawing2D;
-using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Timers;
 using sMkTaskManager.Classes;
@@ -101,6 +99,7 @@ public partial class frmMain : Form {
         }
         tabProcs?.LoadSettings();
         tabServs?.LoadSettings();
+        tabConns?.LoadSettings();
     }
     private void OnLoadAddHandlers() {
         Tables.System.MetricValueChanged += evPerf_MetricValueChanged;
@@ -174,6 +173,7 @@ public partial class frmMain : Form {
             Settings.SaveAll();
             tabProcs.SaveSettings();
             tabServs.SaveSettings();
+            tabConns.SaveSettings();
             // Settings.SaveColsInformation("colsConnections", conn_ListView);
             // Hide Tray Icons
             // TODO: Tray Not implemented yet
@@ -259,11 +259,6 @@ public partial class frmMain : Form {
         Tables.System.Refresh();
         TimmingStop();
     }
-    private void Refresh_Connections(bool firstTime = false) {
-        TimmingStart();
-        Thread.Sleep(Extensions.RandomGenerator.Next(1, 30));
-        TimmingStop();
-    }
     private void Refresh_Ports(bool firstTime = false) {
         TimmingStart();
         Thread.Sleep(Extensions.RandomGenerator.Next(1, 20));
@@ -334,6 +329,7 @@ public partial class frmMain : Form {
         ssServices.Visible = Settings.ServicesInStatus;
         tabProcs.lv.AlternateRowColors = Settings.AlternateRowColors;
         tabProcs.lv.SpaceFirstValue = Settings.IconsInProcess;
+        tabConns.lv.SpaceFirstValue = Settings.IconsInProcess;
 
         // Performance Graphs Settings
         tabPerf.chartCpu.SetIndexes("Total", Settings.Performance.ShowKernelTime ? "Kernel" : null);
@@ -401,7 +397,7 @@ public partial class frmMain : Form {
         Refresh_Performance(firstTime);
         tabProcs?.Refresher(firstTime);
         tabServs?.Refresher(firstTime);
-        Refresh_Connections(firstTime);
+        tabConns?.Refresher(firstTime);
         Refresh_Ports(firstTime);
         Refresh_Nics(firstTime);
         Refresh_TrayIcons(firstTime);
@@ -420,7 +416,7 @@ public partial class frmMain : Form {
         _MonitorTasks.Add(Task.Run(() => Refresh_Performance(firstTime)));
         _MonitorTasks.Add(Task.Run(() => tabProcs?.Refresher(firstTime)));
         _MonitorTasks.Add(Task.Run(() => tabServs?.Refresher(firstTime)));
-        _MonitorTasks.Add(Task.Run(() => Refresh_Connections(firstTime)));
+        _MonitorTasks.Add(Task.Run(() => tabConns?.Refresher(firstTime)));
         _MonitorTasks.Add(Task.Run(() => Refresh_Ports(firstTime)));
         _MonitorTasks.Add(Task.Run(() => Refresh_Nics(firstTime)));
         _MonitorTasks.Add(Task.Run(() => Refresh_TrayIcons(firstTime)));

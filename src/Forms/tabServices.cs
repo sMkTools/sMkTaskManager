@@ -14,6 +14,7 @@ internal class tabServices : UserControl, ITaskManagerTab {
     internal TaskManagerServicesCollection Services = new();
 
     internal sMkListView lv;
+    internal Button btnForceRefresh;
     private ImageList il;
     private ContextMenuStrip cms;
     private ToolStripMenuItem cmsProperties;
@@ -32,7 +33,6 @@ internal class tabServices : UserControl, ITaskManagerTab {
     private CheckBox btnDescriptions;
     private Button btnRestart;
     private Button btnServices;
-    private Button btnForceRefresh;
     private ColumnHeader lvName;
     private ToolStripMenuItem cmsRestart;
     private TextBox txtDescriptions;

@@ -702,6 +702,23 @@ internal unsafe static partial class API {
         STANDARD_RIGHTS_EXECUTE = 0x20000
     }
 
+    public enum UDP_TABLE_CLASS {
+        UDP_TABLE_BASIC,
+        UDP_TABLE_OWNER_PID,
+        UDP_TABLE_OWNER_MODULE
+    }
+    public enum TCP_TABLE_CLASS {
+        TCP_TABLE_BASIC_LISTENER,
+        TCP_TABLE_BASIC_CONNECTIONS,
+        TCP_TABLE_BASIC_ALL,
+        TCP_TABLE_OWNER_PID_LISTENER,
+        TCP_TABLE_OWNER_PID_CONNECTIONS,
+        TCP_TABLE_OWNER_PID_ALL,
+        TCP_TABLE_OWNER_MODULE_LISTENER,
+        TCP_TABLE_OWNER_MODULE_CONNECTIONS,
+        TCP_TABLE_OWNER_MODULE_ALL
+    }
+
     #endregion
 
     #region "API Structs..."
@@ -998,6 +1015,59 @@ internal unsafe static partial class API {
         public uint serviceFlags;
     }
 
+    [StructLayout(LayoutKind.Sequential)] public class MIB_TCPROW {
+        public int State;
+        public uint LocalAddr;
+        public uint LocalPort;
+        public uint RemoteAddr;
+        public uint RemotePort;
+    }
+    [StructLayout(LayoutKind.Sequential)] public class MIB_TCPTABLE_OWNER_PID {
+        public uint dwNumEntries;
+        public MIB_TCPROW_OWNER_PID table;
+    }
+    [StructLayout(LayoutKind.Sequential)] public class MIB_UDPTABLE_OWNER_PID {
+        public uint dwNumEntries;
+        public MIB_UDPROW_OWNER_PID table;
+    }
+    [StructLayout(LayoutKind.Sequential)] public class MIB_TCP6TABLE_OWNER_PID {
+        public uint dwNumEntries;
+        public MIB_TCP6ROW_OWNER_PID table;
+    }
+    [StructLayout(LayoutKind.Sequential)] public class MIB_UDP6TABLE_OWNER_PID {
+        public uint dwNumEntries;
+        public MIB_UDP6ROW_OWNER_PID table;
+    }
+    [StructLayout(LayoutKind.Sequential)] public class MIB_TCPROW_OWNER_PID {
+        public int State;
+        public uint LocalAddr;
+        public uint LocalPort;
+        public uint RemoteAddr;
+        public uint RemotePort;
+        public int OwningPid;
+    }
+    [StructLayout(LayoutKind.Sequential)] public class MIB_UDPROW_OWNER_PID {
+        public uint LocalAddr;
+        public uint LocalPort;
+        public int OwningPid;
+    }
+    [StructLayout(LayoutKind.Sequential)] public class MIB_TCP6ROW_OWNER_PID {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] LocalAddr;
+        public uint LocalScopeId;
+        public uint LocalPort;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] RemoteAddr;
+        public uint RemoteScopeId;
+        public uint RemotePort;
+        public uint State;
+        public int OwningPid;
+    }
+    [StructLayout(LayoutKind.Sequential)] public class MIB_UDP6ROW_OWNER_PID {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public byte[] LocalAddr;
+        public uint LocalScopeId;
+        public uint LocalPort;
+        public int OwningPid;
+    }
+
     #endregion
 
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
@@ -1122,5 +1192,12 @@ internal unsafe static partial class API {
     public static extern unsafe bool SetLastError(int dwErrCode);
     public static System.ComponentModel.Win32Exception GetLastError() => new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
     public static string GetLastErrorStr() => (Marshal.GetLastWin32Error() != 0) ? new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error()).Message : "";
+
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("iphlpapi.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe int GetExtendedTcpTable(IntPtr pTcpTable, ref int dwOutBufLen, bool sort, int ipVersion, TCP_TABLE_CLASS tblClass, int reserved);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("iphlpapi.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe int GetExtendedUdpTable(IntPtr pUdpTable, ref int dwOutBufLen, bool bOrder, int ipVersion, UDP_TABLE_CLASS tblClass, int reserved);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("iphlpapi.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe int SetTcpEntry(MIB_TCPROW pTcpRow);
 
 }

@@ -334,7 +334,7 @@ internal static class ETW {
                 // Send or Receive IPv6
                 TcpIpOrUdpIp_IPV6_Header mof = (TcpIpOrUdpIp_IPV6_Header)Marshal.PtrToStructure(d.MofData, typeof(TcpIpOrUdpIp_IPV6_Header))!;
                 if (mof.PID > 0 && !_AllStats.ContainsKey(mof.PID)) _AllStats.Add(mof.PID, new EtwStats());
-                var _hash = $"{mof.saddr}-{mof.sport}-{mof.daddr}-{mof.dport}";
+                var _hash = GenerateConnectionHash(mof.saddr, mof.sport, mof.daddr, mof.dport);
                 if (!_NetStats.ContainsKey(_hash)) _NetStats.Add(_hash, new EtwNetStats());
                 if (d.Header.Type == EVENT_TRACE_TYPE_SEND) {
                     _AllStats[0].NetSent += mof.size;
@@ -349,7 +349,7 @@ internal static class ETW {
                 // Send or Receive IPv4
                 TcpIpOrUdpIp_IPV4_Header mof = (TcpIpOrUdpIp_IPV4_Header)Marshal.PtrToStructure(d.MofData, typeof(TcpIpOrUdpIp_IPV4_Header))!;
                 if (mof.PID > 0 && !_AllStats.ContainsKey(mof.PID)) _AllStats.Add(mof.PID, new EtwStats());
-                var _hash = $"{mof.saddr}-{mof.sport}-{mof.daddr}-{mof.dport}";
+                var _hash = GenerateConnectionHash(mof.saddr,mof.sport,mof.daddr,mof.dport);
                 if (!_NetStats.ContainsKey(_hash)) _NetStats.Add(_hash, new EtwNetStats());
                 if (d.Header.Type == EVENT_TRACE_TYPE_SEND) {
                     _AllStats[0].NetSent += mof.size;
@@ -366,6 +366,16 @@ internal static class ETW {
 
     }
     private static bool EtwBufferCallback(EVENT_TRACE_LOGFILE logfile) { return !EtwActive; }
+    private static string GenerateConnectionHash(in byte[] saddr, in ushort sport, in byte[] daddr, in ushort dport) {
+        return $"{ new System.Net.IPAddress(saddr) }:{ GetAccuratePortNumber(sport) }-{new System.Net.IPAddress(daddr)}:{GetAccuratePortNumber(dport)}";
+    }
+    private static string GenerateConnectionHash(in uint saddr, in ushort sport, in uint daddr, in ushort dport) {
+        return $"{new System.Net.IPAddress(saddr)}:{GetAccuratePortNumber(sport)}-{new System.Net.IPAddress(daddr)}:{GetAccuratePortNumber(dport)}";
+    }
+    private static int GetAccuratePortNumber(in uint DWord) {
+        byte[] Bytes = BitConverter.GetBytes(DWord);
+        return (Bytes[0] << 8) + Bytes[1] + (Bytes[2] << 24) + (Bytes[3] << 16);
+    }
 
     public static void Flush() {
         if (EtwActive) ControlTrace(EtwHandle, KERNEL_LOGGER_NAME, EtwTraceProperties, EVENT_TRACE_CONTROL_FLUSH);
