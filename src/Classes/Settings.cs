@@ -432,11 +432,12 @@ internal static class Settings {
             case TaskManagerColumnTypes.Process: strName = "colsProcess"; break;
             case TaskManagerColumnTypes.Services: strName = "colsServices"; break;
             case TaskManagerColumnTypes.Connections: strName = "colsConnections"; break;
+            case TaskManagerColumnTypes.Ports: strName = "colsPorts"; break;
             default: return false;
         }
         try {
             byte[] bt = ReadReg(strName, ""u8.ToArray());
-            string allValues = (bt.Length > 10) ? allValues = _Encoding.GetString(bt) : TaskManagerColumn.GetDefaultColumnsChunks(TaskManagerColumnTypes.Process);
+            string allValues = (bt.Length > 10) ? allValues = _Encoding.GetString(bt) : TaskManagerColumn.GetDefaultColumnsChunks(Type);
 
             foreach (string colValues in allValues.Split(Environment.NewLine)) {
                 if (colValues.Trim().Length < 5) continue;

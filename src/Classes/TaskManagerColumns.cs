@@ -148,6 +148,15 @@ internal class TaskManagerColumn {
             new("Sent Rate", "Sent Rate", "SentRate", "Transfer Information", 80, 1, 0, 0),
             new("Received Rate", "Received Rate", "ReceivedRate", "Transfer Information", 86, 1, 0, 0),
             });
+        } else if (type == TaskManagerColumnTypes.Ports) {
+            r.AddRange(new TaskManagerColumn[] {
+            new("Process ID", "PID", "PID", "General Information", 60, 0, 1, 1),
+            new("Process Name", "Process", "ProcessName", "General Information", 100, 0, 0, 1),
+            new("Protocol", "Proto", "Protocol", "General Information", 60, 0, 0, 1),
+            new("Local Address", "Address", "LocalAddr", "General Information", 100, 0, 0, 1),
+            new("Local Port", "Port", "LocalPort", "General Information", 60, 0, 0, 1),
+            new("Port State", "State", "StateString", "General Information", 60, 0, 0, 1),
+            });
         }
         return r;
     }
@@ -165,5 +174,6 @@ internal class TaskManagerColumn {
 public enum TaskManagerColumnTypes : int {
     Process = 1,
     Services = 2,
-    Connections = 3
+    Connections = 3,
+    Ports = 4,
 }

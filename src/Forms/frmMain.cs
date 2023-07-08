@@ -20,6 +20,7 @@ public partial class frmMain : Form {
         Tabs.Tab.Add("Servs", new tabServices());
         Tabs.Tab.Add("Perfs", new tabPerformance());
         Tabs.Tab.Add("Conns", new tabConnections());
+        Tabs.Tab.Add("Ports", new tabPorts());
         // Flicker Free Controls by DoubleBuffer
         Extensions.CascadingDoubleBuffer(this);
         // Extensions.UseImmersiveDarkMode(Handle, true);
