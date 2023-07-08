@@ -8,7 +8,6 @@ partial class frmMain {
     }
     private void InitializeComponent() {
         components = new System.ComponentModel.Container();
-        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
         mnu = new MenuStrip();
         mnuFile = new ToolStripMenuItem();
         mnuOptions = new ToolStripMenuItem();
@@ -23,24 +22,11 @@ partial class frmMain {
         ssBusyTime = new ToolStripStatusLabel();
         timer1 = new System.Windows.Forms.Timer(components);
         tc = new TabControl();
-        tpApplications = new TabPage();
-        tpProcesses = new TabPage();
-        tpServices = new TabPage();
-        tpPerformance = new TabPage();
-        tabPerf = new Forms.tabPerformance();
-        tpNetworking = new TabPage();
-        tpConnections = new TabPage();
-        tpPorts = new TabPage();
-        tpUsers = new TabPage();
+        tpGeneric = new TabPage();
         timmingStrip = new StatusStrip();
-        tabProcs = new Forms.tabProcesses();
-        tabServs = new Forms.tabServices();
-        tabConns = new Forms.tabConnections();
         mnu.SuspendLayout();
         ss.SuspendLayout();
         tc.SuspendLayout();
-        tpProcesses.SuspendLayout();
-        tpPerformance.SuspendLayout();
         SuspendLayout();
         // 
         // mnu
@@ -149,14 +135,7 @@ partial class frmMain {
         // tc
         // 
         tc.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-        tc.Controls.Add(tpApplications);
-        tc.Controls.Add(tpProcesses);
-        tc.Controls.Add(tpServices);
-        tc.Controls.Add(tpPerformance);
-        tc.Controls.Add(tpNetworking);
-        tc.Controls.Add(tpConnections);
-        tc.Controls.Add(tpPorts);
-        tc.Controls.Add(tpUsers);
+        tc.Controls.Add(tpGeneric);
         tc.ItemSize = new Size(70, 20);
         tc.Location = new Point(3, 27);
         tc.Margin = new Padding(0, 3, 0, 3);
@@ -166,123 +145,14 @@ partial class frmMain {
         tc.Size = new Size(577, 508);
         tc.TabIndex = 1;
         // 
-        // tpApplications
+        // tpGeneric
         // 
-        tpApplications.BackColor = SystemColors.Control;
-        tpApplications.Location = new Point(4, 24);
-        tpApplications.Name = "tpApplications";
-        tpApplications.Size = new Size(569, 480);
-        tpApplications.TabIndex = 0;
-        tpApplications.Text = "Applications";
-        // 
-        // tpProcesses
-        // 
-        tpProcesses.BackColor = SystemColors.Control;
-        tpProcesses.Controls.Add(tabProcs);
-        tpProcesses.Location = new Point(4, 24);
-        tpProcesses.Name = "tpProcesses";
-        tpProcesses.Size = new Size(569, 480);
-        tpProcesses.TabIndex = 2;
-        tpProcesses.Text = "Processes";
-        // 
-        // tabProcs
-        // 
-        tabProcs.Active = true;
-        tabProcs.Description = "Processes";
-        tabProcs.Dock = DockStyle.Fill;
-        tabProcs.InfoText = "";
-        tabProcs.Location = new Point(0, 0);
-        tabProcs.Name = "tabProcs";
-        tabProcs.Size = new Size(569, 480);
-        tabProcs.TabIndex = 0;
-        tabProcs.Title = "Processes";
-        // 
-        // tpServices
-        // 
-        tpServices.BackColor = SystemColors.Control;
-        tpServices.Controls.Add(tabServs);
-        tpServices.Location = new Point(4, 24);
-        tpServices.Name = "tpServices";
-        tpServices.Size = new Size(569, 480);
-        tpServices.TabIndex = 3;
-        tpServices.Text = "Services";
-        // 
-        // tabServs
-        // 
-        tabServs.Active = true;
-        tabServs.Description = "Services";
-        tabServs.Dock = DockStyle.Fill;
-        tabServs.Location = new Point(0, 0);
-        tabServs.Name = "tabServs";
-        tabServs.Size = new Size(569, 480);
-        tabServs.TabIndex = 0;
-        tabServs.Title = "Services";
-        // 
-        // tpPerformance
-        // 
-        tpPerformance.BackColor = SystemColors.Control;
-        tpPerformance.Controls.Add(tabPerf);
-        tpPerformance.Location = new Point(4, 24);
-        tpPerformance.Name = "tpPerformance";
-        tpPerformance.Size = new Size(569, 480);
-        tpPerformance.TabIndex = 1;
-        tpPerformance.Text = "Performance";
-        // 
-        // tabPerf
-        // 
-        tabPerf.Dock = DockStyle.Fill;
-        tabPerf.Location = new Point(0, 0);
-        tabPerf.Name = "tabPerf";
-        tabPerf.Size = new Size(569, 480);
-        tabPerf.TabIndex = 0;
-        // 
-        // tpNetworking
-        // 
-        tpNetworking.BackColor = SystemColors.Control;
-        tpNetworking.Location = new Point(4, 24);
-        tpNetworking.Name = "tpNetworking";
-        tpNetworking.Size = new Size(569, 480);
-        tpNetworking.TabIndex = 4;
-        tpNetworking.Text = "Networking";
-        // 
-        // tpConnections
-        // 
-        tpConnections.BackColor = SystemColors.Control;
-        tpConnections.Controls.Add(tabConns);
-        tpConnections.Location = new Point(4, 24);
-        tpConnections.Name = "tpConnections";
-        tpConnections.Size = new Size(569, 480);
-        tpConnections.TabIndex = 5;
-        tpConnections.Text = "Connections";
-        // 
-        // tabConns
-        // 
-        tabConns.Active = true;
-        tabConns.Description = "Connections";
-        tabConns.Dock = DockStyle.Fill;
-        tabConns.Location = new Point(0, 0);
-        tabConns.Name = "tabConns";
-        tabConns.Size = new Size(569, 480);
-        tabConns.TabIndex = 0;
-        tabConns.Title = "Connections";
-        // 
-        // tpPorts
-        // 
-        tpPorts.BackColor = SystemColors.Control;
-        tpPorts.Location = new Point(4, 24);
-        tpPorts.Name = "tpPorts";
-        tpPorts.Size = new Size(569, 480);
-        tpPorts.TabIndex = 6;
-        tpPorts.Text = "Ports";
-        // 
-        // tpUsers
-        // 
-        tpUsers.BackColor = SystemColors.Control;
-        tpUsers.Location = new Point(4, 24);
-        tpUsers.Name = "tpUsers";
-        tpUsers.Size = new Size(569, 480);
-        tpUsers.TabIndex = 7;
-        tpUsers.Text = "Users";
+        tpGeneric.BackColor = SystemColors.Control;
+        tpGeneric.Location = new Point(4, 24);
+        tpGeneric.Name = "tpGeneric";
+        tpGeneric.Size = new Size(569, 480);
+        tpGeneric.TabIndex = 0;
+        tpGeneric.Text = "Generic";
         // 
         // timmingStrip
         // 
@@ -297,6 +167,9 @@ partial class frmMain {
         timmingStrip.TabIndex = 2;
         timmingStrip.Text = "statusStrip1";
         timmingStrip.Visible = false;
+        timmingStrip.GripStyle = ToolStripGripStyle.Hidden;
+        timmingStrip.Stretch = true;
+        timmingStrip.Padding = new Padding(10,0,10,0);
         // 
         // frmMain
         // 
@@ -305,15 +178,15 @@ partial class frmMain {
         Controls.Add(tc);
         Controls.Add(ss);
         Controls.Add(mnu);
+        Icon = Resources.Resources.frmMain;
         KeyPreview = true;
         MainMenuStrip = mnu;
         Margin = new Padding(6);
         MinimumSize = new Size(480, 400);
-        Icon = Resources.Resources.frmMain;
         Name = "frmMain";
         Text = "sMk Task Manager - Next Gen";
         FormClosing += OnClosingEventHandler;
-        Load += OnLoadEventHandler;
+        Load += OnLoad;
         SizeChanged += OnSizeChangedEventHandler;
         KeyDown += OnKeyDownEventHandler;
         mnu.ResumeLayout(false);
@@ -321,8 +194,6 @@ partial class frmMain {
         ss.ResumeLayout(false);
         ss.PerformLayout();
         tc.ResumeLayout(false);
-        tpProcesses.ResumeLayout(false);
-        tpPerformance.ResumeLayout(false);
         ResumeLayout(false);
         PerformLayout();
     }
@@ -341,17 +212,6 @@ partial class frmMain {
     private ToolStripStatusLabel ssBusyTime;
     private System.Windows.Forms.Timer timer1;
     private TabControl tc;
-    private TabPage tpApplications;
-    private TabPage tpPerformance;
-    private Forms.tabPerformance tabPerf;
-    private TabPage tpProcesses;
-    private TabPage tpServices;
-    private TabPage tpNetworking;
-    private TabPage tpConnections;
-    private TabPage tpPorts;
-    private TabPage tpUsers;
+    private TabPage tpGeneric;
     private StatusStrip timmingStrip;
-    private Forms.tabProcesses tabProcs;
-    private Forms.tabServices tabServs;
-    private Forms.tabConnections tabConns;
 }

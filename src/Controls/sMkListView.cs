@@ -8,7 +8,7 @@ using static sMkTaskManager.Controls.sMkListViewHelpers;
 namespace sMkTaskManager.Controls;
 
 [SupportedOSPlatform("windows")]
-internal class sMkListView : ListView {
+public class sMkListView : ListView {
     private readonly sMkColumnSorter _sorter = new();
     private BindingSource _dataSource = new();
     private PropertyDescriptorCollection _descriptors;
@@ -344,7 +344,7 @@ internal class sMkListView : ListView {
 
 }
 
-internal static class sMkListViewHelpers {
+public static class sMkListViewHelpers {
     public const Int32 HDI_FORMAT = 0x4;
     public const Int32 HDF_LEFT = 0x0;
     public const Int32 HDF_STRING = 0x4000;
@@ -373,7 +373,7 @@ internal static class sMkListViewHelpers {
 
 }
 
-internal class sMkListViewSorter {
+public class sMkListViewSorter {
     // We use this class to enable sorting w/icons on regular ListView controls
     private static void ColumnClickHandler(object? sender, ColumnClickEventArgs e) {
         if (sender == null) return;
@@ -456,7 +456,7 @@ internal class sMkListViewSorter {
 
 }
 
-internal class sMkColumnSorter : IComparer {
+public class sMkColumnSorter : IComparer {
     public SortOrder Order = SortOrder.None;
     public int SortColumn = 0;
     public int PrevColumn = 0;

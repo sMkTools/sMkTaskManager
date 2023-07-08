@@ -12,6 +12,7 @@ These features have to be implemented because they are not part of old VB.net pr
 
 * GPU Monitoring.
 * WSL Instances lists and monitoring.
+* Implemented isDirty Property for tabSettings so we dont call Save on all of them if not needed.
 
 ## Known bugs
 * DONE: Idle process is not showing when not showing Processes for all users, it should always display.

@@ -190,6 +190,8 @@ internal class tabConnections : UserControl, ITaskManagerTab {
         lv.DataSource = Connections.DataExporter;
         lv.SpaceFirstValue = Settings.IconsInProcess;
         // Add event handlers
+        KeyPress += OnKeyPress;
+        VisibleChanged += OnVisibleChanged;
         cms.Opening += OnContextOpening;
         cms.ItemClicked += OnContextItemClicked;
         lv.ColumnReordered += OnListViewColumnReordered;
@@ -204,6 +206,11 @@ internal class tabConnections : UserControl, ITaskManagerTab {
     private void OnKeyPress(object? sender, KeyPressEventArgs e) {
         lv.Focus();
         OnListViewKeyPress(lv, e);
+    }
+    private void OnVisibleChanged(object? sender, EventArgs e) {
+        if (Visible && lv.Items.Count == 0 && Shared.InitComplete) {
+            SuspendLayout(); Refresher(true); ResumeLayout();
+        }
     }
     private void OnContextOpening(object? sender, CancelEventArgs e) {
         e.Cancel = lv.SelectedItems.Count == 0;
@@ -308,7 +315,7 @@ internal class tabConnections : UserControl, ITaskManagerTab {
         Shared.BusyCursor = false;
     }
     public void Feature_KillProcess() {
-        if (lv.SelectedItems.Count < 1)  return;
+        if (lv.SelectedItems.Count < 1) return;
         if (lv.SelectedItems.Count > 1) {
             if (!(MessageBox.Show("Are you sure you want to kill all selected processes?", ProductName, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning) == DialogResult.Yes)) {
                 return;
@@ -316,7 +323,7 @@ internal class tabConnections : UserControl, ITaskManagerTab {
         }
         foreach (ListViewItem itm in lv.SelectedItems) {
             var conn = Connections.GetConnection(itm.Name);
-            if (conn == null) continue; 
+            if (conn == null) continue;
             if (conn.PID < Shared.bpi) continue;
             try {
                 TaskManagerProcess p = new(conn.PID);
@@ -334,16 +341,11 @@ internal class tabConnections : UserControl, ITaskManagerTab {
     public string Description { get; set; } = "Connections";
     public string TimmingKey { get; } = "Conns";
     public long TimmingValue => _stopWatch.ElapsedMilliseconds;
-    public bool Active { get; set; } = true;
 
-    public void Refresher(bool firstTime = false) {
-        if (InvokeRequired) { BeginInvoke(() => Refresher(firstTime)); return; }
-        // Check if we are the active tab or its firstTime
-        if (!Active && !firstTime) return;
-        if (lv.Items.Count == 0) firstTime = true;
-        _stopWatch.Restart();
+    private void RefresherDoWork(bool firstTime = false) {
+        Debug.WriteLine($"Refresher for Connections - Visible: {Visible} - firstTime: {firstTime}");
         RefreshStarts?.Invoke(this, EventArgs.Empty);
-
+        if (lv.Items.Count == 0) firstTime = true;
         // Store last round items and initialize new ones.
         HashSet<string> LastRun = new();
         LastRun.UnionWith(HashConnections);
@@ -394,18 +396,27 @@ internal class tabConnections : UserControl, ITaskManagerTab {
         }
         // Update Total Connections Label
         lblTotal.Text = "Total Connections: " + HashConnections.Count;
-
-        _stopWatch.Stop();
         RefreshComplete?.Invoke(this, EventArgs.Empty);
     }
+    public void Refresher(bool firstTime = false) {
+        _stopWatch.Restart();
+        if (Visible || firstTime) {
+            if (InvokeRequired) {
+                Invoke(() => RefresherDoWork(firstTime));
+            } else {
+                RefresherDoWork(firstTime);
+            }
+        }
+        _stopWatch.Stop();
+    }
     public void LoadSettings() {
-        lv.SmallImageList = Settings.IconsInProcess ? il : null;
-        lv.SpaceFirstValue = Settings.IconsInProcess;
         Settings.LoadColsInformation(TaskManagerColumnTypes.Connections, lv, ref ColsConnections);
-
     }
     public bool SaveSettings() {
         return Settings.SaveColsInformation("colsConnections", lv);
     }
-
+    public void ApplySettings() {
+        lv.SmallImageList = Settings.IconsInProcess ? il : null;
+        lv.SpaceFirstValue = Settings.IconsInProcess;
+    }
 }

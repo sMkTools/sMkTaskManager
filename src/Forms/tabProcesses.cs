@@ -196,6 +196,7 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         Name = "tabProcesses";
         Size = new Size(600, 600);
         KeyPress += OnKeyPress;
+        VisibleChanged += OnVisibleChanged;
         ResumeLayout(false);
     }
     private void InitializeContextMenu() {
@@ -232,6 +233,11 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
     private void OnKeyPress(object? sender, KeyPressEventArgs e) {
         lv.Focus();
         OnListViewKeyPress(lv, e);
+    }
+    private void OnVisibleChanged(object? sender, EventArgs e) {
+        if (Visible && lv.Items.Count == 0 && Shared.InitComplete) {
+            SuspendLayout(); Refresher(true); ResumeLayout();
+        }
     }
     private void OnContextOpening(object? sender, CancelEventArgs e) {
         e.Cancel = lv.SelectedItems.Count == 0;
@@ -556,7 +562,6 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
     public string Description { get; set; } = "Processes";
     public string TimmingKey { get; } = "Procs";
     public long TimmingValue => _stopWatch.ElapsedMilliseconds;
-    public bool Active { get; set; } = true;
     public bool AllUsers => btnAllUsers.Checked;
     public void RefreshInfoText() {
         lblText.Text = string.Format("Total: {0}, Selected: {1}", lv.Items.Count, lv.SelectedItems.Count);
@@ -566,20 +571,15 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         set { lblText.Text = value; }
     }
 
-    public void Refresher(bool firstTime = false) {
-        if (InvokeRequired) { BeginInvoke(() => Refresher(firstTime)); return; }
-        // Check if we are the active tab or its firstTime
-        if (!Active && !firstTime) return;
-        if (lv.Items.Count == 0) firstTime = true;
-
-        _stopWatch.Restart();
+    private void RefresherDoWork(bool firstTime = false) {
+        Debug.WriteLine($"Refresher for Processes - Visible: {Visible} - firstTime: {firstTime}");
         RefreshStarts?.Invoke(this, EventArgs.Empty);
+        if (lv.Items.Count == 0) firstTime = true;
 
         // Store last round items and initialize new ones
         HashSet<int> LastRun = new();
         LastRun.UnionWith(HashProcesses);
         HashProcesses.Clear();
-
         // Allocate Main Pointer and offset
         nint lastOffset = 0;
         IntPtr hmain = IntPtr.Zero;
@@ -639,21 +639,32 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
                 thisProcess.BackColor = Settings.Highlights.RemovedColor;
                 HashProcesses.Add(thisProcess.PID);
             }
-            thisProcess = null;
-
         }
         // Set LV First Column Width, only if firstTime
         if (firstTime) lv.Columns[0].Width = -1;
-
-        _stopWatch.Stop();
         RefreshComplete?.Invoke(this, EventArgs.Empty);
+    }
+    public void Refresher(bool firstTime = false) {
+        _stopWatch.Restart();
+        if (Visible || firstTime) {
+            if (InvokeRequired) {
+                Invoke(() => RefresherDoWork(firstTime));
+            } else {
+                RefresherDoWork(firstTime);
+            }
+        }
+        _stopWatch.Stop();
     }
     public void LoadSettings() {
         Settings.LoadColsInformation(TaskManagerColumnTypes.Process, lv, ref ColsProcesses);
-        btnAllUsers.Checked = Settings.ShowAllProcess;
     }
     public bool SaveSettings() {
         return Settings.SaveColsInformation("colsProcess", lv);
+    }
+    public void ApplySettings() {
+        lv.AlternateRowColors = Settings.AlternateRowColors;
+        lv.SpaceFirstValue = Settings.IconsInProcess;
+        btnAllUsers.Checked = Settings.ShowAllProcess;
     }
 
 }

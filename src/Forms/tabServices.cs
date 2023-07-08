@@ -310,11 +310,17 @@ internal class tabServices : UserControl, ITaskManagerTab {
         btnStop.Click += OnButtonClicked;
         btnDescriptions.CheckedChanged += OnButtonClicked;
         KeyPress += OnKeyPress;
+        VisibleChanged += OnVisibleChanged;
     }
 
     private void OnKeyPress(object? sender, KeyPressEventArgs e) {
         lv.Focus();
         OnListViewKeyPress(lv, e);
+    }
+    private void OnVisibleChanged(object? sender, EventArgs e) {
+        if (Visible && lv.Items.Count == 0 && Shared.InitComplete) {
+            SuspendLayout(); Refresher(true); ResumeLayout();
+        }
     }
     private void OnContextOpening(object? sender, CancelEventArgs e) {
         e.Cancel = lv.SelectedItems.Count == 0;
@@ -390,7 +396,7 @@ internal class tabServices : UserControl, ITaskManagerTab {
         cmsRestart.Enabled = btnRestart.Enabled;
 
         if (lv.SelectedItems.Count < 1) return;
-        if (Shared.InitComplete && Active && ShowServiceDescriptions) {
+        if (Shared.InitComplete && Visible && ShowServiceDescriptions) {
             PopulateServiceDescription(Services.GetService(lv.SelectedItems[0].Name));
         }
 
@@ -535,7 +541,7 @@ internal class tabServices : UserControl, ITaskManagerTab {
         x.Start();
     }
     public void Feature_FileProperties() {
-        if (lv.SelectedItems.Count < 1)  return;
+        if (lv.SelectedItems.Count < 1) return;
         for (int i = 0; i < lv.SelectedItems.Count; i++) {
             try {
                 string? file = Services.GetService(lv.SelectedItems[i].Name)?.ImagePath;
@@ -579,19 +585,15 @@ internal class tabServices : UserControl, ITaskManagerTab {
     }
 
     public sMkListView ListView => lv;
-    public string Title { get; set; } = "Processes";
-    public string Description { get; set; } = "Processes";
-    public string TimmingKey { get; } = "Procs";
+    public string Title { get; set; } = "Services";
+    public string Description { get; set; } = "List of Services";
+    public string TimmingKey { get; } = "Servs";
     public long TimmingValue => _stopWatch.ElapsedMilliseconds;
-    public bool Active { get; set; } = true;
 
-    public void Refresher(bool firstTime = false) {
-        if (InvokeRequired) { BeginInvoke(() => Refresher(firstTime)); return; }
-        // Check if we are the active tab or its firstTime
-        if (!Active && !firstTime) return;
-        if (lv.Items.Count == 0) firstTime = true;
-        _stopWatch.Restart();
+    private void RefresherDoWork(bool firstTime = false) {
+        Debug.WriteLine($"Refresher for Services - Visible: {Visible} - firstTime: {firstTime}");
         RefreshStarts?.Invoke(this, EventArgs.Empty);
+        if (lv.Items.Count == 0) firstTime = true;
         // Store last round items and initialize new ones
         HashSet<string> LastRun = new();
         LastRun.UnionWith(HashServices);
@@ -629,8 +631,18 @@ internal class tabServices : UserControl, ITaskManagerTab {
                 HashServices.Add(thisService.Ident);
             }
         }
-        _stopWatch.Stop();
         RefreshComplete?.Invoke(this, EventArgs.Empty);
+    }
+    public void Refresher(bool firstTime = false) {
+        _stopWatch.Restart();
+        if (Visible || firstTime) {
+            if (InvokeRequired) {
+                Invoke(() => RefresherDoWork(firstTime));
+            } else {
+                RefresherDoWork(firstTime);
+            }
+        }
+        _stopWatch.Stop();
     }
     public void LoadSettings() {
         Settings.LoadColsInformation(TaskManagerColumnTypes.Services, lv, ref ColsServices);
@@ -639,5 +651,5 @@ internal class tabServices : UserControl, ITaskManagerTab {
     public bool SaveSettings() {
         return Settings.SaveColsInformation("colsServices", lv);
     }
-
+    public void ApplySettings() { }
 }

@@ -251,7 +251,7 @@ internal static class Settings {
     }
 
     public static bool LoadAll() {
-        return LoadGeneral() && LoadHighlights() && LoadPerformance() && LoadNetworking();
+        return LoadGeneral() && LoadHighlights() && LoadNetworking();
     }
     public static bool LoadGeneral() {
         try {

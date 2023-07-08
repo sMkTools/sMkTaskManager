@@ -1,89 +1,100 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing.Drawing2D;
 using System.Runtime.Versioning;
+using sMkTaskManager.Classes;
 using sMkTaskManager.Controls;
 namespace sMkTaskManager.Forms;
 
 [DesignerCategory("Component"), SupportedOSPlatform("windows")]
-public partial class tabPerformance : UserControl {
+internal partial class tabPerformance : UserControl, ITaskManagerTab {
+    private readonly Stopwatch _stopWatch = new();
+    private Point LastMousePoint = new(0, 0);
+    internal TaskManagerSystem System = new();
 
-    internal TableLayoutPanel tlpMain;
-    internal Label lblCpuMeter;
-    internal Label lblCpuChart;
-    internal Label lblMemMeter;
-    internal Label lblMemChart;
-    internal Label lblIOMeter;
-    internal Label lblIOChart;
-    internal Label lblDiskMeter;
-    internal Label lblDiskChart;
-    internal Label lblNetMeter;
-    internal Label lblNetChart;
-    internal sMkPerfMeter meterCpu;
-    internal sMkPerfChart chartCpu;
-    internal sMkPerfMeter meterMem;
-    internal sMkPerfChart chartMem;
-    internal sMkPerfMeter meterIO;
-    internal sMkPerfChart chartIO;
-    internal sMkPerfMeter meterDisk;
-    internal sMkPerfChart chartDisk;
-    internal sMkPerfMeter meterNet;
-    internal sMkPerfChart chartNet;
+    public event EventHandler? ForceRefreshClicked;
+    public event EventHandler? RefreshStarts;
+    public event EventHandler? RefreshComplete;
+
+    #region "Form Controls"
+    private TableLayoutPanel tlpMain;
+    private Label lblCpuMeter;
+    private Label lblCpuChart;
+    private Label lblMemMeter;
+    private Label lblMemChart;
+    private Label lblIOMeter;
+    private Label lblIOChart;
+    private Label lblDiskMeter;
+    private Label lblDiskChart;
+    private Label lblNetMeter;
+    private Label lblNetChart;
+    private sMkPerfMeter meterCpu;
+    private sMkPerfChart chartCpu;
+    private sMkPerfMeter meterMem;
+    private sMkPerfChart chartMem;
+    private sMkPerfMeter meterIO;
+    private sMkPerfChart chartIO;
+    private sMkPerfMeter meterDisk;
+    private sMkPerfChart chartDisk;
+    private sMkPerfMeter meterNet;
+    private sMkPerfChart chartNet;
     private TableLayoutPanel tlpDetails;
     private GroupBox gbMemory;
     private Label gbMemory_Label1;
-    internal Label gbMemory_Avail;
-    internal Label gbMemory_Total;
+    private Label gbMemory_Avail;
+    private Label gbMemory_Total;
     private Label gbMemory_Label3;
     private Label gbMemory_Label2;
-    internal Label gbMemory_Cached;
+    private Label gbMemory_Cached;
     private GroupBox gbIOops;
     private Label gbIOops_Label3;
-    internal Label gbIOops_Others;
+    private Label gbIOops_Others;
     private Label gbIOops_Label2;
     private Label gbIOops_Label1;
-    internal Label gbIOops_Writes;
-    internal Label gbIOops_Reads;
+    private Label gbIOops_Writes;
+    private Label gbIOops_Reads;
     private GroupBox gbIOtranf;
     private Label gbIOtranf_Label3;
-    internal Label gbIOtranf_Others;
+    private Label gbIOtranf_Others;
     private Label gbIOtranf_Labe2;
     private Label gbIOtranf_Labe1;
-    internal Label gbIOtranf_Writes;
-    internal Label gbIOtranf_Reads;
+    private Label gbIOtranf_Writes;
+    private Label gbIOtranf_Reads;
     private GroupBox gbCommit;
     private Label gbCommit_Label3;
-    internal Label gbCommit_Peak;
+    private Label gbCommit_Peak;
     private Label gbCommit_Label2;
     private Label gbCommit_Label1;
-    internal Label gbCommit_Current;
-    internal Label gbCommit_Limit;
+    private Label gbCommit_Current;
+    private Label gbCommit_Limit;
     private GroupBox gbPagefile;
     private Label gbPagefile_Label3;
-    internal Label gbPagefile_Peak;
+    private Label gbPagefile_Peak;
     private Label gbPagefile_Label2;
     private Label gbPagefile_Label1;
-    internal Label gbPagefile_Current;
-    internal Label gbPagefile_Limit;
+    private Label gbPagefile_Current;
+    private Label gbPagefile_Limit;
     private GroupBox gbKernel;
     private Label gbKernel_Label3;
-    internal Label gbKernel_NonPaged;
+    private Label gbKernel_NonPaged;
     private Label gbKernel_Label2;
     private Label gbKernel_Label1;
-    internal Label gbKernel_Paged;
-    internal Label gbKernel_Total;
+    private Label gbKernel_Paged;
+    private Label gbKernel_Total;
     private GroupBox gbSystem;
     private Label gbSystem_Label3;
-    internal Label gbSystem_Processes;
+    private Label gbSystem_Processes;
     private Label gbSystem_Label2;
     private Label gbSystem_Label1;
-    internal Label gbSystem_Threads;
-    internal Label gbSystem_Handles;
+    private Label gbSystem_Threads;
+    private Label gbSystem_Handles;
     private Label gbSystem_Label6;
     private Label gbSystem_Label5;
     private Label gbSystem_Label4;
-    internal Label gbSystem_UpTime;
-    internal Label gbSystem_Devices;
-    internal Label gbSystem_Services;
-
+    private Label gbSystem_UpTime;
+    private Label gbSystem_Devices;
+    private Label gbSystem_Services;
+    #endregion
     private IContainer? components = null;
     protected override void Dispose(bool disposing) {
         if (disposing && (components != null)) { components.Dispose(); }
@@ -94,9 +105,7 @@ public partial class tabPerformance : UserControl {
         InitializeComponent();
         InitializeSettings();
         Extensions.CascadingDoubleBuffer(this);
-        Resize += OnResizeEventHandler;
-        GotFocus += OnResizeEventHandler;
-        CascadeDoubleClickHandlers(this);
+        Debug.WriteLine("Perfs Created! - Name: " + Name);
     }
     private void InitializeComponent() {
         components = new Container();
@@ -1205,6 +1214,8 @@ public partial class tabPerformance : UserControl {
         Controls.Add(tlpMain);
         Name = "tabPerformance";
         Size = new Size(600, 600);
+        Load += OnLoad;
+        VisibleChanged += OnVisibleChanged;
         tlpMain.ResumeLayout(false);
         tlpDetails.ResumeLayout(false);
         gbSystem.ResumeLayout(false);
@@ -1251,6 +1262,25 @@ public partial class tabPerformance : UserControl {
         chartNet.ValuesSuffix = " Kb.";
     }
 
+    private void OnLoad(object? sender, EventArgs e) {
+        Debug.WriteLine("Perfs Loaded! - Name: " + Name);
+        Resize += OnResizeEventHandler;
+        GotFocus += OnResizeEventHandler;
+        CascadeDoubleClickHandlers(this);
+        System.MetricValueChanged += System_MetricValueChanged;
+        System.RefreshCompleted += System_RefreshCompleted;
+    }
+    private void OnVisibleChanged(object? sender, EventArgs e) {
+        if (Visible && Shared.InitComplete && _stopWatch.ElapsedTicks == 0) {
+            SuspendLayout(); Refresher(true); ResumeLayout();
+        }
+    }
+    private void CascadeDoubleClickHandlers(Control MainControl) {
+        foreach (Control c in MainControl.Controls) {
+            c.MouseDoubleClick += OnMouseDoubleClickEventHandler;
+            if (c.Controls.Count > 1) CascadeDoubleClickHandlers(c);
+        }
+    }
     private void OnResizeEventHandler(object? sender, EventArgs e) {
         if (ParentForm == null) return;
         if (ParentForm.WindowState == FormWindowState.Minimized) return;
@@ -1299,12 +1329,50 @@ public partial class tabPerformance : UserControl {
             ParentForm.Top = ParentForm.Top + (e.Location.Y - LastMousePoint.Y);
         }
     }
-    private void CascadeDoubleClickHandlers(Control MainControl) {
-        foreach (Control c in MainControl.Controls) {
-            c.MouseDoubleClick += OnMouseDoubleClickEventHandler;
-            if (c.Controls.Count > 1) CascadeDoubleClickHandlers(c);
+    private void System_MetricValueChanged(object sender, Metric metric, MetricChangedEventArgs e) {
+        switch (e.MetricName) {
+            case "PhysicalTotal": gbMemory_Total.Text = System.PhysicalTotal.ValueFmt; break;
+            case "PhysicalAvail": gbMemory_Avail.Text = System.PhysicalAvail.ValueFmt; break;
+            case "SystemCached": gbMemory_Cached.Text = System.SystemCached.ValueFmt; break;
+            case "CommitTotal": gbCommit_Current.Text = System.CommitTotal.ValueFmt; break;
+            case "CommitPeak": gbCommit_Peak.Text = System.CommitPeak.ValueFmt; break;
+            case "CommitLimit": gbCommit_Limit.Text = System.CommitLimit.ValueFmt; break;
+            case "KernelTotal": gbKernel_Total.Text = System.KernelTotal.ValueFmt; break;
+            case "KernelPaged": gbKernel_Paged.Text = System.KernelPaged.ValueFmt; break;
+            case "KernelNonPaged": gbKernel_NonPaged.Text = System.KernelNonPaged.ValueFmt; break;
+            case "PageFileTotal": gbPagefile_Limit.Text = System.PageFileTotal.ValueFmt; break;
+            case "PageFileUsed": gbPagefile_Current.Text = System.PageFileUsed.ValueFmt; break;
+            case "PageFilePeak": gbPagefile_Peak.Text = System.PageFilePeak.ValueFmt; break;
+            case "ioReadCount": gbIOops_Reads.Text = System.ioReadCount.ValueFmt; break;
+            case "ioReadBytes": gbIOtranf_Reads.Text = System.ioReadBytes.ValueFmt; break;
+            case "ioWriteCount": gbIOops_Writes.Text = System.ioWriteCount.ValueFmt; break;
+            case "ioWriteBytes": gbIOtranf_Writes.Text = System.ioWriteBytes.ValueFmt; break;
+            case "ioOtherCount": gbIOops_Others.Text = System.ioOtherCount.ValueFmt; break;
+            case "ioOtherBytes": gbIOtranf_Others.Text = System.ioOtherBytes.ValueFmt; break;
+            case "HandleCount": gbSystem_Handles.Text = System.HandleCount.ValueFmt; break;
+            case "ThreadCount": gbSystem_Threads.Text = System.ThreadCount.ValueFmt; break;
+            case "ProcessCount": gbSystem_Processes.Text = System.ProcessCount.ValueFmt; break;
+            case "DevicesCount": gbSystem_Devices.Text = System.DevicesCount.ValueFmt; break;
+            case "ServicesCount": gbSystem_Services.Text = System.ServicesCount.ValueFmt; break;
         }
     }
+    private void System_RefreshCompleted(object? sender, EventArgs e) {
+        // Always set these values. regardless we are visible or not.
+        gbSystem_UpTime.Text = System.UpTime;
+        meterCpu.SetValue(System.CpuUsage.Value);
+        chartCpu.AddValue(System.CpuUsage.Value, System.CpuUsageKernel.Value);
+        meterMem.SetValue(System.MemoryUsage, System.MemoryUsageString);
+        chartMem.AddValue((double)System.MemoryUsage, System.SwapUsage);
+        meterIO.SetValue(System.ioDataUsage, System.ioDataUsageString);
+        chartIO.AddValue((double)System.ioOtherBytes.Delta / 1024, (double)System.ioWriteBytes.Delta / 1024, (double)System.ioReadBytes.Delta / 1024);
+        meterDisk.SetValue(System.DiskUsage, System.DiskUsageString);
+        chartDisk.AddValue((double)System.DiskRead.Delta / 1024, (double)System.DiskWrite.Delta / 1024);
+        meterNet.SetValue(System.NetworkUsage, System.NetworkUsageString);
+        chartNet.AddValue((double)System.NetReceived.Delta / 1024, (double)System.NetSent.Delta / 1024);
+        // Always flush the ETW, if its active.
+        ETW.Flush();
+    }
+
 
     private bool FullScreen {
         get { return !tlpDetails.Visible; }
@@ -1375,8 +1443,6 @@ public partial class tabPerformance : UserControl {
         }
 
     }
-    private Point LastMousePoint = new(0, 0);
-
     private enum PerformanceMeters {
         CPU = 1,
         Mem = 2,
@@ -1384,6 +1450,62 @@ public partial class tabPerformance : UserControl {
         Disk = 4,
         Net = 5
     }
+
+    public sMkListView? ListView => null;
+    public string Title { get; set; } = "Performance";
+    public string Description { get; set; } = "System Performance";
+    public string TimmingKey { get; } = "Perfs";
+    public long TimmingValue => _stopWatch.ElapsedMilliseconds;
+
+    private void RefresherDoWork(bool firstTime = false) {
+        Debug.WriteLine($"Refresher for Performance - Visible: {Visible} - firstTime: {firstTime}");
+        RefreshStarts?.Invoke(this, EventArgs.Empty);
+        System.Refresh();
+        RefreshComplete?.Invoke(this, EventArgs.Empty);
+    }
+    public void Refresher(bool firstTime = false) {
+        _stopWatch.Restart();
+        if (InvokeRequired) {
+            Invoke(() => RefresherDoWork(firstTime));
+        } else {
+            RefresherDoWork(firstTime);
+        }
+        _stopWatch.Stop();
+    }
+    public void LoadSettings() {
+        Settings.LoadPerformance();
+    }
+    public bool SaveSettings() { return true; }
+    public void ApplySettings() {
+        chartCpu.SetIndexes("Total", Settings.Performance.ShowKernelTime ? "Kernel" : null);
+        chartCpu.BackSolid = Settings.Performance.Solid;
+        chartCpu.AntiAliasing = Settings.Performance.AntiAlias;
+        chartCpu.ShadeBackground = Settings.Performance.ShadeBackground;
+        chartCpu.DisplayAverage = Settings.Performance.DisplayAverages;
+        chartCpu.DisplayLegends = Settings.Performance.DisplayLegends;
+        chartCpu.DisplayIndexes = Settings.Performance.DisplayIndexes;
+        chartCpu.DetailsOnHover = Settings.Performance.DisplayOnHover;
+        chartCpu.ValueSpacing = Settings.Performance.ValueSpacing;
+        chartCpu.GridSpacing = Settings.Performance.GridSize;
+        chartCpu.PenGridVertical.DashStyle = (DashStyle)Settings.Performance.VerticalGridStyle;
+        chartCpu.PenGridVertical.Color = Settings.Performance.VerticalGridColor;
+        chartCpu.PenGridHorizontal.DashStyle = (DashStyle)Settings.Performance.HorizontalGridStyle;
+        chartCpu.PenGridHorizontal.Color = Settings.Performance.HorizontalGridColor;
+        chartCpu.PenAverage.DashStyle = (DashStyle)Settings.Performance.AverageLineStyle;
+        chartCpu.PenAverage.Color = Settings.Performance.AverageLineColor;
+        chartCpu.LightColors = Settings.Performance.LightColors;
+        chartMem.CopySettings(chartCpu);
+        chartIO.CopySettings(chartCpu);
+        chartDisk.CopySettings(chartCpu);
+        chartNet.CopySettings(chartCpu);
+        meterCpu.LightColors = chartCpu.LightColors;
+        meterMem.LightColors = chartCpu.LightColors;
+        meterIO.LightColors = chartCpu.LightColors;
+        meterDisk.LightColors = chartCpu.LightColors;
+        meterNet.LightColors = chartCpu.LightColors;
+
+    }
+
 
 }
 

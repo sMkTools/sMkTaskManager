@@ -14,19 +14,19 @@ partial class frmMain {
     private ToolStripMenuItem mnuView_Refresh, mnuView_SpeedHigh, mnuView_SpeedNormal, mnuView_SpeedLow, mnuView_Pause;
     private ToolStripMenuItem mnuHelp_About, mnuHelp_Timmings;
 
-    private void Initialize_MainMenu() {
+    private void InitializeMainMenu() {
         mnu.SuspendLayout();
-        Initialize_FileMenu();
+        InitializeFileMenu();
         mnuFile.DropDownOpening += mnu_DropDownOpening;
         mnuFile.DropDownItemClicked += mnu_DropDownItemClicked;
         mnuMonitor.DropDownItemClicked += mnu_DropDownItemClicked;
         mnuComputer.DropDownItemClicked += mnuComputer_DropDownItemClicked;
-        Initialize_OptionsMenu();
+        InitializeOptionsMenu();
         mnuOptions.DropDownOpening += mnu_DropDownOpening;
         mnuOptions.DropDownItemClicked += mnu_DropDownItemClicked;
-        Initialize_ViewMenu();
+        InitializeViewMenu();
         mnuView.DropDownOpening += mnu_DropDownOpening;
-        Initialize_HelpMenu();
+        InitializeHelpMenu();
         mnuHelp.DropDownOpening += mnu_DropDownOpening;
         mnuHelp.DropDownItemClicked += mnu_DropDownItemClicked;
         mnu.ResumeLayout(true);
@@ -37,7 +37,7 @@ partial class frmMain {
         mnuView_SpeedLow.Click += mnuView_ItemClicked;
         mnuView_Pause.Click += mnuView_ItemClicked;
     }
-    private void Initialize_FileMenu() {
+    private void InitializeFileMenu() {
         // mnuMonitor
         mnuMonitor = new("&Monitor") { Name = "mnuMonitor" };
         mnuMonitor_ScreenSaver = new("&Screensaver...") { Name = "mnuMonitor_ScreenSaver" };
@@ -67,7 +67,7 @@ partial class frmMain {
         mnuFile.DropDownItems.AddSeparator();
         mnuFile.DropDownItems.Add(mnuFile_Exit);
     }
-    private void Initialize_OptionsMenu() {
+    private void InitializeOptionsMenu() {
         mnuOptions_Preferences = new("&Preferences...") { Name = "mnuOptions_Preferences", ShortcutKeys = Keys.F2 };
         mnuOptions_OnTop = new("&Always On Top") { Name = "mnuOptions_OnTop" };
         mnuOptions_Highlight = new("H&ighlight Changes") { Name = "mnuOptions_Highlight" };
@@ -84,7 +84,7 @@ partial class frmMain {
         mnuOptions.DropDownItems.AddSeparator("mnuOptions_Separator3");
         mnuOptions.DropDownItems.AddRange(new[] { mnuOptions_SelectColumns, mnuOptions_SelectSummary });
     }
-    private void Initialize_ViewMenu() {
+    private void InitializeViewMenu() {
         mnuView_Refresh = new("&Refresh Now") { Name = "mnuView_Refresh", ShortcutKeys = Keys.F5 };
         mnuView_SpeedHigh = new("Update Speed: &High") { Name = "mnuView_SpeedHigh", ImageIndex = 500 };
         mnuView_SpeedNormal = new("Update Speed: &Normal") { Name = "mnuView_SpeedNormal", ImageIndex = 1000 };
@@ -96,7 +96,7 @@ partial class frmMain {
         mnuView.DropDownItems.AddSeparator();
         mnuView.DropDownItems.Add(mnuView_Pause);
     }
-    private void Initialize_HelpMenu() {
+    private void InitializeHelpMenu() {
         mnuHelp_About = new("&About") { Name = "mnuHelp_About", ShortcutKeys = Keys.F1 };
         mnuHelp_Timmings = new("&Timmings") { Name = "mnuHelp_Timmings", ShortcutKeys = Keys.F9 };
         mnuHelp.DropDownItems.Add(mnuHelp_About);
@@ -108,8 +108,8 @@ partial class frmMain {
         if (mnu == mnuHelp) {
             mnuHelp_Timmings.Checked = TimmingVisible;
         } else if (mnu == mnuOptions) {
-            mnuOptions_SelectColumns.Visible = tc.SelectedTab == tpProcesses || tc.SelectedTab == tpServices || tc.SelectedTab == tpConnections;
-            mnuOptions_SelectSummary.Visible = tc.SelectedTab == tpProcesses;
+            //mnuOptions_SelectColumns.Visible = tc.SelectedTab == tpProcesses || tc.SelectedTab == tpServices || tc.SelectedTab == tpConnections;
+            //mnuOptions_SelectSummary.Visible = tc.SelectedTab == tpProcesses;
             mnu.DropDownItems["mnuOptions_Separator3"].Visible = mnuOptions_SelectColumns.Visible || mnuOptions_SelectSummary.Visible;
             mnuOptions_OnTop.Checked = Settings.AlwaysOnTop;
             mnuOptions_Highlight.Checked = Settings.Highlights.ChangingItems;
@@ -143,7 +143,7 @@ partial class frmMain {
     private void mnuView_ItemClicked(object? sender, EventArgs e) {
         if (sender == null) return;
         switch (((ToolStripMenuItem)sender).Name) {
-            case nameof(mnuView_Refresh): MonitorRefreshParallel(); return;
+            case nameof(mnuView_Refresh): MonitorRefresh(); return;
             case nameof(mnuView_Pause): MonitorRunning = !MonitorRunning; return;
         }
         mnuView_SpeedHigh.Checked = false; mnuView_SpeedNormal.Checked = false; mnuView_SpeedLow.Checked = false;

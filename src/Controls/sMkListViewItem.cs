@@ -1,6 +1,6 @@
 ﻿namespace sMkTaskManager.Controls;
 
-internal class sMkListViewItem : ListViewItem {
+public class sMkListViewItem : ListViewItem {
 
     public int ID = 0;
     public bool Pinned = false;
