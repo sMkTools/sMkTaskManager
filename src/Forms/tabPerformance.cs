@@ -1458,7 +1458,6 @@ internal partial class tabPerformance : UserControl, ITaskManagerTab {
     public long TimmingValue => _stopWatch.ElapsedMilliseconds;
 
     private void RefresherDoWork(bool firstTime = false) {
-        Debug.WriteLine($"Refresher for Performance - Visible: {Visible} - firstTime: {firstTime}");
         RefreshStarts?.Invoke(this, EventArgs.Empty);
         System.Refresh();
         RefreshComplete?.Invoke(this, EventArgs.Empty);

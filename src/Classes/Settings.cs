@@ -433,6 +433,7 @@ internal static class Settings {
             case TaskManagerColumnTypes.Services: strName = "colsServices"; break;
             case TaskManagerColumnTypes.Connections: strName = "colsConnections"; break;
             case TaskManagerColumnTypes.Ports: strName = "colsPorts"; break;
+            case TaskManagerColumnTypes.Users: strName = "colsUsers"; break;
             default: return false;
         }
         try {

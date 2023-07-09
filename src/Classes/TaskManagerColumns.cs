@@ -150,12 +150,21 @@ internal class TaskManagerColumn {
             });
         } else if (type == TaskManagerColumnTypes.Ports) {
             r.AddRange(new TaskManagerColumn[] {
-            new("Process ID", "PID", "PID", "General Information", 60, 0, 1, 1),
-            new("Process Name", "Process", "ProcessName", "General Information", 100, 0, 0, 1),
-            new("Protocol", "Proto", "Protocol", "General Information", 60, 0, 0, 1),
-            new("Local Address", "Address", "LocalAddr", "General Information", 100, 0, 0, 1),
-            new("Local Port", "Port", "LocalPort", "General Information", 60, 0, 0, 1),
-            new("Port State", "State", "StateString", "General Information", 60, 0, 0, 1),
+            new("Process ID", "PID", "PID", "General", 60, 0, 1, 1),
+            new("Process Name", "Process", "ProcessName", "General", 100, 0, 0, 1),
+            new("Protocol", "Proto", "Protocol", "General", 60, 0, 0, 1),
+            new("Local Address", "Address", "LocalAddr", "General", 100, 0, 0, 1),
+            new("Local Port", "Port", "LocalPort", "General", 60, 0, 0, 1),
+            new("Port State", "State", "StateString", "General", 60, 0, 0, 1),
+            });
+        } else if (type == TaskManagerColumnTypes.Users) {
+            r.AddRange(new TaskManagerColumn[] {
+            new("Session ID", "ID", "ID", "General", 60, 0, 1, 1),
+            new("Username", "Username", "Username", "General", 100, 0, 0, 1),
+            new("Status", "Status", "Status", "General", 100, 0, 0, 1),
+            new("Client Name", "Client Name", "Client", "General", 100, 0, 0, 1),
+            new("Session Type", "Session", "Session", "General", 100, 0, 0, 1),
+            new("Total Processes", "Processes", "TotalProcesses", "General", 70, 1, 0, 1),
             });
         }
         return r;
@@ -176,4 +185,5 @@ public enum TaskManagerColumnTypes : int {
     Services = 2,
     Connections = 3,
     Ports = 4,
+    Users = 5,
 }

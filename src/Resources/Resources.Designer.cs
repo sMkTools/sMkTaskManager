@@ -143,6 +143,66 @@ namespace sMkTaskManager.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap frmUser_BannerConnect {
+            get {
+                object obj = ResourceManager.GetObject("frmUser_BannerConnect", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap frmUser_BannerMessage {
+            get {
+                object obj = ResourceManager.GetObject("frmUser_BannerMessage", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon frmUser_Connect {
+            get {
+                object obj = ResourceManager.GetObject("frmUser_Connect", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon frmUser_Details {
+            get {
+                object obj = ResourceManager.GetObject("frmUser_Details", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon frmUser_Message {
+            get {
+                object obj = ResourceManager.GetObject("frmUser_Message", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap pbUserDetails {
+            get {
+                object obj = ResourceManager.GetObject("pbUserDetails", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Process_Black {
             get {
                 object obj = ResourceManager.GetObject("Process_Black", resourceCulture);
@@ -253,9 +313,9 @@ namespace sMkTaskManager.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap User {
+        internal static System.Drawing.Bitmap User_Active {
             get {
-                object obj = ResourceManager.GetObject("User", resourceCulture);
+                object obj = ResourceManager.GetObject("User_Active", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

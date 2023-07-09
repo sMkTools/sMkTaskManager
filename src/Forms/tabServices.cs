@@ -604,7 +604,7 @@ internal class tabServices : UserControl, ITaskManagerTab {
             TaskManagerService thisService = new(s.ServiceName);
             HashServices.Add(s.ServiceName);
             if (Services.Contains(s.ServiceName)) {
-                thisService = Services.GetService(s.ServiceName)!; ;
+                thisService = Services.GetService(s.ServiceName)!;
                 if (thisService.BackColor == Settings.Highlights.NewColor) thisService.BackColor = Color.Empty;
                 try {
                     thisService.Update();

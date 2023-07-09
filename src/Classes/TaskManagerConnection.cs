@@ -19,7 +19,6 @@ internal class TaskManagerConnection : IEquatable<TaskManagerConnection>, INotif
     private IPEndPoint _Remote = new(0, 0);
     private Color _BackColor = Color.Empty;
     private int _ImageIndex = 0, _PID;
-    private bool _CancellingEvents = false;
 
     public TaskManagerConnection() {
         LastUpdated = DateTime.Now.Ticks;
@@ -335,14 +334,14 @@ internal class TaskManagerConnection : IEquatable<TaskManagerConnection>, INotif
     }
 
     /* Private Methods */
-    private void OnPropertyChanged(PropertyChangedEventArgs e) { PropertyChanged?.Invoke(this, e); }
+    private void OnPropertyChanged(PropertyChangedEventArgs e) { if (NotifyChanges) PropertyChanged?.Invoke(this, e); }
     private void SetField<T>(ref T field, T newValue, [CallerMemberName] string propertyName = "", string[]? alsoNotifyProperties = null) {
         if (!EqualityComparer<T>.Default.Equals(field, newValue)) {
             field = newValue;
             // Since all properties ending with Value should be read as the NonValue<string> Property
             if (propertyName.EndsWith("Value")) propertyName = propertyName.Replace("Value", "");
-            if (!_CancellingEvents) OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
-            if (!_CancellingEvents && alsoNotifyProperties != null) {
+            if (NotifyChanges) OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+            if (NotifyChanges && alsoNotifyProperties != null) {
                 foreach (string ap in alsoNotifyProperties) { OnPropertyChanged(new PropertyChangedEventArgs(ap)); }
             }
         }

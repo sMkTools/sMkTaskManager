@@ -142,6 +142,24 @@
   <data name="frmService_Details" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>frmService_Details.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="frmUser_BannerConnect" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>frmUser_BannerConnect.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frmUser_BannerMessage" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>frmUser_BannerMessage.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frmUser_Connect" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>frmUser_Connect.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frmUser_Details" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>frmUser_Details.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="frmUser_Message" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>frmUser_Message.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="pbUserDetails" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>pbUserDetails.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Process_Black" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Process_Black.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -256,7 +274,7 @@
   <data name="State_Stop" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\State_Stop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="User" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="User_Active" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\User.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="User_Down" type="System.Resources.ResXFileRef, System.Windows.Forms">

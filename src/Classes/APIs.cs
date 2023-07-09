@@ -719,6 +719,56 @@ internal unsafe static partial class API {
         TCP_TABLE_OWNER_MODULE_ALL
     }
 
+    public enum WTS_INFO_CLASS {
+        WTSInitialProgram,
+        WTSApplicationName,
+        WTSWorkingDirectory,
+        WTSOEMId,
+        WTSSessionId,
+        WTSUserName,
+        WTSWinStationName,
+        WTSDomainName,
+        WTSConnectState,
+        WTSClientBuildNumber,
+        WTSClientName,
+        WTSClientDirectory,
+        WTSClientProductId,
+        WTSClientHardwareId,
+        WTSClientAddress,
+        WTSClientDisplay,
+        WTSClientProtocolType,
+        WTSIdleTime,
+        WTSLogonTime,
+        WTSIncomingBytes,
+        WTSOutgoingBytes,
+        WTSIncomingFrames,
+        WTSOutgoingFrames,
+        WTSSessionInfo = 24
+    }
+    public enum WTS_CONNECTSTATE_CLASS {
+        WTSActive,
+        WTSConnected,
+        WTSConnectQuery,
+        WTSShadow,
+        WTSDisconnected,
+        WTSIdle,
+        WTSListen,
+        WTSReset,
+        WTSDown,
+        WTSInit
+    }
+    public enum RemoteMessageBoxResult {
+        Ok = 1,
+        Cancel = 2,
+        Abort = 3,
+        Retry = 4,
+        Ignore = 5,
+        Yes = 6,
+        No = 7,
+        Timeout = 0x7D00,
+        Asynchronous = 0x7D01
+    }
+
     #endregion
 
     #region "API Structs..."
@@ -1068,6 +1118,56 @@ internal unsafe static partial class API {
         public int OwningPid;
     }
 
+    [StructLayout(LayoutKind.Sequential)] public struct WINSTATIONINFORMATIONW {
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 70)] private byte[] ConnectState;
+        public uint SessionId;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] private byte[] LogonId;
+        public long ConnectTime;
+        public long DisconnectTime;
+        public long LastInputTime;
+        public long LoginTime;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1096)] private byte[] UserName;
+        public long CurrentTime;
+    }
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)] public struct WTS_SESSION_INFO {
+        public int SessionID;
+        public string pWinStationName;
+        public WTS_CONNECTSTATE_CLASS State;
+    }
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)] public struct WTS_INFO {
+        public WTS_CONNECTSTATE_CLASS State;
+        public int SessionId;
+        public int IncomingBytes;
+        public int OutgoingBytes;
+        public int IncomingFrames;
+        public int OutgoingFrames;
+        public int IncomingCompressedBytes;
+        public int OutgoingCompressedBytes;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)] public string WinStationName;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 17)] public string Domain;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 21)] public string UserName;
+        [MarshalAs(UnmanagedType.I8)] public long ConnectTime;
+        [MarshalAs(UnmanagedType.I8)] public long DisconnectTime;
+        [MarshalAs(UnmanagedType.I8)] public long LastInputTime;
+        [MarshalAs(UnmanagedType.I8)] public long LogonTime;
+        [MarshalAs(UnmanagedType.I8)] public long CurrentTime;
+    }
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)] public struct WTS_CLIENT_DISPLAY {
+        public int HorizontalResolution;
+        public int VerticalResolution;
+        public int ColorDepth;
+    }
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)] public struct WTS_CLIENT_ADDRESS {
+        public int AddressFamily;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 20)] public byte[] Address;
+    }
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)] public struct WTS_PROCESS_INFO {
+        public int SessionId;
+        public int ProcessId;
+        [MarshalAs(UnmanagedType.LPTStr)] public string ProcessName;
+        public IntPtr UserSid;
+    }
+
     #endregion
 
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
@@ -1199,5 +1299,34 @@ internal unsafe static partial class API {
     public static extern unsafe int GetExtendedUdpTable(IntPtr pUdpTable, ref int dwOutBufLen, bool bOrder, int ipVersion, UDP_TABLE_CLASS tblClass, int reserved);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("iphlpapi.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern unsafe int SetTcpEntry(MIB_TCPROW pTcpRow);
+
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern unsafe void WTSFreeMemory(IntPtr memory);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern unsafe void WTSCloseServer(IntPtr hServer);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern unsafe IntPtr WTSOpenServer(string pServerName);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern unsafe bool WTSLogoffSession(IntPtr hServer, int sessionId, bool bWait);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern unsafe bool WTSConnectSession(UIntPtr LogonId, UIntPtr TargetLogonId, string pPassword, bool bWait);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern unsafe bool WTSDisconnectSession(IntPtr hServer, int sessionId, bool wait);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern unsafe int WTSEnumerateSessions(IntPtr hServer, int reserved, int version, ref IntPtr ppSessionInfo, ref int count);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern unsafe bool WTSQuerySessionInformation(IntPtr hServer, int sessionId, WTS_INFO_CLASS wtsInfoClass, ref IntPtr ppBuffer, ref int pBytesReturned);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("winsta.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern unsafe int WinStationQueryInformation(IntPtr hServer, int sessionId, int information, ref WINSTATIONINFORMATIONW buffer, int bufferLength, ref int returnedLength);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern unsafe bool WTSSendMessage(IntPtr hServer, int sessionId, [MarshalAs(UnmanagedType.LPWStr)] string title, int titleLength, [MarshalAs(UnmanagedType.LPWStr)] string message, int messageLength, int style, int timeout, ref RemoteMessageBoxResult result, bool wait);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern unsafe int WTSEnumerateServers([MarshalAs(UnmanagedType.LPTStr)] string pDomainName, int reserved, int version, ref IntPtr ppServerInfo, ref int pCount);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern unsafe int WTSEnumerateProcesses(IntPtr hServer, int reserved, int version, ref IntPtr ppProcessInfo, ref int count);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern unsafe int WTSShutdownSystem(IntPtr hServer, int shutdownFlag);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern unsafe int WTSTerminateProcess(IntPtr hServer, int processId, int exitCode);
 
 }
