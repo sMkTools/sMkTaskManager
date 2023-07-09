@@ -587,8 +587,16 @@ internal class tabServices : UserControl, ITaskManagerTab {
     public sMkListView ListView => lv;
     public string Title { get; set; } = "Services";
     public string Description { get; set; } = "List of Services";
-    public string TimmingKey { get; } = "Servs";
+    public string TimmingKey => "Servs";
     public long TimmingValue => _stopWatch.ElapsedMilliseconds;
+    public bool CanSelectColumns => true;
+    public TaskManagerColumnTypes ColumnType => TaskManagerColumnTypes.Services;
+    public void ForceRefresh() => btnForceRefresh.PerformClick();
+    public ListView.ColumnHeaderCollection? GetColumns() => lv.Columns;
+    public void SetColumns(in ListView.ListViewItemCollection colItems) {
+        lv.SetColumns(colItems);
+        ColsServices = lv.Columns.Cast<ColumnHeader>().Select(x => x.Name).ToHashSet()!;
+    }
 
     private void RefresherDoWork(bool firstTime = false) {
         Debug.WriteLine($"Refresher for Services - Visible: {Visible} - firstTime: {firstTime}");

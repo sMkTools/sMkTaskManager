@@ -181,6 +181,7 @@ internal class TaskManagerColumn {
     }
 }
 public enum TaskManagerColumnTypes : int {
+    None = 0,
     Process = 1,
     Services = 2,
     Connections = 3,

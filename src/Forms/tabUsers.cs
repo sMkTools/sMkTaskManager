@@ -204,7 +204,6 @@ internal class tabUsers : UserControl, ITaskManagerTab {
         cms.ResumeLayout(false);
         ResumeLayout(false);
     }
-
     private void InitializeExtras() {
         il.Images.Clear();
         il.Images.Add(Resources.Resources.User_Active);
@@ -425,8 +424,16 @@ internal class tabUsers : UserControl, ITaskManagerTab {
     public sMkListView ListView => lv;
     public string Title { get; set; } = "Users";
     public string Description { get; set; } = "User Sessions";
-    public string TimmingKey { get; } = "Users";
+    public string TimmingKey => "Users";
     public long TimmingValue => _stopWatch.ElapsedMilliseconds;
+    public bool CanSelectColumns => false;
+    public TaskManagerColumnTypes ColumnType => TaskManagerColumnTypes.Users;
+    public void ForceRefresh() => btnForceRefresh.PerformClick();
+    public ListView.ColumnHeaderCollection? GetColumns() => lv.Columns;
+    public void SetColumns(in ListView.ListViewItemCollection colItems) {
+        lv.SetColumns(colItems);
+        ColsUsers = lv.Columns.Cast<ColumnHeader>().Select(x => x.Name).ToHashSet()!;
+    }
 
     private void RefresherDoWork(bool firstTime = false) {
         RefreshStarts?.Invoke(this, EventArgs.Empty);

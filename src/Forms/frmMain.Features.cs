@@ -46,37 +46,19 @@ partial class frmMain {
         mnuOptions_MinimizeClose.Checked = !mnuOptions_MinimizeClose.Checked;
         Settings.MinimizeWhenClosing = mnuOptions_MinimizeClose.Checked;
     }
-    internal void Feature_SelectColumns(TaskManagerColumnTypes? Type = null) {
-        //if (tc.SelectedTab == tpProcesses) Type = TaskManagerColumnTypes.Process;
-        //if (tc.SelectedTab == tpServices) Type = TaskManagerColumnTypes.Services;
-        //if (tc.SelectedTab == tpConnections) Type = TaskManagerColumnTypes.Connections;
-        //if (Type == null) return;
+    internal void Feature_SelectColumns() {
+        if (Tabs.ActiveTab == null) return;
+        ITaskManagerTab tab = Tabs.ActiveTab;
+        if (!tab.CanSelectColumns) return;
+        if (tab.ColumnType == TaskManagerColumnTypes.None) return;
 
-        //if (Type == TaskManagerColumnTypes.Process) {
-        //    using frmColumns frmcols = new(TaskManagerColumnTypes.Process);
-        //    frmcols.LoadCheckedColumns(tabProcs.lv.Columns);
-        //    if (frmcols.ShowDialog(this) == DialogResult.OK) {
-        //        tabProcs.lv.SetColumns(frmcols.ColItems);
-        //        tabProcs.ColsProcesses = tabProcs.lv.Columns.Cast<ColumnHeader>().Select(x => x.Name).ToHashSet()!;
-        //        tabProcs.btnForceRefresh.PerformClick();
-        //    }
-        //} else if (Type == TaskManagerColumnTypes.Services) {
-        //    using frmColumns frmcols = new(TaskManagerColumnTypes.Services);
-        //    frmcols.LoadCheckedColumns(tabServs.lv.Columns);
-        //    if (frmcols.ShowDialog(this) == DialogResult.OK) {
-        //        tabServs.lv.SetColumns(frmcols.ColItems);
-        //        tabServs.ColsServices = tabServs.lv.Columns.Cast<ColumnHeader>().Select(x => x.Name).ToHashSet()!;
-        //        tabServs.btnForceRefresh.PerformClick();
-        //    }
-        //} else if (Type == TaskManagerColumnTypes.Connections) {
-        //    using frmColumns frmcols = new(TaskManagerColumnTypes.Connections);
-        //    frmcols.LoadCheckedColumns(tabConns.lv.Columns);
-        //    if (frmcols.ShowDialog(this) == DialogResult.OK) {
-        //        tabConns.lv.SetColumns(frmcols.ColItems);
-        //        tabConns.ColsConnections = tabConns.lv.Columns.Cast<ColumnHeader>().Select(x => x.Name).ToHashSet()!;
-        //        tabConns.btnForceRefresh.PerformClick();
-        //    }
-        //}
+        using frmColumns frmcols = new(tab.ColumnType);
+        frmcols.LoadCheckedColumns(tab.GetColumns()!);
+        if (frmcols.ShowDialog(this) == DialogResult.OK) {
+            tab.SetColumns(frmcols.ColItems);
+            tab.ForceRefresh();
+        }
+
     }
 
 }

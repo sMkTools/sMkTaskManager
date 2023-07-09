@@ -88,5 +88,13 @@ internal static class Tabs {
     internal static ITaskManagerTab? GetTab(string tabKey) {
         return Tab.FirstOrDefault(t => t.Key == tabKey).Value;
     }
-
+    internal static ITaskManagerTab? ActiveTab {
+        get {
+            foreach (ITaskManagerTab t in Tab.Values) {
+                if (((Control)t).Parent == null) continue;
+                if (((Control)t).Parent!.Visible) return t;
+            }
+            return default;
+        }
+    }
 }

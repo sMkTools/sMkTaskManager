@@ -339,8 +339,16 @@ internal class tabConnections : UserControl, ITaskManagerTab {
     public sMkListView ListView => lv;
     public string Title { get; set; } = "Connections";
     public string Description { get; set; } = "Connections";
-    public string TimmingKey { get; } = "Conns";
+    public string TimmingKey => "Conns";
     public long TimmingValue => _stopWatch.ElapsedMilliseconds;
+    public bool CanSelectColumns => true;
+    public TaskManagerColumnTypes ColumnType => TaskManagerColumnTypes.Connections;
+    public void ForceRefresh() => btnForceRefresh.PerformClick();
+    public ListView.ColumnHeaderCollection? GetColumns() => lv.Columns;
+    public void SetColumns(in ListView.ListViewItemCollection colItems) {
+        lv.SetColumns(colItems);
+        ColsConnections = lv.Columns.Cast<ColumnHeader>().Select(x => x.Name).ToHashSet()!;
+    }
 
     private void RefresherDoWork(bool firstTime = false) {
         Debug.WriteLine($"Refresher for Connections - Visible: {Visible} - firstTime: {firstTime}");

@@ -13,8 +13,8 @@ internal class tabPorts : UserControl, ITaskManagerTab {
     internal TaskManagerConnectionCollection Ports = new();
 
     internal sMkListView lv;
-    private ContextMenuStrip cms;
     internal Button btnForceRefresh;
+    private ContextMenuStrip cms;
     private CheckBox btnIncludeIPv6;
     private ToolStripMenuItem cmsKillProcess;
     private ToolStripMenuItem cmsGoToProcess;
@@ -31,6 +31,7 @@ internal class tabPorts : UserControl, ITaskManagerTab {
         if (disposing && (components != null)) { components.Dispose(); }
         base.Dispose(disposing);
     }
+
     public tabPorts() {
         InitializeComponent();
         InitializeExtras();
@@ -145,7 +146,6 @@ internal class tabPorts : UserControl, ITaskManagerTab {
         cms.ResumeLayout(false);
         ResumeLayout(false);
     }
-
     private void InitializeExtras() {
         il.Images.Clear();
         il.Images.Add(Resources.Resources.Process_Empty);
@@ -280,8 +280,16 @@ internal class tabPorts : UserControl, ITaskManagerTab {
     public sMkListView ListView => lv;
     public string Title { get; set; } = "Ports";
     public string Description { get; set; } = "Display Listening Ports";
-    public string TimmingKey { get; } = "Ports";
+    public string TimmingKey => "Ports";
     public long TimmingValue => _stopWatch.ElapsedMilliseconds;
+    public bool CanSelectColumns => false;
+    public TaskManagerColumnTypes ColumnType => TaskManagerColumnTypes.Ports;
+    public void ForceRefresh() => btnForceRefresh.PerformClick();
+    public ListView.ColumnHeaderCollection? GetColumns() => lv.Columns;
+    public void SetColumns(in ListView.ListViewItemCollection colItems) {
+        lv.SetColumns(colItems);
+        ColsPorts = lv.Columns.Cast<ColumnHeader>().Select(x => x.Name).ToHashSet()!;
+    }
 
     private void RefresherDoWork(bool firstTime = false) {
         Debug.WriteLine($"Refresher for Ports - Visible: {Visible} - firstTime: {firstTime}");

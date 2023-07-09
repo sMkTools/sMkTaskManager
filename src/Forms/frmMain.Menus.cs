@@ -77,9 +77,9 @@ partial class frmMain {
         mnuOptions_SelectColumns = new("&Select Columns...") { Name = "mnuOptions_SelectColumns" };
         mnuOptions_SelectSummary = new("Select S&ummary View...") { Name = "mnuOptions_SelectSummary" };
         mnuOptions.DropDownItems.Add(mnuOptions_Preferences);
-        mnuOptions.DropDownItems.AddSeparator();
+        mnuOptions.DropDownItems.AddSeparator("mnuOptions_Separator1");
         mnuOptions.DropDownItems.AddRange(new[] { mnuOptions_OnTop, mnuOptions_Highlight, mnuOptions_HideMinimize, mnuOptions_MinimizeClose });
-        mnuOptions.DropDownItems.AddSeparator();
+        mnuOptions.DropDownItems.AddSeparator("mnuOptions_Separator2");
         mnuOptions.DropDownItems.Add(mnuOptions_Default);
         mnuOptions.DropDownItems.AddSeparator("mnuOptions_Separator3");
         mnuOptions.DropDownItems.AddRange(new[] { mnuOptions_SelectColumns, mnuOptions_SelectSummary });
@@ -108,9 +108,11 @@ partial class frmMain {
         if (mnu == mnuHelp) {
             mnuHelp_Timmings.Checked = TimmingVisible;
         } else if (mnu == mnuOptions) {
-            //mnuOptions_SelectColumns.Visible = tc.SelectedTab == tpProcesses || tc.SelectedTab == tpServices || tc.SelectedTab == tpConnections;
-            //mnuOptions_SelectSummary.Visible = tc.SelectedTab == tpProcesses;
-            mnu.DropDownItems["mnuOptions_Separator3"].Visible = mnuOptions_SelectColumns.Visible || mnuOptions_SelectSummary.Visible;
+            mnuOptions_SelectColumns.Enabled = Tabs.ActiveTab != null && Tabs.ActiveTab.CanSelectColumns;
+            mnuOptions_SelectColumns.Visible = mnuOptions_SelectColumns.Enabled;
+            mnuOptions_SelectSummary.Enabled = false;
+            mnuOptions_SelectSummary.Visible = mnuOptions_SelectSummary.Enabled;
+            mnuOptions.DropDownItems["mnuOptions_Separator3"].Visible = mnuOptions_SelectColumns.Enabled | mnuOptions_SelectSummary.Enabled;
             mnuOptions_OnTop.Checked = Settings.AlwaysOnTop;
             mnuOptions_Highlight.Checked = Settings.Highlights.ChangingItems;
             mnuOptions_HideMinimize.Checked = Settings.ToTrayWhenMinimized;

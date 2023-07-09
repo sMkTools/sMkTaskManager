@@ -560,8 +560,17 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
     public sMkListView ListView => lv;
     public string Title { get; set; } = "Processes";
     public string Description { get; set; } = "Processes";
-    public string TimmingKey { get; } = "Procs";
+    public string TimmingKey => "Procs";
     public long TimmingValue => _stopWatch.ElapsedMilliseconds;
+    public bool CanSelectColumns => true;
+    public TaskManagerColumnTypes ColumnType => TaskManagerColumnTypes.Process;
+    public void ForceRefresh() => btnForceRefresh.PerformClick();
+    public ListView.ColumnHeaderCollection? GetColumns() => lv.Columns;
+    public void SetColumns(in ListView.ListViewItemCollection colItems) {
+        lv.SetColumns(colItems);
+        ColsProcesses = lv.Columns.Cast<ColumnHeader>().Select(x => x.Name).ToHashSet()!;
+    }
+
     public bool AllUsers => btnAllUsers.Checked;
     public void RefreshInfoText() {
         lblText.Text = string.Format("Total: {0}, Selected: {1}", lv.Items.Count, lv.SelectedItems.Count);
