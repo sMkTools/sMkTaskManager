@@ -187,4 +187,5 @@ public enum TaskManagerColumnTypes : int {
     Connections = 3,
     Ports = 4,
     Users = 5,
+    Applications = 6,
 }

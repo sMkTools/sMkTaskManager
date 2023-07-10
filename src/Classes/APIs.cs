@@ -769,6 +769,55 @@ internal unsafe static partial class API {
         Asynchronous = 0x7D01
     }
 
+    public enum WindowShowCommand : int {
+        SW_HIDE = 0,
+        SW_SHOWNORMAL = 1,
+        SW_SHOWMINIMIZED = 2,
+        SW_SHOWMAXIMIZED = 3,
+        SW_SHOWNOACTIVATE = 4,
+        SW_SHOW = 5,
+        SW_MINIMIZE = 6,
+        SW_SHOWMINNOACTIVE = 7,
+        SW_SHOWNA = 8,
+        SW_RESTORE = 9,
+        SW_SHOWDEFAULT = 10,
+        SW_FORCEMINIMIZE = 11
+    }
+    [Flags()] public enum WindowStyles : long {
+        WS_BORDER = 0x800000,
+        WS_CAPTION = 0xC00000,
+        WS_CHILD = 0x40000000,
+        WS_CHILDWINDOW = (WS_CHILD),
+        WS_CLIPCHILDREN = 0x2000000,
+        WS_CLIPSIBLINGS = 0x4000000,
+        WS_DISABLED = 0x8000000,
+        WS_DLGFRAME = 0x400000,
+        WS_EX_ACCEPTFILES = 0x10L,
+        WS_EX_DLGMODALFRAME = 0x1L,
+        WS_EX_NOPARENTNOTIFY = 0x4L,
+        WS_EX_TOPMOST = 0x8L,
+        WS_EX_TRANSPARENT = 0x20L,
+        WS_GROUP = 0x20000,
+        WS_HSCROLL = 0x100000,
+        WS_MAXIMIZE = 0x1000000,
+        WS_MAXIMIZEBOX = 0x10000,
+        WS_MINIMIZE = 0x20000000,
+        WS_MINIMIZEBOX = 0x20000,
+        WS_OVERLAPPED = 0x0L,
+        WS_ICONIC = WS_MINIMIZE,
+        WS_POPUP = unchecked((int)0x80000000),
+        WS_VISIBLE = 0x10000000,
+        WS_VSCROLL = 0x200000,
+        WS_SYSMENU = 0x80000,
+        WS_TABSTOP = 0x10000,
+        WS_THICKFRAME = 0x40000,
+        WS_TILED = WS_OVERLAPPED,
+        WS_OVERLAPPEDWINDOW = (WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX),
+        WS_POPUPWINDOW = (WS_POPUP | WS_BORDER | WS_SYSMENU),
+        WS_TILEDWINDOW = WS_OVERLAPPEDWINDOW,
+        WS_SIZEBOX = WS_THICKFRAME
+    }
+
     #endregion
 
     #region "API Structs..."
@@ -1168,6 +1217,28 @@ internal unsafe static partial class API {
         public IntPtr UserSid;
     }
 
+    [StructLayout(LayoutKind.Sequential)] public struct WindowPlacement {
+        public int Length;
+        public int flags;
+        public int showCmd;
+        public Point ptMinPosition;
+        public Point ptMaxPosition;
+        public Rectangle rcNormalPosition;
+      
+    }
+    [StructLayout(LayoutKind.Sequential)] public struct WindowInfo {
+        public int cbSize;
+        public Rectangle rcWindow;
+        public Rectangle rcClient;
+        public uint dwStyle;
+        public uint dwExStyle;
+        public uint dwWindowStatus;
+        public uint cxWindowBorders;
+        public uint cyWindowBorders;
+        public ushort atomWindowType;
+        public ushort wCreatorVersion;
+    }
+    
     #endregion
 
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
@@ -1251,11 +1322,15 @@ internal unsafe static partial class API {
     internal static extern unsafe bool Module32First(IntPtr hSnapshot, ref ModuleEntry32 lpme);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     internal static extern unsafe bool Module32Next(IntPtr hSnapshot, ref ModuleEntry32 lpme);
-    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    internal static extern unsafe int ExtractIconEx(string lpszFile, int nIconIndex, [Out] IntPtr[]? phIconLarge, [Out] IntPtr[]? phIconSmall, int nIcons);
-    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    internal static extern unsafe bool DestroyIcon(IntPtr handle);
 
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe IntPtr GetClassLong(IntPtr hwnd, int index);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe int ExtractIconEx(string lpszFile, int nIconIndex, [Out] IntPtr[]? phIconLarge, [Out] IntPtr[]? phIconSmall, int nIcons);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe bool DestroyIcon(IntPtr handle);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe int GetWindowThreadProcessId(IntPtr hwnd, ref IntPtr lpdwProcessId);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern unsafe long ShellExecute(IntPtr hwnd, string lpOperation, string lpFile, string lpParameters, string lpDirectory, long nShowCmd);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
@@ -1265,7 +1340,7 @@ internal unsafe static partial class API {
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
     public static extern unsafe bool LockWorkStation();
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true, EntryPoint = "#61")]
-    public static extern unsafe bool RunFileDlg(IntPtr owner, IntPtr hIcon, string lpszDirectory, string lpszTitle, string lpszDescription, long uFlags);
+    public static extern unsafe bool RunFileDlg(IntPtr owner, IntPtr hIcon, string? lpszDirectory, string? lpszTitle, string? lpszDescription, long uFlags);
 
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern unsafe IntPtr OpenSCManager(string lpMachineName, string? lpDatabaseName, SERVICE_ACCESS dwDesiredAccess);
@@ -1328,5 +1403,47 @@ internal unsafe static partial class API {
     public static extern unsafe int WTSShutdownSystem(IntPtr hServer, int shutdownFlag);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe int WTSTerminateProcess(IntPtr hServer, int processId, int exitCode);
+
+    public delegate bool EnumWindowsProc(IntPtr hWnd, int lParam);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern unsafe bool IsWindow(IntPtr hWnd);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern unsafe bool IsWindowVisible(IntPtr hWnd);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", EntryPoint = "IsIconic", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern unsafe bool IsWindowIconic(IntPtr hWnd);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", EntryPoint = "IsZoomed", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern unsafe bool IsWindowZoomed(IntPtr hWnd);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern unsafe bool SetForegroundWindow(IntPtr handle);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe long FindWindow(string lpClassName, string lpWindowName);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern unsafe bool ShowWindow(IntPtr handle, WindowShowCommand nCmd);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern unsafe long CallWindowProc(long lpPrevWndFunc, long hwnd, long Msg, long wParam, long lParam);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern unsafe int GetSystemMenu(int hwnd, int bRevert);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe int AppendMenu(int hMenu, int wFlags, int wIDNewItem, string lpNewItem);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    public static extern unsafe int DeleteMenu(int hMenu, int nPosition, int wFlags);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe bool EnumWindows(EnumWindowsProc callPtr, IntPtr lPar);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe bool EnumDesktopWindows(IntPtr hDesktop, EnumWindowsProc lpEnumCallbackFunction, IntPtr lParam);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    public static extern unsafe IntPtr FindWindowEx(IntPtr parentHandle, IntPtr childAfter, string lclassName, string windowTitle);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe IntPtr GetWindow(IntPtr hwnd, int uCmd);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe bool GetWindowInfo(IntPtr hwnd, ref WindowInfo pwi);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe int GetWindowText(IntPtr hWnd, StringBuilder lpWindowText, int nMaxCount);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe bool GetWindowPlacement(IntPtr hWnd, ref WindowPlacement lpwndpl);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe ushort TileWindows(IntPtr hwndParent, uint wHow, IntPtr lpRect, uint cKids, IntPtr[] lpKids);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    public static extern unsafe ushort CascadeWindows(IntPtr hwndParent, uint wHow, IntPtr lpRect, uint cKids, IntPtr[] lpKids);
 
 }

@@ -16,6 +16,7 @@ public partial class frmMain : Form {
         InitializeComponent();
         InitializeMainMenu();
         // Initialize all tabControls. Maybe this should be delayed.
+        Tabs.Tab.Add("Apps", new tabApplications());
         Tabs.Tab.Add("Procs", new tabProcesses());
         Tabs.Tab.Add("Servs", new tabServices());
         Tabs.Tab.Add("Perfs", new tabPerformance());
