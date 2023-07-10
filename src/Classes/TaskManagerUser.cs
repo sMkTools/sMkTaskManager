@@ -134,7 +134,7 @@ internal class TaskManagerUser : IEquatable<TaskManagerUser>, INotifyPropertyCha
                 API.WTSFreeMemory(thisInfoPtr);
             }
             API.WINSTATIONINFORMATIONW thisInfoStruct = new();
-            API.WinStationQueryInformation(IntPtr.Zero, Convert.ToInt32(_ID), 8, ref thisInfoStruct, Marshal.SizeOf(thisInfoStruct), ref infoLength);
+            _ = API.WinStationQueryInformation(IntPtr.Zero, Convert.ToInt32(_ID), 8, ref thisInfoStruct, Marshal.SizeOf(thisInfoStruct), ref infoLength);
             LogonTimeValue = DateTime.FromFileTime(thisInfoStruct.LoginTime);
             ConnectTimeValue = DateTime.FromFileTime(thisInfoStruct.ConnectTime);
             LastInputTimeValue = DateTime.FromFileTime(thisInfoStruct.LastInputTime);
@@ -257,9 +257,9 @@ internal class TaskManagerUser : IEquatable<TaskManagerUser>, INotifyPropertyCha
                 TaskManagerUser thisUser = new(sessionInfo[i].SessionID.ToString()) {
                     Session = sessionInfo[i].pWinStationName,
                     StatusNum = (int)sessionInfo[i].State,
-                    ImageIndex = ((int)sessionInfo[i].State == 4) ? 1 : 0
+                    ImageIndex = ((int)sessionInfo[i].State == 4) ? 1 : 0,
+                    Status = GetConnectionStateString(sessionInfo[i].State)
                 };
-                thisUser.Status = GetConnectionStateString(sessionInfo[i].State);
                 int infoLength = 0;
                 IntPtr thisInfoPtr = IntPtr.Zero;
                 if (Environment.OSVersion.Version >= new Version(6, 0)) {
@@ -283,7 +283,7 @@ internal class TaskManagerUser : IEquatable<TaskManagerUser>, INotifyPropertyCha
                         API.WTSFreeMemory(thisInfoPtr);
                     }
                     API.WINSTATIONINFORMATIONW thisInfoStruct = new();
-                    API.WinStationQueryInformation(IntPtr.Zero, sessionInfo[i].SessionID, 8, ref thisInfoStruct, Marshal.SizeOf(thisInfoStruct), ref infoLength);
+                    _ = API.WinStationQueryInformation(IntPtr.Zero, sessionInfo[i].SessionID, 8, ref thisInfoStruct, Marshal.SizeOf(thisInfoStruct), ref infoLength);
                     thisUser.LogonTimeValue = DateTime.FromFileTime(thisInfoStruct.LoginTime);
                     thisUser.ConnectTimeValue = DateTime.FromFileTime(thisInfoStruct.ConnectTime);
                     thisUser.LastInputTimeValue = DateTime.FromFileTime(thisInfoStruct.LastInputTime);

@@ -4,9 +4,9 @@ using sMkTaskManager.Controls;
 namespace sMkTaskManager.Forms;
 
 public interface ITaskManagerTab {
-    public event EventHandler? ForceRefreshClicked;
-    public event EventHandler? RefreshStarts;
-    public event EventHandler? RefreshComplete;
+    public abstract event EventHandler? ForceRefreshClicked;
+    public abstract event EventHandler? RefreshStarts;
+    public abstract event EventHandler? RefreshComplete;
 
     public sMkListView? ListView { get; }
     public string Name { get; set; }
@@ -19,11 +19,11 @@ public interface ITaskManagerTab {
     public TaskManagerColumnTypes ColumnType { get; }
 
     public void Refresher(bool firstTime = false);
-    public void ForceRefresh();
-    public void LoadSettings();
-    public bool SaveSettings();
-    public void ApplySettings();
-    public void SetColumns(in ListView.ListViewItemCollection colItems);
-    public ListView.ColumnHeaderCollection? GetColumns();
+    public void ForceRefresh() { }
+    public void LoadSettings() { }
+    public bool SaveSettings() { return true; }
+    public void ApplySettings() { }
+    public void SetColumns(in ListView.ListViewItemCollection colItems) { }
+    public ListView.ColumnHeaderCollection? GetColumns() { return null; }
 
 }

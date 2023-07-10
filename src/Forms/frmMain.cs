@@ -367,10 +367,10 @@ public partial class frmMain : Form {
                 BorderStyle = Border3DStyle.Flat,
                 AutoToolTip = false,
                 Spring = true,
-                Visible = true
+                Visible = true,
+                Name = t.TimmingKey,
+                AccessibleName = t.TimmingKey + ": "
             };
-            lbl.Name = t.TimmingKey;
-            lbl.AccessibleName = t.TimmingKey + ": ";
             lbl.Text = lbl.AccessibleName + string.Format("{0:N0}", t.TimmingValue) + "ms.";
             timmingStrip.Items.Add(lbl);
             i++;
@@ -419,8 +419,4 @@ public partial class frmMain : Form {
         }
     }
 
-    private void DelayTask() {
-        Thread.Sleep(100);
-        Debug.WriteLine("termine");
-    }
 }

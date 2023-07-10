@@ -491,9 +491,7 @@ internal class tabApplications : UserControl, ITaskManagerTab {
     public long TimmingValue => _stopWatch.ElapsedMilliseconds;
     public bool CanSelectColumns => false;
     public TaskManagerColumnTypes ColumnType => TaskManagerColumnTypes.Applications;
-    public void ForceRefresh() { }
-    public ListView.ColumnHeaderCollection? GetColumns() => lv.Columns;
-    public void SetColumns(in ListView.ListViewItemCollection colItems) { }
+    public void ForceRefresh() => ForceRefreshClicked?.Invoke(this, EventArgs.Empty);
 
     private void RefresherDoWork(bool firstTime = false) {
         RefreshStarts?.Invoke(this, EventArgs.Empty);
@@ -578,9 +576,6 @@ internal class tabApplications : UserControl, ITaskManagerTab {
         }
         _stopWatch.Stop();
     }
-    public void LoadSettings() { }
-    public bool SaveSettings() { return true; }
-    public void ApplySettings() { }
 
     private struct winInformation {
         public int wHandle;

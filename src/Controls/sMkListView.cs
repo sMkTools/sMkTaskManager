@@ -298,7 +298,7 @@ public class sMkListView : ListView {
                     foreach (ColumnHeader c in Columns) {
                         if (e.PropertyDescriptor?.Name.ToLower() == c.Tag?.ToString()?.ToLower()) {
                             if (!Items.ContainsKey(_keyDescriptor.GetValue(row)!.ToString())) break;
-                            // TODO: Used to catch an error in the ForceRefresh
+                            // Used to catch an error in the ForceRefresh
                             // Items[_keyDescriptor.GetValue(row)!.ToString()].SubItems[c.Index].Text = e.PropertyDescriptor!.GetValue(row)!.ToString();
                             Items[_keyDescriptor.GetValue(row)!.ToString()].SubItems[c.Index].Text = ((c.DisplayIndex == 0 && SpaceFirstValue) ? " " : "") + e.PropertyDescriptor!.GetValue(row)?.ToString();
                             break;
@@ -345,14 +345,14 @@ public class sMkListView : ListView {
 }
 
 public static class sMkListViewHelpers {
-    public const Int32 HDI_FORMAT = 0x4;
-    public const Int32 HDF_LEFT = 0x0;
-    public const Int32 HDF_STRING = 0x4000;
-    public const Int32 HDF_SORTUP = 0x400;
-    public const Int32 HDF_SORTDOWN = 0x200;
-    public const Int32 LVM_GETHEADER = 0x1000 + 31; // LVM_FIRST + 31
-    public const Int32 HDM_GETITEM = 0x1200 + 11;   // HDM_FIRST + 11
-    public const Int32 HDM_SETITEM = 0x1200 + 12;   // HDM_FIRST + 12
+    public const int HDI_FORMAT = 0x4;
+    public const int HDF_LEFT = 0x0;
+    public const int HDF_STRING = 0x4000;
+    public const int HDF_SORTUP = 0x400;
+    public const int HDF_SORTDOWN = 0x200;
+    public const int LVM_GETHEADER = 0x1000 + 31; // LVM_FIRST + 31
+    public const int HDM_GETITEM = 0x1200 + 11;   // HDM_FIRST + 11
+    public const int HDM_SETITEM = 0x1200 + 12;   // HDM_FIRST + 12
 
     [StructLayout(LayoutKind.Sequential)]
     public struct HDITEM {
@@ -366,8 +366,10 @@ public static class sMkListViewHelpers {
         public Int32 iImage;
         public Int32 iOrder;
     }
+    [System.Security.SuppressUnmanagedCodeSecurity()]
     [DllImport("USER32.DLL", EntryPoint = "SendMessage")]
     public static unsafe extern IntPtr GetHeaderHnd(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
+    [System.Security.SuppressUnmanagedCodeSecurity()]
     [DllImport("USER32.DLL", EntryPoint = "SendMessage")]
     public static unsafe extern IntPtr SendMessageItem(IntPtr Handle, int msg, IntPtr wParam, ref HDITEM lParam);
 

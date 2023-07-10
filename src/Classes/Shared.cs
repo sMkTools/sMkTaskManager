@@ -48,16 +48,12 @@ internal static partial class Shared {
         try {
             System.Security.Principal.SecurityIdentifier sid = new(System.Security.Principal.WellKnownSidType.LocalSystemSid, null);
             _SystemAccount = sid.Translate(typeof(System.Security.Principal.NTAccount)).ToString();
-
-            // TODO: Validate this and implemente vbProperCase somehow.
             if (_SystemAccount.IndexOf("\\") > 0) _SystemAccount = _SystemAccount[(_SystemAccount.LastIndexOf("\\") + 1)..];
             _SystemAccount = ToTitleCase(_SystemAccount);
             Debug.WriteLine("Getting System Account... Result: " + _SystemAccount);
         } catch (Exception ex) {
-            DebugTrap(ex);
-            _SystemAccount = "Error";
+            DebugTrap(ex); _SystemAccount = "Error";
         }
-
         return _SystemAccount!;
     }
     internal static void GetDebuggerCmd() {

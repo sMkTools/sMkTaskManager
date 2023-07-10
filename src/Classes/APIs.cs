@@ -1258,9 +1258,9 @@ internal unsafe static partial class API {
     internal delegate bool EnumPageFilesProc(IntPtr lpContext, ref PAGE_FILE_INFORMATION Info, string Name);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("psapi.dll", SetLastError = true)]
     internal static extern unsafe bool GetPerformanceInfo(ref PERFORMANCE_INFORMATION pPerformanceInformation, uint cb);
-    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     internal static extern unsafe bool ConvertStringSidToSid(string StringSid, ref IntPtr Sid);
-    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     internal static extern unsafe bool ConvertSidToStringSid(IntPtr pSID, ref string pStringSid);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     internal static extern unsafe bool GetTokenInformation(IntPtr TokenHandle, TOKEN_INFORMATION_CLASS tokenInfoClass, IntPtr TokenInformation, int TokenInformationLength, ref uint ReturnLength);
@@ -1365,7 +1365,7 @@ internal unsafe static partial class API {
 
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", EntryPoint = "SetLastError")]
     public static extern unsafe bool SetLastError(int dwErrCode);
-    public static System.ComponentModel.Win32Exception GetLastError() => new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+    public static System.ComponentModel.Win32Exception GetLastError() => new(Marshal.GetLastWin32Error());
     public static string GetLastErrorStr() => (Marshal.GetLastWin32Error() != 0) ? new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error()).Message : "";
 
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("iphlpapi.dll", CharSet = CharSet.Unicode, SetLastError = true)]
@@ -1379,11 +1379,11 @@ internal unsafe static partial class API {
     public static extern unsafe void WTSFreeMemory(IntPtr memory);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe void WTSCloseServer(IntPtr hServer);
-    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("wtsapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern unsafe IntPtr WTSOpenServer(string pServerName);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe bool WTSLogoffSession(IntPtr hServer, int sessionId, bool bWait);
-    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("wtsapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern unsafe bool WTSConnectSession(UIntPtr LogonId, UIntPtr TargetLogonId, string pPassword, bool bWait);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe bool WTSDisconnectSession(IntPtr hServer, int sessionId, bool wait);

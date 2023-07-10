@@ -34,6 +34,7 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
     public bool IgnoreBackColor { get; set; } = false;
     public Icon? Icon { get; private set; } = null;
 
+#pragma warning disable IDE0052
     private bool _Suspended;
     public bool Suspended { get => _Suspended; set { SetField(ref _Suspended, value); BackColor = value ? Settings.Highlights.FrozenColor : Color.Empty; } }
     /* Primary Basic Properties */
@@ -161,6 +162,7 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
     public string ProductVersion => (_FileVersionInfo == null || _FileVersionInfo.ProductVersion == null) ? "n/a." : _FileVersionInfo.ProductVersion;
     public string ProductCompany => (_FileVersionInfo == null || _FileVersionInfo.CompanyName == null) ? "n/a." : _FileVersionInfo.CompanyName;
     public string ProductLanguage => (_FileVersionInfo == null || _FileVersionInfo.Language == null) ? "n/a." : _FileVersionInfo.Language;
+#pragma warning restore IDE0052
 
     /* Public Methods */
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -248,7 +250,6 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
         if (vv.Contains("VirtualMemory")) VirtualMemoryValue = spi.VirtualSize;
         if (vv.Contains("VirtualMemoryPeak")) VirtualMemoryPeakValue = spi.PeakVirtualSize;
         // I/O Counters Values
-        // TODO: Warning, these columns changed definitions from Transfers to Transfer
         if (vv.Contains("ReadTransfer") || vv.Contains("ReadTransferDelta")) {
             ReadTransferDeltaValue = (ReadTransferValue == 0) ? 0 : ReadTransferValue - spi.ReadTransferCount;
             ReadTransferValue = spi.ReadTransferCount;
@@ -290,7 +291,6 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
                 NetSentValue = ETW.Stats(_PID).NetSent;
                 NetSentRateValue = CalculateRateValue(NetSentDeltaValue);
             }
-            // TODO: There can be a mix on col tagging here as well betweehn NetReceived and NetRcvd
             if (vv.Contains("NetReceived") || vv.Contains("NetReceivedDelta") || vv.Contains("NetReceivedRate")) {
                 NetRcvdDeltaValue = (NetRcvdValue == 0) ? 0 : NetRcvdValue - ETW.Stats(_PID).NetReceived;
                 NetRcvdValue = ETW.Stats(_PID).NetReceived;
@@ -540,7 +540,6 @@ internal class TaskManagerProcessCollection : BindingList<TaskManagerProcess> {
         RaiseListChangedEvents = true;
     }
 
-    // TODO: These should be improved, maybe use LinQ.
     public bool Contains(IntPtr PID) => Contains(PID.ToInt32());
     public bool Contains(int PID) {
         foreach (TaskManagerProcess i in Items) {

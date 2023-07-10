@@ -46,7 +46,7 @@ internal class TaskManagerSystem : TaskManagerValuesBase {
             ioTotalCount.SetValue(ioReadCount.Value + ioWriteCount.Value + ioOtherCount.Value);
             ioTotalBytes.SetValue(ioReadBytes.Value + ioWriteBytes.Value + ioOtherBytes.Value);
 
-        } else { /* TODO: Improve */ Debug.WriteLine(Marshal.GetLastPInvokeErrorMessage()); }
+        } else { Debug.WriteLine(Marshal.GetLastPInvokeErrorMessage()); }
         if (API.GetPerformanceInfo(ref _PI, _PI.cb)) {
             HandleCount.SetValue(_PI.HandleCount);
             ThreadCount.SetValue(_PI.ThreadCount);
@@ -60,7 +60,7 @@ internal class TaskManagerSystem : TaskManagerValuesBase {
             PhysicalTotal.SetValue(_PI.PhysicalTotal * Multiplier);
             PhysicalAvail.SetValue(_PI.PhysicalAvailable * Multiplier);
 
-        } else { /* TODO: Improve */ Debug.WriteLine(Marshal.GetLastPInvokeErrorMessage()); }
+        } else { Debug.WriteLine(Marshal.GetLastPInvokeErrorMessage()); }
 
         // Compute PageFile Data
         ResetPageFile();

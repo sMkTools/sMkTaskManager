@@ -1373,7 +1373,6 @@ internal partial class tabPerformance : UserControl, ITaskManagerTab {
         ETW.Flush();
     }
 
-
     private bool FullScreen {
         get { return !tlpDetails.Visible; }
         set {
@@ -1386,16 +1385,6 @@ internal partial class tabPerformance : UserControl, ITaskManagerTab {
                 if (value) { c.MouseUp += OnMouseUpEventHandler; } else { c.MouseUp -= OnMouseUpEventHandler; }
             }
         }
-    }
-    private bool isMeterVisible(PerformanceMeters meter) {
-        return meter switch {
-            PerformanceMeters.CPU => chartCpu.Visible,
-            PerformanceMeters.Mem => chartMem.Visible,
-            PerformanceMeters.IO => chartIO.Visible,
-            PerformanceMeters.Disk => chartDisk.Visible,
-            PerformanceMeters.Net => chartNet.Visible,
-            _ => false,
-        };
     }
     private void setMeterVisible(PerformanceMeters meter, bool visible) {
         var minWidth = 110;
@@ -1458,9 +1447,7 @@ internal partial class tabPerformance : UserControl, ITaskManagerTab {
     public long TimmingValue => _stopWatch.ElapsedMilliseconds;
     public bool CanSelectColumns => false;
     public TaskManagerColumnTypes ColumnType => TaskManagerColumnTypes.None;
-    public void ForceRefresh() { }
-    public ListView.ColumnHeaderCollection? GetColumns() => default;
-    public void SetColumns(in ListView.ListViewItemCollection colItems) { }
+    public void ForceRefresh() => ForceRefreshClicked?.Invoke(this, EventArgs.Empty);
 
     private void RefresherDoWork(bool firstTime = false) {
         RefreshStarts?.Invoke(this, EventArgs.Empty);
@@ -1479,7 +1466,6 @@ internal partial class tabPerformance : UserControl, ITaskManagerTab {
     public void LoadSettings() {
         Settings.LoadPerformance();
     }
-    public bool SaveSettings() { return true; }
     public void ApplySettings() {
         chartCpu.SetIndexes("Total", Settings.Performance.ShowKernelTime ? "Kernel" : null);
         chartCpu.BackSolid = Settings.Performance.Solid;
@@ -1509,7 +1495,6 @@ internal partial class tabPerformance : UserControl, ITaskManagerTab {
         meterNet.LightColors = chartCpu.LightColors;
 
     }
-
 
 }
 

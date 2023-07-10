@@ -489,10 +489,5 @@ internal class tabUsers : UserControl, ITaskManagerTab {
     public void LoadSettings() {
         Settings.LoadColsInformation(TaskManagerColumnTypes.Users, lv, ref ColsUsers);
     }
-    public bool SaveSettings() {
-        return true;
-    }
-    public void ApplySettings() {
-    }
 
 }
