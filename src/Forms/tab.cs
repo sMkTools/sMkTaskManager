@@ -1,6 +1,5 @@
 ﻿using sMkTaskManager.Classes;
 using sMkTaskManager.Controls;
-
 namespace sMkTaskManager.Forms;
 
 public interface ITaskManagerTab {
