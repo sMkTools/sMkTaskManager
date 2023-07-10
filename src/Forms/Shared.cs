@@ -63,15 +63,11 @@ internal static partial class Shared {
         }
     }
 
-    internal static Dictionary<string, Stopwatch> Timmings = new();
-    // internal static TaskManagerSystem System = new();
-
     internal static List<Color> TimmingsColors = new() {
         Color.FromArgb(255, 192, 192), Color.FromArgb(255, 224, 192), Color.FromArgb(255, 255, 192),
         Color.FromArgb(192, 255, 192), Color.FromArgb(192, 255, 255), Color.FromArgb(192, 192, 255),
         Color.FromArgb(255, 192, 255), Color.FromArgb(192, 192, 192)
     };
-
 
 }
 
@@ -87,6 +83,9 @@ internal static class Tabs {
     }
     internal static ITaskManagerTab? GetTab(string tabKey) {
         return Tab.FirstOrDefault(t => t.Key == tabKey).Value;
+    }
+    internal static bool Contains(string tabKey) {
+    return Tab.ContainsKey(tabKey);
     }
     internal static ITaskManagerTab? ActiveTab {
         get {

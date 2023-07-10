@@ -1,16 +1,21 @@
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing.Drawing2D;
-using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
 using System.Timers;
 using sMkTaskManager.Classes;
 using sMkTaskManager.Forms;
-
 namespace sMkTaskManager;
 
 [DesignerCategory("Component"), SupportedOSPlatform("windows")]
 public partial class frmMain : Form {
+
+    private readonly List<Task> _MonitorTasks = new();
+    private readonly System.Windows.Forms.Timer StatusTimer = new();
+    private readonly Stopwatch _StopWatch1 = new(), _StopWatch2 = new();
+    private System.Timers.Timer _MonitorTriggerTimer;
+    private Size? _prevSize, _prevMinSize, _fullScreenSize;
+    private Point? _prevLocation, _fullScreenLocation;
+    private BackgroundWorker _InitWorker;
 
     public frmMain() {
         InitializeComponent();
@@ -20,6 +25,7 @@ public partial class frmMain : Form {
         Tabs.Tab.Add("Procs", new tabProcesses());
         Tabs.Tab.Add("Servs", new tabServices());
         Tabs.Tab.Add("Perfs", new tabPerformance());
+        Tabs.Tab.Add("Net", new tabNetworking());
         Tabs.Tab.Add("Conns", new tabConnections());
         Tabs.Tab.Add("Ports", new tabPorts());
         Tabs.Tab.Add("Users", new tabUsers());
@@ -28,16 +34,6 @@ public partial class frmMain : Form {
         // Extensions.UseImmersiveDarkMode(Handle, true);
         // Extensions.UseImmersiveRoundCorner(Handle, 3);
     }
-
-    // Local variables...
-    private List<Task> _MonitorTasks = new();
-    private System.Timers.Timer _MonitorTriggerTimer;
-    private System.Windows.Forms.Timer StatusTimer = new();
-    private readonly Stopwatch _StopWatch1 = new(), _StopWatch2 = new();
-    private Size? _prevSize, _prevMinSize; Point? _prevLocation;
-    private Size? _fullScreenSize; Point? _fullScreenLocation;
-    private BackgroundWorker _InitWorker;
-
     protected override void WndProc(ref Message m) {
         if (m.Msg == 0x112) { // WM_SYSCOMMAND
             if (m.WParam == 61536) { Shared.RealExit = false; }
@@ -127,8 +123,10 @@ public partial class frmMain : Form {
         Extensions.StopMeasure(sw);
     }
     private void OnLoadAddHandlers() {
-        ((Control)Tabs.Tab["Perfs"]).MouseDoubleClick += evtabPerf_MouseDoubleClick;
-        Tabs.Tab["Perfs"].RefreshComplete += evtabPerf_RefreshComplete;
+        if (Tabs.Contains("Perfs")) {
+            ((Control)Tabs.Tab["Perfs"]).MouseDoubleClick += evtabPerf_MouseDoubleClick;
+            Tabs.Tab["Perfs"].RefreshComplete += evtabPerf_RefreshComplete;
+        }
         ssBtnState.DropDownOpening += evStatusBarStateOpening;
         ssBtnState.DropDownClosed += evStatusBarStateClosed;
         ssBtnState.ButtonDoubleClick += evStatusBarStateDoubleClick;
@@ -314,7 +312,7 @@ public partial class frmMain : Form {
         TimmingDisplay();
     }
     internal async void MonitorRefreshAsync(bool firstTime = false) {
-        if (MonitorSpeed<=200) { MonitorSpeed =Settings.UpdateSpeed; }
+        if (MonitorSpeed <= 200) { MonitorSpeed = Settings.UpdateSpeed; }
         if (MonitorBusy) return;
         _StopWatch1.Restart();
         MonitorBusy = true;
@@ -330,8 +328,8 @@ public partial class frmMain : Form {
         TimmingDisplay();
     }
     private void MonitorTriggerExecutor(object? sender, ElapsedEventArgs e) {
-        if (MonitorRunning) { 
-        MonitorRefreshAsync();
+        if (MonitorRunning) {
+            MonitorRefreshAsync();
         }
     }
     private void MonitorUpdateBtnStatus() {
@@ -361,6 +359,7 @@ public partial class frmMain : Form {
         timmingStrip.Items.Clear();
         int i = 0;
         foreach (ITaskManagerTab? t in Tabs.Tab.Values) {
+            if (i >= Shared.TimmingsColors.Count) { i = 0; }
             ToolStripStatusLabel lbl = new() {
                 BackColor = Shared.TimmingsColors[i],
                 BorderSides = ToolStripStatusLabelBorderSides.All,
@@ -383,7 +382,7 @@ public partial class frmMain : Form {
             // timmingStrip.BeginInvoke(TimmingDisplay); return;
         }
         foreach (ITaskManagerTab? t in Tabs.Tab.Values) {
-            if (!timmingStrip.Items.ContainsKey(t.TimmingKey)) continue; 
+            if (!timmingStrip.Items.ContainsKey(t.TimmingKey)) continue;
             var itm = timmingStrip.Items[t.TimmingKey];
             itm.Text = itm.AccessibleName + string.Format("{0:N0}", t.TimmingValue) + "ms.";
         }

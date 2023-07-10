@@ -469,6 +469,7 @@ public class sMkColumnSorter : IComparer {
     public int Compare(object? x, object? y) {
         if (x == null) return -1;
         if (y == null) return +1;
+        if (SortColumn < 0) return 0;
         ListViewItem listviewX = (ListViewItem)x;
         ListViewItem listviewY = (ListViewItem)y;
         if (SortColumn > listviewX.SubItems.Count - 1 || SortColumn > listviewY.SubItems.Count - 1) return 0;
