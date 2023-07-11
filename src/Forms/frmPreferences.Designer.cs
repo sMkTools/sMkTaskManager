@@ -61,6 +61,33 @@ partial class frmPreferences {
         p_chkAntiAlias = new CheckBox();
         p_chkSolidGraphs = new CheckBox();
         tpNetworking = new TabPage();
+        n_Label7 = new Label();
+        n_Label6 = new Label();
+        n_btnDnColor = new Button();
+        n_btnUpColor = new Button();
+        n_chkKeepDrawing = new CheckBox();
+        n_chkLightBackground = new CheckBox();
+        n_chkShowLegends = new CheckBox();
+        n_chkShowIndexes = new CheckBox();
+        n_tbGridSize = new TrackBar();
+        n_tbValueSpacing = new TrackBar();
+        n_AverageLine = new ComboBox();
+        n_lblGridSize = new Label();
+        n_lblValueSpacing = new Label();
+        n_Label5 = new Label();
+        n_Label4 = new Label();
+        n_Label3 = new Label();
+        n_GridHorizontal = new ComboBox();
+        n_GridVertical = new ComboBox();
+        n_Label2 = new Label();
+        n_AverageLineColor = new Button();
+        n_GridHorizontalColor = new Button();
+        n_GridVerticalColor = new Button();
+        n_Label1 = new Label();
+        n_chkAvgValue = new CheckBox();
+        n_chkShadeBackground = new CheckBox();
+        n_chkAntiAlias = new CheckBox();
+        n_chkSolidGraphs = new CheckBox();
         btnCancel = new Button();
         btnApply = new Button();
         btnOk = new Button();
@@ -71,6 +98,9 @@ partial class frmPreferences {
         tpPerformance.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)p_tbGridSize).BeginInit();
         ((System.ComponentModel.ISupportInitialize)p_tbValueSpacing).BeginInit();
+        tpNetworking.SuspendLayout();
+        ((System.ComponentModel.ISupportInitialize)n_tbGridSize).BeginInit();
+        ((System.ComponentModel.ISupportInitialize)n_tbValueSpacing).BeginInit();
         SuspendLayout();
         // 
         // tc
@@ -203,7 +233,7 @@ partial class frmPreferences {
         g_btnHighlightFrozen.Size = new Size(30, 17);
         g_btnHighlightFrozen.TabIndex = 16;
         g_btnHighlightFrozen.UseVisualStyleBackColor = false;
-        g_btnHighlightFrozen.Click += g_btnHighlightColor_Click;
+        g_btnHighlightFrozen.Click += btnColors_Click;
         // 
         // g_btnHighlightRemoved
         // 
@@ -214,7 +244,7 @@ partial class frmPreferences {
         g_btnHighlightRemoved.Size = new Size(30, 17);
         g_btnHighlightRemoved.TabIndex = 14;
         g_btnHighlightRemoved.UseVisualStyleBackColor = false;
-        g_btnHighlightRemoved.Click += g_btnHighlightColor_Click;
+        g_btnHighlightRemoved.Click += btnColors_Click;
         // 
         // g_btnHighlightChanges
         // 
@@ -225,7 +255,7 @@ partial class frmPreferences {
         g_btnHighlightChanges.Size = new Size(30, 17);
         g_btnHighlightChanges.TabIndex = 12;
         g_btnHighlightChanges.UseVisualStyleBackColor = false;
-        g_btnHighlightChanges.Click += g_btnHighlightColor_Click;
+        g_btnHighlightChanges.Click += btnColors_Click;
         // 
         // g_chkHighlightFrozen
         // 
@@ -292,7 +322,7 @@ partial class frmPreferences {
         g_btnHighlightNew.Size = new Size(30, 17);
         g_btnHighlightNew.TabIndex = 10;
         g_btnHighlightNew.UseVisualStyleBackColor = false;
-        g_btnHighlightNew.Click += g_btnHighlightColor_Click;
+        g_btnHighlightNew.Click += btnColors_Click;
         // 
         // g_chkShowIcons
         // 
@@ -475,7 +505,7 @@ partial class frmPreferences {
         p_tbGridSize.TabIndex = 22;
         p_tbGridSize.TickStyle = TickStyle.None;
         p_tbGridSize.Value = 2;
-        p_tbGridSize.Scroll += p_tbGridSize_Scroll;
+        p_tbGridSize.Scroll += tbValues_Scroll;
         // 
         // p_tbValueSpacing
         // 
@@ -488,7 +518,7 @@ partial class frmPreferences {
         p_tbValueSpacing.TabIndex = 20;
         p_tbValueSpacing.TickStyle = TickStyle.None;
         p_tbValueSpacing.Value = 2;
-        p_tbValueSpacing.Scroll += p_tbValueSpacing_Scroll;
+        p_tbValueSpacing.Scroll += tbValues_Scroll;
         // 
         // p_AverageLine
         // 
@@ -591,7 +621,7 @@ partial class frmPreferences {
         p_AverageLineColor.Size = new Size(30, 20);
         p_AverageLineColor.TabIndex = 19;
         p_AverageLineColor.UseVisualStyleBackColor = false;
-        p_AverageLineColor.Click += p_btnColors_Click;
+        p_AverageLineColor.Click += btnColors_Click;
         // 
         // p_GridHorizontalColor
         // 
@@ -602,7 +632,7 @@ partial class frmPreferences {
         p_GridHorizontalColor.Size = new Size(30, 20);
         p_GridHorizontalColor.TabIndex = 17;
         p_GridHorizontalColor.UseVisualStyleBackColor = false;
-        p_GridHorizontalColor.Click += p_btnColors_Click;
+        p_GridHorizontalColor.Click += btnColors_Click;
         // 
         // p_GridVerticalColor
         // 
@@ -613,7 +643,7 @@ partial class frmPreferences {
         p_GridVerticalColor.Size = new Size(30, 20);
         p_GridVerticalColor.TabIndex = 15;
         p_GridVerticalColor.UseVisualStyleBackColor = false;
-        p_GridVerticalColor.Click += p_btnColors_Click;
+        p_GridVerticalColor.Click += btnColors_Click;
         // 
         // p_Label1
         // 
@@ -741,12 +771,344 @@ partial class frmPreferences {
         // 
         // tpNetworking
         // 
+        tpNetworking.Controls.Add(n_Label7);
+        tpNetworking.Controls.Add(n_Label6);
+        tpNetworking.Controls.Add(n_btnDnColor);
+        tpNetworking.Controls.Add(n_btnUpColor);
+        tpNetworking.Controls.Add(n_chkKeepDrawing);
+        tpNetworking.Controls.Add(n_chkLightBackground);
+        tpNetworking.Controls.Add(n_chkShowLegends);
+        tpNetworking.Controls.Add(n_chkShowIndexes);
+        tpNetworking.Controls.Add(n_tbGridSize);
+        tpNetworking.Controls.Add(n_tbValueSpacing);
+        tpNetworking.Controls.Add(n_AverageLine);
+        tpNetworking.Controls.Add(n_lblGridSize);
+        tpNetworking.Controls.Add(n_lblValueSpacing);
+        tpNetworking.Controls.Add(n_Label5);
+        tpNetworking.Controls.Add(n_Label4);
+        tpNetworking.Controls.Add(n_Label3);
+        tpNetworking.Controls.Add(n_GridHorizontal);
+        tpNetworking.Controls.Add(n_GridVertical);
+        tpNetworking.Controls.Add(n_Label2);
+        tpNetworking.Controls.Add(n_AverageLineColor);
+        tpNetworking.Controls.Add(n_GridHorizontalColor);
+        tpNetworking.Controls.Add(n_GridVerticalColor);
+        tpNetworking.Controls.Add(n_Label1);
+        tpNetworking.Controls.Add(n_chkAvgValue);
+        tpNetworking.Controls.Add(n_chkShadeBackground);
+        tpNetworking.Controls.Add(n_chkAntiAlias);
+        tpNetworking.Controls.Add(n_chkSolidGraphs);
         tpNetworking.Location = new Point(4, 24);
         tpNetworking.Name = "tpNetworking";
         tpNetworking.Size = new Size(448, 187);
         tpNetworking.TabIndex = 2;
         tpNetworking.Text = "Networking Graphs";
         tpNetworking.UseVisualStyleBackColor = true;
+        // 
+        // n_Label7
+        // 
+        n_Label7.Location = new Point(256, 127);
+        n_Label7.Name = "n_Label7";
+        n_Label7.Size = new Size(162, 17);
+        n_Label7.TabIndex = 26;
+        n_Label7.Text = "Download bandwith color";
+        n_Label7.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // n_Label6
+        // 
+        n_Label6.Location = new Point(256, 109);
+        n_Label6.Name = "n_Label6";
+        n_Label6.Size = new Size(162, 17);
+        n_Label6.TabIndex = 24;
+        n_Label6.Text = "Upload bandwith color";
+        n_Label6.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // n_btnDnColor
+        // 
+        n_btnDnColor.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        n_btnDnColor.BackColor = Color.Cyan;
+        n_btnDnColor.Location = new Point(230, 126);
+        n_btnDnColor.Name = "n_btnDnColor";
+        n_btnDnColor.Size = new Size(25, 18);
+        n_btnDnColor.TabIndex = 25;
+        n_btnDnColor.UseVisualStyleBackColor = false;
+        n_btnDnColor.Click += btnColors_Click;
+        // 
+        // n_btnUpColor
+        // 
+        n_btnUpColor.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        n_btnUpColor.BackColor = Color.Fuchsia;
+        n_btnUpColor.Location = new Point(230, 109);
+        n_btnUpColor.Name = "n_btnUpColor";
+        n_btnUpColor.Size = new Size(25, 18);
+        n_btnUpColor.TabIndex = 23;
+        n_btnUpColor.UseVisualStyleBackColor = false;
+        n_btnUpColor.Click += btnColors_Click;
+        // 
+        // n_chkKeepDrawing
+        // 
+        n_chkKeepDrawing.AutoSize = true;
+        n_chkKeepDrawing.CheckAlign = ContentAlignment.TopLeft;
+        n_chkKeepDrawing.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point);
+        n_chkKeepDrawing.Location = new Point(6, 128);
+        n_chkKeepDrawing.Margin = new Padding(3, 0, 3, 0);
+        n_chkKeepDrawing.Name = "n_chkKeepDrawing";
+        n_chkKeepDrawing.Size = new Size(199, 30);
+        n_chkKeepDrawing.TabIndex = 7;
+        n_chkKeepDrawing.Text = "Keep updating when not in focus\r\n(may incrase CPU usage)";
+        n_chkKeepDrawing.TextAlign = ContentAlignment.TopLeft;
+        n_chkKeepDrawing.UseVisualStyleBackColor = true;
+        // 
+        // n_chkLightBackground
+        // 
+        n_chkLightBackground.AutoSize = true;
+        n_chkLightBackground.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point);
+        n_chkLightBackground.Location = new Point(6, 108);
+        n_chkLightBackground.Margin = new Padding(3, 0, 3, 0);
+        n_chkLightBackground.Name = "n_chkLightBackground";
+        n_chkLightBackground.Size = new Size(152, 17);
+        n_chkLightBackground.TabIndex = 6;
+        n_chkLightBackground.Text = "Light background colors";
+        n_chkLightBackground.TextAlign = ContentAlignment.TopLeft;
+        n_chkLightBackground.UseVisualStyleBackColor = true;
+        // 
+        // n_chkShowLegends
+        // 
+        n_chkShowLegends.AutoSize = true;
+        n_chkShowLegends.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point);
+        n_chkShowLegends.Location = new Point(6, 91);
+        n_chkShowLegends.Margin = new Padding(3, 0, 3, 0);
+        n_chkShowLegends.Name = "n_chkShowLegends";
+        n_chkShowLegends.Size = new Size(158, 17);
+        n_chkShowLegends.TabIndex = 5;
+        n_chkShowLegends.Text = "Display legends on graph";
+        n_chkShowLegends.TextAlign = ContentAlignment.TopLeft;
+        n_chkShowLegends.UseVisualStyleBackColor = true;
+        // 
+        // n_chkShowIndexes
+        // 
+        n_chkShowIndexes.AutoSize = true;
+        n_chkShowIndexes.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point);
+        n_chkShowIndexes.Location = new Point(6, 74);
+        n_chkShowIndexes.Margin = new Padding(3, 0, 3, 0);
+        n_chkShowIndexes.Name = "n_chkShowIndexes";
+        n_chkShowIndexes.Size = new Size(140, 17);
+        n_chkShowIndexes.TabIndex = 4;
+        n_chkShowIndexes.Text = "Display indexes values";
+        n_chkShowIndexes.TextAlign = ContentAlignment.TopLeft;
+        n_chkShowIndexes.UseVisualStyleBackColor = true;
+        // 
+        // n_tbGridSize
+        // 
+        n_tbGridSize.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        n_tbGridSize.AutoSize = false;
+        n_tbGridSize.BackColor = SystemColors.Window;
+        n_tbGridSize.Location = new Point(313, 88);
+        n_tbGridSize.Name = "n_tbGridSize";
+        n_tbGridSize.Size = new Size(102, 21);
+        n_tbGridSize.TabIndex = 21;
+        n_tbGridSize.TickStyle = TickStyle.None;
+        n_tbGridSize.Value = 2;
+        n_tbGridSize.Scroll += tbValues_Scroll;
+        // 
+        // n_tbValueSpacing
+        // 
+        n_tbValueSpacing.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        n_tbValueSpacing.AutoSize = false;
+        n_tbValueSpacing.BackColor = SystemColors.Window;
+        n_tbValueSpacing.Location = new Point(313, 68);
+        n_tbValueSpacing.Name = "n_tbValueSpacing";
+        n_tbValueSpacing.Size = new Size(102, 21);
+        n_tbValueSpacing.TabIndex = 19;
+        n_tbValueSpacing.TickStyle = TickStyle.None;
+        n_tbValueSpacing.Value = 2;
+        n_tbValueSpacing.Scroll += tbValues_Scroll;
+        // 
+        // n_AverageLine
+        // 
+        n_AverageLine.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        n_AverageLine.DropDownStyle = ComboBoxStyle.DropDownList;
+        n_AverageLine.DropDownWidth = 80;
+        n_AverageLine.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point);
+        n_AverageLine.Items.AddRange(new object[] { "Solid", "Dash", "Dot", "DashDot", "DashDotDot", "None" });
+        n_AverageLine.Location = new Point(319, 44);
+        n_AverageLine.Name = "n_AverageLine";
+        n_AverageLine.Size = new Size(90, 21);
+        n_AverageLine.TabIndex = 17;
+        // 
+        // n_lblGridSize
+        // 
+        n_lblGridSize.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        n_lblGridSize.Location = new Point(412, 85);
+        n_lblGridSize.Name = "n_lblGridSize";
+        n_lblGridSize.Size = new Size(30, 20);
+        n_lblGridSize.TabIndex = 22;
+        n_lblGridSize.Text = "20";
+        n_lblGridSize.TextAlign = ContentAlignment.MiddleCenter;
+        // 
+        // n_lblValueSpacing
+        // 
+        n_lblValueSpacing.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        n_lblValueSpacing.Location = new Point(412, 65);
+        n_lblValueSpacing.Name = "n_lblValueSpacing";
+        n_lblValueSpacing.Size = new Size(30, 20);
+        n_lblValueSpacing.TabIndex = 20;
+        n_lblValueSpacing.Text = "20";
+        n_lblValueSpacing.TextAlign = ContentAlignment.MiddleCenter;
+        // 
+        // n_Label5
+        // 
+        n_Label5.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        n_Label5.Location = new Point(230, 88);
+        n_Label5.Name = "n_Label5";
+        n_Label5.Size = new Size(90, 17);
+        n_Label5.TabIndex = 12;
+        n_Label5.Text = "Grid size:";
+        // 
+        // n_Label4
+        // 
+        n_Label4.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        n_Label4.Location = new Point(230, 68);
+        n_Label4.Name = "n_Label4";
+        n_Label4.Size = new Size(90, 17);
+        n_Label4.TabIndex = 11;
+        n_Label4.Text = "Value spacing:";
+        // 
+        // n_Label3
+        // 
+        n_Label3.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        n_Label3.Location = new Point(230, 48);
+        n_Label3.Name = "n_Label3";
+        n_Label3.Size = new Size(90, 17);
+        n_Label3.TabIndex = 10;
+        n_Label3.Text = "Average line:";
+        // 
+        // n_GridHorizontal
+        // 
+        n_GridHorizontal.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        n_GridHorizontal.DropDownStyle = ComboBoxStyle.DropDownList;
+        n_GridHorizontal.DropDownWidth = 80;
+        n_GridHorizontal.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point);
+        n_GridHorizontal.Items.AddRange(new object[] { "Solid", "Dash", "Dot", "DashDot", "DashDotDot", "None" });
+        n_GridHorizontal.Location = new Point(319, 25);
+        n_GridHorizontal.Name = "n_GridHorizontal";
+        n_GridHorizontal.Size = new Size(90, 21);
+        n_GridHorizontal.TabIndex = 15;
+        // 
+        // n_GridVertical
+        // 
+        n_GridVertical.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        n_GridVertical.DropDownStyle = ComboBoxStyle.DropDownList;
+        n_GridVertical.DropDownWidth = 80;
+        n_GridVertical.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point);
+        n_GridVertical.Items.AddRange(new object[] { "Solid", "Dash", "Dot", "DashDot", "DashDotDot", "None" });
+        n_GridVertical.Location = new Point(319, 5);
+        n_GridVertical.Name = "n_GridVertical";
+        n_GridVertical.Size = new Size(90, 21);
+        n_GridVertical.TabIndex = 13;
+        // 
+        // n_Label2
+        // 
+        n_Label2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        n_Label2.Location = new Point(230, 28);
+        n_Label2.Name = "n_Label2";
+        n_Label2.Size = new Size(90, 17);
+        n_Label2.TabIndex = 9;
+        n_Label2.Text = "Horizontal grid:";
+        // 
+        // n_AverageLineColor
+        // 
+        n_AverageLineColor.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        n_AverageLineColor.BackColor = Color.Coral;
+        n_AverageLineColor.Location = new Point(412, 45);
+        n_AverageLineColor.Name = "n_AverageLineColor";
+        n_AverageLineColor.Size = new Size(30, 20);
+        n_AverageLineColor.TabIndex = 18;
+        n_AverageLineColor.UseVisualStyleBackColor = false;
+        n_AverageLineColor.Click += btnColors_Click;
+        // 
+        // n_GridHorizontalColor
+        // 
+        n_GridHorizontalColor.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        n_GridHorizontalColor.BackColor = Color.Green;
+        n_GridHorizontalColor.Location = new Point(412, 25);
+        n_GridHorizontalColor.Name = "n_GridHorizontalColor";
+        n_GridHorizontalColor.Size = new Size(30, 20);
+        n_GridHorizontalColor.TabIndex = 16;
+        n_GridHorizontalColor.UseVisualStyleBackColor = false;
+        n_GridHorizontalColor.Click += btnColors_Click;
+        // 
+        // n_GridVerticalColor
+        // 
+        n_GridVerticalColor.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        n_GridVerticalColor.BackColor = Color.Green;
+        n_GridVerticalColor.Location = new Point(412, 5);
+        n_GridVerticalColor.Name = "n_GridVerticalColor";
+        n_GridVerticalColor.Size = new Size(30, 20);
+        n_GridVerticalColor.TabIndex = 14;
+        n_GridVerticalColor.UseVisualStyleBackColor = false;
+        n_GridVerticalColor.Click += btnColors_Click;
+        // 
+        // n_Label1
+        // 
+        n_Label1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        n_Label1.Location = new Point(230, 8);
+        n_Label1.Name = "n_Label1";
+        n_Label1.Size = new Size(90, 17);
+        n_Label1.TabIndex = 8;
+        n_Label1.Text = "Vertical grid:";
+        // 
+        // n_chkAvgValue
+        // 
+        n_chkAvgValue.AutoSize = true;
+        n_chkAvgValue.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point);
+        n_chkAvgValue.Location = new Point(6, 57);
+        n_chkAvgValue.Margin = new Padding(3, 0, 3, 0);
+        n_chkAvgValue.Name = "n_chkAvgValue";
+        n_chkAvgValue.Size = new Size(141, 17);
+        n_chkAvgValue.TabIndex = 3;
+        n_chkAvgValue.Text = "Display average values";
+        n_chkAvgValue.TextAlign = ContentAlignment.TopLeft;
+        n_chkAvgValue.UseVisualStyleBackColor = true;
+        // 
+        // n_chkShadeBackground
+        // 
+        n_chkShadeBackground.AutoSize = true;
+        n_chkShadeBackground.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point);
+        n_chkShadeBackground.Location = new Point(6, 40);
+        n_chkShadeBackground.Margin = new Padding(3, 0, 3, 0);
+        n_chkShadeBackground.Name = "n_chkShadeBackground";
+        n_chkShadeBackground.Size = new Size(153, 17);
+        n_chkShadeBackground.TabIndex = 2;
+        n_chkShadeBackground.Text = "Shade background color";
+        n_chkShadeBackground.TextAlign = ContentAlignment.TopLeft;
+        n_chkShadeBackground.UseVisualStyleBackColor = true;
+        // 
+        // n_chkAntiAlias
+        // 
+        n_chkAntiAlias.AutoSize = true;
+        n_chkAntiAlias.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point);
+        n_chkAntiAlias.Location = new Point(6, 23);
+        n_chkAntiAlias.Margin = new Padding(3, 0, 3, 0);
+        n_chkAntiAlias.Name = "n_chkAntiAlias";
+        n_chkAntiAlias.Size = new Size(124, 17);
+        n_chkAntiAlias.TabIndex = 1;
+        n_chkAntiAlias.Text = "Enable antialiasing";
+        n_chkAntiAlias.TextAlign = ContentAlignment.TopLeft;
+        n_chkAntiAlias.UseVisualStyleBackColor = true;
+        // 
+        // n_chkSolidGraphs
+        // 
+        n_chkSolidGraphs.AutoSize = true;
+        n_chkSolidGraphs.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point);
+        n_chkSolidGraphs.Location = new Point(6, 6);
+        n_chkSolidGraphs.Margin = new Padding(3, 0, 3, 0);
+        n_chkSolidGraphs.Name = "n_chkSolidGraphs";
+        n_chkSolidGraphs.Size = new Size(112, 17);
+        n_chkSolidGraphs.TabIndex = 0;
+        n_chkSolidGraphs.Text = "Solid graph style";
+        n_chkSolidGraphs.TextAlign = ContentAlignment.TopLeft;
+        n_chkSolidGraphs.UseVisualStyleBackColor = true;
         // 
         // btnCancel
         // 
@@ -799,17 +1161,17 @@ partial class frmPreferences {
         Controls.Add(tc);
         FormBorderStyle = FormBorderStyle.FixedSingle;
         HelpButton = true;
+        Icon = Resources.Resources.frmPreferences;
         MaximizeBox = false;
         MinimizeBox = false;
-        Icon = Resources.Resources.frmPreferences;
         Name = "frmPreferences";
         ShowInTaskbar = false;
         SizeGripStyle = SizeGripStyle.Hide;
         StartPosition = FormStartPosition.CenterScreen;
         Text = "Preferences";
         TopMost = true;
-        Load += onLoad;
         FormClosing += onFormClosing;
+        Load += onLoad;
         tc.ResumeLayout(false);
         tpGeneral.ResumeLayout(false);
         tpGeneral.PerformLayout();
@@ -819,6 +1181,10 @@ partial class frmPreferences {
         tpPerformance.PerformLayout();
         ((System.ComponentModel.ISupportInitialize)p_tbGridSize).EndInit();
         ((System.ComponentModel.ISupportInitialize)p_tbValueSpacing).EndInit();
+        tpNetworking.ResumeLayout(false);
+        tpNetworking.PerformLayout();
+        ((System.ComponentModel.ISupportInitialize)n_tbGridSize).EndInit();
+        ((System.ComponentModel.ISupportInitialize)n_tbValueSpacing).EndInit();
         ResumeLayout(false);
     }
 
@@ -878,4 +1244,31 @@ partial class frmPreferences {
     private ColorDialog cd;
     private CheckBox p_chkSeparateCpu;
     private CheckBox p_chkKernelTime;
+    private CheckBox n_chkLightBackground;
+    private CheckBox n_chkShowLegends;
+    private CheckBox n_chkShowIndexes;
+    private TrackBar n_tbGridSize;
+    private TrackBar n_tbValueSpacing;
+    private ComboBox n_AverageLine;
+    private Label n_lblGridSize;
+    private Label n_lblValueSpacing;
+    private Label n_Label5;
+    private Label n_Label4;
+    private Label n_Label3;
+    private ComboBox n_GridHorizontal;
+    private ComboBox n_GridVertical;
+    private Label n_Label2;
+    private Button n_AverageLineColor;
+    private Button n_GridHorizontalColor;
+    private Button n_GridVerticalColor;
+    private Label n_Label1;
+    private CheckBox n_chkAvgValue;
+    private CheckBox n_chkShadeBackground;
+    private CheckBox n_chkAntiAlias;
+    private CheckBox n_chkSolidGraphs;
+    private Button n_btnDnColor;
+    private Button n_btnUpColor;
+    private Label n_Label7;
+    private Label n_Label6;
+    private CheckBox n_chkKeepDrawing;
 }

@@ -33,21 +33,16 @@ public partial class frmPreferences : Form {
         DialogResult = DialogResult.Cancel;
         Close();
     }
-
-    private void g_btnHighlightColor_Click(object sender, EventArgs e) {
+    private void btnColors_Click(object sender, EventArgs e) {
         cd.Color = ((Button)sender).BackColor;
         if (cd.ShowDialog(this) == DialogResult.OK) ((Button)sender).BackColor = cd.Color;
     }
-    private void p_tbValueSpacing_Scroll(object sender, EventArgs e) {
-        p_lblValueSpacing.Text = p_tbValueSpacing.Value.ToString();
-    }
-    private void p_tbGridSize_Scroll(object sender, EventArgs e) {
-        p_lblGridSize.Text = p_tbGridSize.Value.ToString();
-
-    }
-    private void p_btnColors_Click(object sender, EventArgs e) {
-        cd.Color = ((Button)sender).BackColor;
-        if (cd.ShowDialog(this) == DialogResult.OK) ((Button)sender).BackColor = cd.Color;
+    private void tbValues_Scroll(object sender, EventArgs e) {
+        if (sender == null) return;
+        if (sender == p_tbGridSize) p_lblGridSize.Text = p_tbGridSize.Value.ToString();
+        if (sender == n_tbGridSize) n_lblGridSize.Text = n_tbGridSize.Value.ToString();
+        if (sender == p_tbValueSpacing) p_lblValueSpacing.Text = p_tbValueSpacing.Value.ToString();
+        if (sender == n_tbValueSpacing) n_lblValueSpacing.Text = n_tbValueSpacing.Value.ToString();
     }
 
     public void LoadSettings() {
@@ -98,24 +93,26 @@ public partial class frmPreferences : Form {
             p_lblValueSpacing.Text = p_tbValueSpacing.Value.ToString();
         } catch { }
         try { // Networking Graphs Settings
-            //n_chkKeepDrawing.Checked = Settings.Networking.KeepUpdating;
-            //n_chkSolidGraphs.Checked = Settings.Networking.Solid;
-            //n_chkAntiAlias.Checked = Settings.Networking.AntiAlias;
-            //n_chkShadeBackground.Checked = Settings.Networking.ShadeBackground;
-            //n_chkAvgValue.Checked = Settings.Networking.DisplayAverages;
-            //n_tbValueSpacing.Value = Settings.Networking.ValueSpacing;
-            //n_tbGridSize.Value = Settings.Networking.GridSize;
-            //n_chkLightBackground.Checked = Settings.Networking.LightColors;
-            //n_GridVertical.SelectedIndex = Settings.Networking.VerticalGridStyle;
-            //n_GridVerticalColor.BackColor = Settings.Networking.VerticalGridColor;
-            //n_GridHorizontal.SelectedIndex = Settings.Networking.HorizontalGridStyle;
-            //n_GridHorizontalColor.BackColor = Settings.Networking.HorizontalGridColor;
-            //n_AverageLine.SelectedIndex = Settings.Networking.AverageLineStyle;
-            //n_AverageLineColor.BackColor = Settings.Networking.AverageLineColor;
-            //n_btnUpColor.BackColor = Settings.Networking.UploadColor;
-            //n_btnDnColor.BackColor = Settings.Networking.DownloadColor;
-            //n_lblGridSize.Text = n_tbGridSize.Value.ToString();
-            //n_lblValueSpacing.Text = n_tbValueSpacing.Value.ToString();
+            n_chkKeepDrawing.Checked = Settings.Networking.KeepUpdating;
+            n_chkSolidGraphs.Checked = Settings.Networking.Solid;
+            n_chkAntiAlias.Checked = Settings.Networking.AntiAlias;
+            n_chkShadeBackground.Checked = Settings.Networking.ShadeBackground;
+            n_chkAvgValue.Checked = Settings.Networking.DisplayAverages;
+            n_chkShowIndexes.Checked = Settings.Networking.DisplayIndexes;
+            n_chkShowLegends.Checked = Settings.Networking.DisplayLegends;
+            n_tbValueSpacing.Value = Settings.Networking.ValueSpacing;
+            n_tbGridSize.Value = Settings.Networking.GridSize;
+            n_chkLightBackground.Checked = Settings.Networking.LightColors;
+            n_GridVertical.SelectedIndex = Settings.Networking.VerticalGridStyle;
+            n_GridVerticalColor.BackColor = Settings.Networking.VerticalGridColor;
+            n_GridHorizontal.SelectedIndex = Settings.Networking.HorizontalGridStyle;
+            n_GridHorizontalColor.BackColor = Settings.Networking.HorizontalGridColor;
+            n_AverageLine.SelectedIndex = Settings.Networking.AverageLineStyle;
+            n_AverageLineColor.BackColor = Settings.Networking.AverageLineColor;
+            n_btnUpColor.BackColor = Settings.Networking.UploadColor;
+            n_btnDnColor.BackColor = Settings.Networking.DownloadColor;
+            n_lblGridSize.Text = n_tbGridSize.Value.ToString();
+            n_lblValueSpacing.Text = n_tbValueSpacing.Value.ToString();
         } catch { }
 
     }
@@ -163,22 +160,24 @@ public partial class frmPreferences : Form {
         Settings.Performance.AverageLineStyle = p_AverageLine.SelectedIndex;
         Settings.Performance.AverageLineColor = p_AverageLineColor.BackColor;
         // Networking Graphs Settings
-        //Settings.Networking.KeepUpdating = n_chkKeepDrawing.Checked;
-        //Settings.Networking.Solid = n_chkSolidGraphs.Checked;
-        //Settings.Networking.AntiAlias = n_chkAntiAlias.Checked;
-        //Settings.Networking.ShadeBackground = n_chkShadeBackground.Checked;
-        //Settings.Networking.DisplayAverages = n_chkAvgValue.Checked;
-        //Settings.Networking.ValueSpacing = n_tbValueSpacing.Value;
-        //Settings.Networking.GridSize = n_tbGridSize.Value;
-        //Settings.Networking.LightColors = n_chkLightBackground.Checked;
-        //Settings.Networking.VerticalGridStyle = n_GridVertical.SelectedIndex;
-        //Settings.Networking.VerticalGridColor = n_GridVerticalColor.BackColor;
-        //Settings.Networking.HorizontalGridStyle = n_GridHorizontal.SelectedIndex;
-        //Settings.Networking.HorizontalGridColor = n_GridHorizontalColor.BackColor;
-        //Settings.Networking.AverageLineStyle = n_AverageLine.SelectedIndex;
-        //Settings.Networking.AverageLineColor = n_AverageLineColor.BackColor;
-        //Settings.Networking.UploadColor = n_btnUpColor.BackColor;
-        //Settings.Networking.DownloadColor = n_btnDnColor.BackColor;
+        Settings.Networking.KeepUpdating = n_chkKeepDrawing.Checked;
+        Settings.Networking.Solid = n_chkSolidGraphs.Checked;
+        Settings.Networking.AntiAlias = n_chkAntiAlias.Checked;
+        Settings.Networking.ShadeBackground = n_chkShadeBackground.Checked;
+        Settings.Networking.DisplayAverages = n_chkAvgValue.Checked;
+        Settings.Networking.DisplayIndexes = n_chkShowIndexes.Checked;
+        Settings.Networking.DisplayLegends = n_chkShowLegends.Checked;
+        Settings.Networking.ValueSpacing = n_tbValueSpacing.Value;
+        Settings.Networking.GridSize = n_tbGridSize.Value;
+        Settings.Networking.LightColors = n_chkLightBackground.Checked;
+        Settings.Networking.VerticalGridStyle = n_GridVertical.SelectedIndex;
+        Settings.Networking.VerticalGridColor = n_GridVerticalColor.BackColor;
+        Settings.Networking.HorizontalGridStyle = n_GridHorizontal.SelectedIndex;
+        Settings.Networking.HorizontalGridColor = n_GridHorizontalColor.BackColor;
+        Settings.Networking.AverageLineStyle = n_AverageLine.SelectedIndex;
+        Settings.Networking.AverageLineColor = n_AverageLineColor.BackColor;
+        Settings.Networking.UploadColor = n_btnUpColor.BackColor;
+        Settings.Networking.DownloadColor = n_btnDnColor.BackColor;
 
         Settings.SaveAll();
     }
