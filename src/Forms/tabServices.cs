@@ -654,7 +654,6 @@ internal class tabServices : UserControl, ITaskManagerTab {
     }
     public void LoadSettings() {
         Settings.LoadColsInformation(TaskManagerColumnTypes.Services, lv, ref ColsServices);
-
     }
     public bool SaveSettings() {
         return Settings.SaveColsInformation("colsServices", lv);

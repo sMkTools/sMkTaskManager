@@ -166,6 +166,21 @@ internal class TaskManagerColumn {
             new("Session Type", "Session", "Session", "General", 100, 0, 0, 1),
             new("Total Processes", "Processes", "TotalProcesses", "General", 70, 1, 0, 1),
             });
+        } else if (type == TaskManagerColumnTypes.Nics) {
+            r.AddRange(new TaskManagerColumn[] {
+            new ("Adapter Name", "Name", "Name", "General", 120, 0, 1, 1),
+            new ("Description", "Description", "Description", "General", 120, 0, 0, 0),
+            new ("Speed", "Speed", "Speed", "General", 80, 2, 0, 1),
+            new ("State", "State", "State", "General", 60, 2, 0, 1),
+            new ("Type", "Type", "Type", "General", 90, 2, 0, 1),
+            new ("Mac Address", "MacAddress", "MacAddress", "General", 90, 1, 0, 0),
+            new ("Received Bytes", "Received", "Rcvd", "General", 80, 1, 0, 1),
+            new ("Sent Bytes", "Sent", "Sent", "General", 80, 1, 0, 1),
+            new ("Received Rate", "Rcvd Rate", "RcvdRate", "General", 80, 1, 0, 1),
+            new ("Sent Rate", "Sent Rate", "SentRate", "General", 80, 1, 0, 1),
+            new ("Received Delta", "Rcvd Delta", "RcvdDelta", "General", 80, 1, 0, 0),
+            new ("Sent Delta", "Sent Delta", "SentDelta", "General", 80, 1, 0, 0),
+            });
         }
         return r;
     }
@@ -188,4 +203,5 @@ public enum TaskManagerColumnTypes : int {
     Ports = 4,
     Users = 5,
     Applications = 6,
+    Nics = 7,
 }

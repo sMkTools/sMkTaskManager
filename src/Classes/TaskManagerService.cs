@@ -15,12 +15,13 @@ internal class TaskManagerService : IEquatable<TaskManagerService>, INotifyPrope
     private string _Ident, _PID = "", _Name = "", _Description = "", _Logon = "", _ImagePath = "", _CommandLine = "";
     private Color _BackColor = Color.Empty;
     private int _ImageIndex = 0;
-    private bool _CancellingEvents = false;
 
     public TaskManagerService(string serviceIdent) {
         _Ident = serviceIdent;
-        LastChanged = DateTime.Now.Ticks;
-        LastUpdated = LastChanged;
+        LastUpdated = DateTime.Now.Ticks;
+        LastChanged = LastUpdated;
+        PreviousUpdate = LastUpdated;
+        PropertyChanged += MyPropertyChanged;
     }
 
     /* Public Properties */
@@ -30,6 +31,8 @@ internal class TaskManagerService : IEquatable<TaskManagerService>, INotifyPrope
     public bool CanResume { get; set; }
     public long LastUpdated { get; set; }
     public long LastChanged { get; set; }
+    public long PreviousUpdate { get; set; } = 0;
+    public bool NotifyChanges { get; set; } = true;
     public string ID => _Ident;
     public string Ident => _Ident;
 
@@ -57,10 +60,10 @@ internal class TaskManagerService : IEquatable<TaskManagerService>, INotifyPrope
     public override bool Equals(object? obj) => Equals(obj as TaskManagerService);
     public override int GetHashCode() => _Ident.GetHashCode();
     public void Load(ServiceController s) {
-        _CancellingEvents = true;
+        NotifyChanges = false;
         _BaseService = s;
         Update();
-        _CancellingEvents = false;
+        NotifyChanges = true;
     }
     public void Update() {
         try {
@@ -86,7 +89,7 @@ internal class TaskManagerService : IEquatable<TaskManagerService>, INotifyPrope
             if (si.Description != "") { Description = si.Description!; }
             PID = (si.ProcessID == 0) ? "" : si.ProcessID.ToString();
 
-            if (LastUpdated <= LastChanged && !_CancellingEvents) {
+            if (NotifyChanges && LastUpdated <= LastChanged) {
                 BackColor = Settings.Highlights.ChangingItems ? Settings.Highlights.ChangingColor : Color.Empty;
             } else {
                 BackColor = Color.Empty;
@@ -194,14 +197,19 @@ internal class TaskManagerService : IEquatable<TaskManagerService>, INotifyPrope
     }
 
     /* Private Methods */
-    private void OnPropertyChanged(PropertyChangedEventArgs e) { PropertyChanged?.Invoke(this, e); }
+    private void MyPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        if (!NotifyChanges) return;
+        if (e.PropertyName == null) return;
+        LastChanged = LastUpdated;
+    }
+    private void OnPropertyChanged(PropertyChangedEventArgs e) { if (NotifyChanges) PropertyChanged?.Invoke(this, e); }
     private void SetField<T>(ref T field, T newValue, [CallerMemberName] string propertyName = "", string[]? alsoNotifyProperties = null) {
         if (!EqualityComparer<T>.Default.Equals(field, newValue)) {
             field = newValue;
             // Since all properties ending with Value should be read as the NonValue<string> Property
             if (propertyName.EndsWith("Value")) propertyName = propertyName.Replace("Value", "");
-            if (!_CancellingEvents) OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
-            if (!_CancellingEvents && alsoNotifyProperties != null) {
+            if (NotifyChanges) OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+            if (NotifyChanges && alsoNotifyProperties != null) {
                 foreach (string ap in alsoNotifyProperties) { OnPropertyChanged(new PropertyChangedEventArgs(ap)); }
             }
         }

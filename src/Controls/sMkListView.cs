@@ -520,20 +520,24 @@ public class sMkColumnSorter : IComparer {
     }
     private string CompareFixValues(string Value) {
         if (IsNumeric(Value)) return Value;
-        var retValue = Value.ToUpper().Replace(",", "");
-        if (retValue.EndsWith(".")) retValue = retValue[..^1];
+        //var retValue = Value.ToUpper().Replace(",", "");
+        //if (retValue.EndsWith(".")) retValue = retValue[..^1];
+        //if (retValue.EndsWith("+")) retValue = retValue[1..].Trim();
+        var retValue = Value.ToUpper().Replace(",", "").TrimStart('+', '=').TrimEnd('.').Trim();
+        if (retValue.EndsWith("BPS")) { retValue = retValue[..^3]; }
+        if (IsNumeric(retValue)) return retValue;
 
         if (retValue.EndsWith("B") && IsNumeric(retValue.Replace("B", "").Trim())) {
             retValue = retValue.Replace("B", "").Trim();
         } else if ((retValue.EndsWith("K") && IsNumeric(retValue.Replace("K", "").Trim())) | (retValue.EndsWith("KB") && IsNumeric(retValue.Replace("KB", "").Trim())) | (retValue.EndsWith("KB/S") && IsNumeric(retValue.Replace("KB/S", "").Trim()))) {
             retValue = retValue.Replace("KB/S", "").Replace("KB", "").Replace("K", "").Trim();
-            retValue = (Int128.Parse(retValue) * 1024).ToString();
+            retValue = (double.Parse(retValue) * 1024).ToString();
         } else if ((retValue.EndsWith("M") && IsNumeric(retValue.Replace("M", "").Trim())) | (retValue.EndsWith("MB") && IsNumeric(retValue.Replace("MB", "").Trim())) | (retValue.EndsWith("MB/S") && IsNumeric(retValue.Replace("MB/S", "").Trim()))) {
             retValue = retValue.Replace("MB/S", "").Replace("MB", "").Replace("M", "").Trim();
-            retValue = (Int128.Parse(retValue) * 1024 * 1024).ToString();
+            retValue = (double.Parse(retValue) * 1024 * 1024).ToString();
         } else if ((retValue.EndsWith("G") && IsNumeric(retValue.Replace("G", "").Trim())) | (retValue.EndsWith("GB") && IsNumeric(retValue.Replace("GB", "").Trim())) | (retValue.EndsWith("GB/S") && IsNumeric(retValue.Replace("GB/S", "").Trim()))) {
             retValue = retValue.Replace("GB/S", "").Replace("GB", "").Replace("G", "").Trim();
-            retValue = (Int128.Parse(retValue) * 1024 * 1024 * 1024).ToString();
+            retValue = (double.Parse(retValue) * 1024 * 1024 * 1024).ToString();
         } else {
             retValue = Value;
         }

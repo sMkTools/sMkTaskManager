@@ -101,7 +101,7 @@ internal static class Settings {
     }
 
     public static bool SaveAll() {
-        return SaveGeneral() && SaveHighlights() && SavePerformance() && SaveNetworking();
+        return SaveGeneral() && SaveHighlights() && SavePerformance();
     }
     public static bool SaveGeneral() {
         _StringBuilder.Clear();
@@ -251,7 +251,7 @@ internal static class Settings {
     }
 
     public static bool LoadAll() {
-        return LoadGeneral() && LoadHighlights() && LoadNetworking();
+        return LoadGeneral() && LoadHighlights();
     }
     public static bool LoadGeneral() {
         try {
@@ -434,6 +434,8 @@ internal static class Settings {
             case TaskManagerColumnTypes.Connections: strName = "colsConnections"; break;
             case TaskManagerColumnTypes.Ports: strName = "colsPorts"; break;
             case TaskManagerColumnTypes.Users: strName = "colsUsers"; break;
+            case TaskManagerColumnTypes.Applications: strName = "colsApps"; break;
+            case TaskManagerColumnTypes.Nics: strName = "colsNics"; break;
             default: return false;
         }
         try {

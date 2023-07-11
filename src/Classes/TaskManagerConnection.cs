@@ -25,6 +25,7 @@ internal class TaskManagerConnection : IEquatable<TaskManagerConnection>, INotif
         LastChanged = LastUpdated;
         CreationTime = LastUpdated;
         PreviousUpdate = LastUpdated;
+        PropertyChanged += MyPropertyChanged;
     }
     public TaskManagerConnection(string connIdent) : this() {
         _Ident = connIdent;
@@ -334,6 +335,12 @@ internal class TaskManagerConnection : IEquatable<TaskManagerConnection>, INotif
     }
 
     /* Private Methods */
+    private void MyPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        if (!NotifyChanges) return;
+        if (e.PropertyName == null) return;
+        if (e.PropertyName.Equals("LifeTime")) return;
+        LastChanged = LastUpdated;
+    }
     private void OnPropertyChanged(PropertyChangedEventArgs e) { if (NotifyChanges) PropertyChanged?.Invoke(this, e); }
     private void SetField<T>(ref T field, T newValue, [CallerMemberName] string propertyName = "", string[]? alsoNotifyProperties = null) {
         if (!EqualityComparer<T>.Default.Equals(field, newValue)) {

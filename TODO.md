@@ -22,3 +22,4 @@ These features have to be implemented because they are not part of old VB.net pr
 * DONE: Process PageFault is freaking out, most likely some signature // It was a STRUCT issue with the value.
 * ListView Sorted values are not re-sorted, check with cpu usage, shall we call sort again after all refreshers?.
 * When sorting a ListView column for the second time it makes the control to scroll to origin.
+* Highlighted items are not being cleared properly when property doesnt change.

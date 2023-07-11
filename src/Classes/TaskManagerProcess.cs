@@ -12,13 +12,14 @@ namespace sMkTaskManager.Classes;
 [SupportedOSPlatform("windows")]
 internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPropertyChanged {
     private readonly int _PID;
-    private bool _CancellingEvents = false;
     private IntPtr _pHandle = IntPtr.Zero;
 
     public TaskManagerProcess(int pid) {
         _PID = pid;
         LastUpdated = DateTime.Now.Ticks;
         LastChanged = LastUpdated;
+        PreviousUpdate = LastUpdated;
+        PropertyChanged += MyPropertyChanged;
     }
     public TaskManagerProcess(IntPtr pid) : this(pid.ToInt32()) { }
 
@@ -26,9 +27,10 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
     public int PID => _PID;
     private Color _BackColor;
     public Color BackColor { get => _BackColor; set { SetField(ref _BackColor, value); } }
-    public long LastUpdated { get; set; } = 0;
+    public long LastUpdated { get; set; }
+    public long LastChanged { get; set; }
     public long PreviousUpdate { get; set; } = 0;
-    public long LastChanged { get; set; } = 0;
+    public bool NotifyChanges { get; set; } = true;
     public int ImageIndex { get; set; } = -1;
     public string ImageKey { get; set; } = "";
     public bool IgnoreBackColor { get; set; } = false;
@@ -62,7 +64,7 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
     /* Times Related Properties */
     private TimeSpan _CreationTimeValue, _CpuTimeValue, _UserTimeValue, _KernelTimeValue, _prevCpuTimeValue;
     private TimeSpan CreationTimeValue { get => _CreationTimeValue; set { SetField(ref _CreationTimeValue, value); } }
-    private string CreationTime => (_PID == 0) ? "n/a." : new DateTime(_CreationTimeValue.Ticks).ToString();
+    public string CreationTime => (_PID == 0) ? "n/a." : new DateTime(_CreationTimeValue.Ticks).ToString();
     private TimeSpan CpuTimeValue { get => _CpuTimeValue; set { SetField(ref _CpuTimeValue, value); } }
     public string CpuTime => (_PID == 0) ? "n/a." : Shared.TimeSpanToElapsed(_CpuTimeValue);
     private TimeSpan UserTimeValue { get => _UserTimeValue; set { SetField(ref _UserTimeValue, value); } }
@@ -177,7 +179,7 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
     }
     public void Load(API.SYSTEM_PROCESS_INFORMATION spi, in HashSet<string> vv, bool getNewSPI = false) {
         if (getNewSPI) GetSpecificSPI(_PID, out spi);
-        _CancellingEvents = true;
+        NotifyChanges = false;
 
         // Load values that are fixed to this process and wont change...
         if (_PID > Shared.bpi) {
@@ -223,7 +225,7 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
 
         // And then update the rest of values...
         Update(spi, vv);
-        _CancellingEvents = false;
+        NotifyChanges = true;
     }
     public void Update(API.SYSTEM_PROCESS_INFORMATION spi, in HashSet<string> vv, bool getNewSPI = false) {
         // vv is short for visibleValues and contains the cols definition we are showing, so we dont update if we dont need.
@@ -319,9 +321,7 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
         }
         // Process Times & CPU Usage
         if (vv.Contains("CpuUsage") || vv.Contains("CpuTime") || vv.Contains("UserTime") || vv.Contains("KernelTime") || vv.Contains("CreationTime") || vv.Contains("RunTime")) {
-            if (_CreationTimeValue.Ticks == 0) {
-                CreationTimeValue = new TimeSpan(DateTime.FromFileTime(Convert.ToInt64(spi.CreateTime)).Ticks);
-            }
+            if (_CreationTimeValue.Ticks == 0) CreationTimeValue = new TimeSpan(DateTime.FromFileTime(Convert.ToInt64(spi.CreateTime)).Ticks);
             RunTime = Shared.TimeDiff(CreationTimeValue.Ticks, 2);
             KernelTimeValue = new TimeSpan(Convert.ToInt64(spi.KernelTime));
             UserTimeValue = new TimeSpan(Convert.ToInt64(spi.UserTime));
@@ -335,7 +335,7 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
         }
         // Define whatever or not we should change the item color
         if (!IgnoreBackColor) {
-            if (LastUpdated <= LastChanged && !_CancellingEvents) {
+            if (NotifyChanges && LastUpdated <= LastChanged) {
                 if (Suspended && Settings.Highlights.FrozenItems) {
                     BackColor = Settings.Highlights.FrozenColor;
                 } else {
@@ -349,7 +349,7 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
         }
     }
     public void ForceRaiseChange(HashSet<string> visibleValues) {
-        if (_CancellingEvents) return;
+        if (!NotifyChanges) return;
         foreach (string PropertyName in visibleValues) {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(PropertyName));
         }
@@ -417,14 +417,23 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
     }
 
     /* Private Methods */
-    private void OnPropertyChanged(PropertyChangedEventArgs e) { PropertyChanged?.Invoke(this, e); }
+    private void MyPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        if (!NotifyChanges) return;
+        if (e.PropertyName == null) return;
+        if (e.PropertyName.Equals("RunTime")) return;
+        if (e.PropertyName.Equals("LastChanged")) return;
+        if (e.PropertyName.Equals("LastUpdated")) return;
+        if (e.PropertyName.Equals("PreviousUpdate")) return;
+        LastChanged = LastUpdated;
+    }
+    private void OnPropertyChanged(PropertyChangedEventArgs e) { if (NotifyChanges) PropertyChanged?.Invoke(this, e); }
     private void SetField<T>(ref T field, T newValue, [CallerMemberName] string propertyName = "", string[]? alsoNotifyProperties = null) {
         if (!EqualityComparer<T>.Default.Equals(field, newValue)) {
             field = newValue;
             // Since all properties ending with Value should be read as the NonValue<string> Property
             if (propertyName.EndsWith("Value")) propertyName = propertyName.Replace("Value", "");
-            if (!_CancellingEvents) OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
-            if (!_CancellingEvents && alsoNotifyProperties != null) {
+            if (NotifyChanges) OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+            if (NotifyChanges && alsoNotifyProperties != null) {
                 foreach (string ap in alsoNotifyProperties) { OnPropertyChanged(new PropertyChangedEventArgs(ap)); }
             }
         }
