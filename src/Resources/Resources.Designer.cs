@@ -193,6 +193,16 @@ namespace sMkTaskManager.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap pbProcessDetails {
+            get {
+                object obj = ResourceManager.GetObject("pbProcessDetails", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap pbUserDetails {
             get {
                 object obj = ResourceManager.GetObject("pbUserDetails", resourceCulture);

@@ -23,3 +23,15 @@ These features have to be implemented because they are not part of old VB.net pr
 * ListView Sorted values are not re-sorted, check with cpu usage, shall we call sort again after all refreshers?.
 * When sorting a ListView column for the second time it makes the control to scroll to origin.
 * Highlighted items are not being cleared properly when property doesnt change.
+
+## Pending migration list
+* File / New Tasks (both)
+* File / Computer Features
+* File / Monitor Features
+* Test out User Connnect/logoff/disconnect
+* Summary View for Processes (not sure i want it anymore)
+* Set Default Task Manager
+* System Tray 
+* Process Details 
+* Process Locked Files 
+* Shrink Timer (is it still needed?)
