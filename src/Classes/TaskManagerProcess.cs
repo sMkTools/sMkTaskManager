@@ -36,7 +36,6 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
     public bool IgnoreBackColor { get; set; } = false;
     public Icon? Icon { get; private set; } = null;
 
-#pragma warning disable IDE0052
     private bool _Suspended;
     public bool Suspended { get => _Suspended; set { SetField(ref _Suspended, value); BackColor = value ? Settings.Highlights.FrozenColor : Color.Empty; } }
     /* Primary Basic Properties */
@@ -63,100 +62,100 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
     public int UserObjectsPeak { get => _UserObjectsPeak; set { SetField(ref _UserObjectsPeak, value); } }
     /* Times Related Properties */
     private TimeSpan _CreationTimeValue, _CpuTimeValue, _UserTimeValue, _KernelTimeValue, _prevCpuTimeValue;
-    private TimeSpan CreationTimeValue { get => _CreationTimeValue; set { SetField(ref _CreationTimeValue, value); } }
+    public TimeSpan CreationTimeValue { get => _CreationTimeValue; set { SetField(ref _CreationTimeValue, value); } }
     public string CreationTime => (_PID == 0) ? "n/a." : new DateTime(_CreationTimeValue.Ticks).ToString();
-    private TimeSpan CpuTimeValue { get => _CpuTimeValue; set { SetField(ref _CpuTimeValue, value); } }
+    public TimeSpan CpuTimeValue { get => _CpuTimeValue; set { SetField(ref _CpuTimeValue, value); } }
     public string CpuTime => (_PID == 0) ? "n/a." : Shared.TimeSpanToElapsed(_CpuTimeValue);
-    private TimeSpan UserTimeValue { get => _UserTimeValue; set { SetField(ref _UserTimeValue, value); } }
+    public TimeSpan UserTimeValue { get => _UserTimeValue; set { SetField(ref _UserTimeValue, value); } }
     public string UserTime => (_PID == 0) ? "n/a." : Shared.TimeSpanToElapsed(_UserTimeValue);
-    private TimeSpan KernelTimeValue { get => _KernelTimeValue; set { SetField(ref _KernelTimeValue, value); } }
+    public TimeSpan KernelTimeValue { get => _KernelTimeValue; set { SetField(ref _KernelTimeValue, value); } }
     public string KernelTime => (_PID == 0) ? "n/a." : Shared.TimeSpanToElapsed(_KernelTimeValue);
     /* Memory Related Properties */
     private ulong _PagedPoolValue, _PagedPoolPeakValue, _NonPagedPoolValue, _NonPagedPoolPeakValue;
     private ulong _PagedMemoryValue, _PagedMemoryPeakValue, _VirtualMemoryValue, _VirtualMemoryPeakValue;
     private ulong _WorkingSetValue, _WorkingSetPeakValue, _WorkingSetPrivateValue, _WorkingSetShareableValue, _PrivateBytesValue;
-    private ulong PagedPoolValue { get => _PagedPoolValue; set { SetField(ref _PagedPoolValue, value); } }
+    public ulong PagedPoolValue { get => _PagedPoolValue; set { SetField(ref _PagedPoolValue, value); } }
     public string PagedPool => FormatValue(_PagedPoolValue, FormatValueTypes.KBytes);
-    private ulong PagedPoolPeakValue { get => _PagedPoolPeakValue; set { SetField(ref _PagedPoolPeakValue, value); } }
+    public ulong PagedPoolPeakValue { get => _PagedPoolPeakValue; set { SetField(ref _PagedPoolPeakValue, value); } }
     public string PagedPoolPeak => FormatValue(_PagedPoolPeakValue, FormatValueTypes.KBytes);
-    private ulong NonPagedPoolValue { get => _NonPagedPoolValue; set { SetField(ref _NonPagedPoolValue, value); } }
+    public ulong NonPagedPoolValue { get => _NonPagedPoolValue; set { SetField(ref _NonPagedPoolValue, value); } }
     public string NonPagedPool => FormatValue(_NonPagedPoolValue, FormatValueTypes.KBytes);
-    private ulong NonPagedPoolPeakValue { get => _NonPagedPoolPeakValue; set { SetField(ref _NonPagedPoolPeakValue, value); } }
+    public ulong NonPagedPoolPeakValue { get => _NonPagedPoolPeakValue; set { SetField(ref _NonPagedPoolPeakValue, value); } }
     public string NonPagedPoolPeak => FormatValue(_NonPagedPoolPeakValue, FormatValueTypes.KBytes);
-    private ulong PagedMemoryValue { get => _PagedMemoryValue; set { SetField(ref _PagedMemoryValue, value); } }
+    public ulong PagedMemoryValue { get => _PagedMemoryValue; set { SetField(ref _PagedMemoryValue, value); } }
     public string PagedMemory => FormatValue(_PagedMemoryValue, FormatValueTypes.KBytes);
-    private ulong PagedMemoryPeakValue { get => _PagedMemoryPeakValue; set { SetField(ref _PagedMemoryPeakValue, value); } }
+    public ulong PagedMemoryPeakValue { get => _PagedMemoryPeakValue; set { SetField(ref _PagedMemoryPeakValue, value); } }
     public string PagedMemoryPeak => FormatValue(_PagedMemoryPeakValue, FormatValueTypes.KBytes);
-    private ulong VirtualMemoryValue { get => _VirtualMemoryValue; set { SetField(ref _VirtualMemoryValue, value); } }
+    public ulong VirtualMemoryValue { get => _VirtualMemoryValue; set { SetField(ref _VirtualMemoryValue, value); } }
     public string VirtualMemory => FormatValue(_VirtualMemoryValue, FormatValueTypes.KBytes);
-    private ulong VirtualMemoryPeakValue { get => _VirtualMemoryPeakValue; set { SetField(ref _VirtualMemoryPeakValue, value); } }
+    public ulong VirtualMemoryPeakValue { get => _VirtualMemoryPeakValue; set { SetField(ref _VirtualMemoryPeakValue, value); } }
     public string VirtualMemoryPeak => FormatValue(_VirtualMemoryPeakValue, FormatValueTypes.KBytes);
-    private ulong WorkingSetValue { get => _WorkingSetValue; set { SetField(ref _WorkingSetValue, value); } }
+    public ulong WorkingSetValue { get => _WorkingSetValue; set { SetField(ref _WorkingSetValue, value); } }
     public string WorkingSet => FormatValue(_WorkingSetValue, FormatValueTypes.KBytes);
-    private ulong WorkingSetPeakValue { get => _WorkingSetPeakValue; set { SetField(ref _WorkingSetPeakValue, value); } }
+    public ulong WorkingSetPeakValue { get => _WorkingSetPeakValue; set { SetField(ref _WorkingSetPeakValue, value); } }
     public string WorkingSetPeak => FormatValue(_WorkingSetPeakValue, FormatValueTypes.KBytes);
-    private ulong WorkingSetPrivateValue { get => _WorkingSetPrivateValue; set { SetField(ref _WorkingSetPrivateValue, value); } }
+    public ulong WorkingSetPrivateValue { get => _WorkingSetPrivateValue; set { SetField(ref _WorkingSetPrivateValue, value); } }
     public string WorkingSetPrivate => FormatValue(_WorkingSetPrivateValue, FormatValueTypes.KBytes);
-    private ulong WorkingSetShareableValue { get => _WorkingSetShareableValue; set { SetField(ref _WorkingSetShareableValue, value); } }
+    public ulong WorkingSetShareableValue { get => _WorkingSetShareableValue; set { SetField(ref _WorkingSetShareableValue, value); } }
     public string WorkingSetShareable => FormatValue(_WorkingSetShareableValue, FormatValueTypes.KBytes);
-    private ulong PrivateBytesValue { get => _PrivateBytesValue; set { SetField(ref _PrivateBytesValue, value); } }
+    public ulong PrivateBytesValue { get => _PrivateBytesValue; set { SetField(ref _PrivateBytesValue, value); } }
     public string PrivateBytes => FormatValue(_PrivateBytesValue, FormatValueTypes.KBytes);
     /* I/O Related Properties */
     private ulong _ReadTransferValue, _WriteTransferValue, _OtherTransferValue;
     private ulong _ReadTransferDeltaValue, _WriteTransferDeltaValue, _OtherTransferDeltaValue;
     private ulong _ReadOperationsValue, _WriteOperationsValue, _OtherOperationsValue;
     private ulong _ReadOperationsDeltaValue, _WriteOperationsDeltaValue, _OtherOperationsDeltaValue;
-    private ulong ReadTransferValue { get => _ReadTransferValue; set { SetField(ref _ReadTransferValue, value); } }
+    public ulong ReadTransferValue { get => _ReadTransferValue; set { SetField(ref _ReadTransferValue, value); } }
     public string ReadTransfer => FormatValue(_ReadTransferValue, FormatValueTypes.AutoBytes, true);
-    private ulong ReadTransferDeltaValue { get => _ReadTransferDeltaValue; set { SetField(ref _ReadTransferDeltaValue, value); } }
+    public ulong ReadTransferDeltaValue { get => _ReadTransferDeltaValue; set { SetField(ref _ReadTransferDeltaValue, value); } }
     public string ReadTransferDelta => FormatValue(_ReadTransferDeltaValue, FormatValueTypes.AutoBytes, true);
-    private ulong ReadOperationsValue { get => _ReadOperationsValue; set { SetField(ref _ReadOperationsValue, value); } }
-    public string ReadOperations => FormatValue(_ReadOperationsValue, FormatValueTypes.AutoBytes, true);
-    private ulong ReadOperationsDeltaValue { get => _ReadOperationsDeltaValue; set { SetField(ref _ReadOperationsDeltaValue, value); } }
-    public string ReadOperationsDelta => FormatValue(_ReadOperationsDeltaValue, FormatValueTypes.AutoBytes, true);
-    private ulong WriteTransferValue { get => _WriteTransferValue; set { SetField(ref _WriteTransferValue, value); } }
+    public ulong ReadOperationsValue { get => _ReadOperationsValue; set { SetField(ref _ReadOperationsValue, value); } }
+    public string ReadOperations => FormatValue(_ReadOperationsValue, FormatValueTypes.Number, true);
+    public ulong ReadOperationsDeltaValue { get => _ReadOperationsDeltaValue; set { SetField(ref _ReadOperationsDeltaValue, value); } }
+    public string ReadOperationsDelta => FormatValue(_ReadOperationsDeltaValue, FormatValueTypes.Number, true);
+    public ulong WriteTransferValue { get => _WriteTransferValue; set { SetField(ref _WriteTransferValue, value); } }
     public string WriteTransfer => FormatValue(_WriteTransferValue, FormatValueTypes.AutoBytes, true);
-    private ulong WriteTransferDeltaValue { get => _WriteTransferDeltaValue; set { SetField(ref _WriteTransferDeltaValue, value); } }
+    public ulong WriteTransferDeltaValue { get => _WriteTransferDeltaValue; set { SetField(ref _WriteTransferDeltaValue, value); } }
     public string WriteTransferDelta => FormatValue(_WriteTransferDeltaValue, FormatValueTypes.AutoBytes, true);
-    private ulong WriteOperationsValue { get => _WriteOperationsValue; set { SetField(ref _WriteOperationsValue, value); } }
-    public string WriteOperations => FormatValue(_WriteOperationsValue, FormatValueTypes.AutoBytes, true);
-    private ulong WriteOperationsDeltaValue { get => _WriteOperationsDeltaValue; set { SetField(ref _WriteOperationsDeltaValue, value); } }
-    public string WriteOperationsDelta => FormatValue(_WriteOperationsDeltaValue, FormatValueTypes.AutoBytes, true);
-    private ulong OtherTransferValue { get => _OtherTransferValue; set { SetField(ref _OtherTransferValue, value); } }
+    public ulong WriteOperationsValue { get => _WriteOperationsValue; set { SetField(ref _WriteOperationsValue, value); } }
+    public string WriteOperations => FormatValue(_WriteOperationsValue, FormatValueTypes.Number, true);
+    public ulong WriteOperationsDeltaValue { get => _WriteOperationsDeltaValue; set { SetField(ref _WriteOperationsDeltaValue, value); } }
+    public string WriteOperationsDelta => FormatValue(_WriteOperationsDeltaValue, FormatValueTypes.Number, true);
+    public ulong OtherTransferValue { get => _OtherTransferValue; set { SetField(ref _OtherTransferValue, value); } }
     public string OtherTransfer => FormatValue(_OtherTransferValue, FormatValueTypes.AutoBytes, true);
-    private ulong OtherTransferDeltaValue { get => _OtherTransferDeltaValue; set { SetField(ref _OtherTransferDeltaValue, value); } }
-    public string OtherTransferDelta => FormatValue(_OtherTransferDeltaValue, FormatValueTypes.Number, true);
-    private ulong OtherOperationsValue { get => _OtherOperationsValue; set { SetField(ref _OtherOperationsValue, value); } }
+    public ulong OtherTransferDeltaValue { get => _OtherTransferDeltaValue; set { SetField(ref _OtherTransferDeltaValue, value); } }
+    public string OtherTransferDelta => FormatValue(_OtherTransferDeltaValue, FormatValueTypes.AutoBytes, true);
+    public ulong OtherOperationsValue { get => _OtherOperationsValue; set { SetField(ref _OtherOperationsValue, value); } }
     public string OtherOperations => FormatValue(_OtherOperationsValue, FormatValueTypes.Number, true);
-    private ulong OtherOperationsDeltaValue { get => _OtherOperationsDeltaValue; set { SetField(ref _OtherOperationsDeltaValue, value); } }
+    public ulong OtherOperationsDeltaValue { get => _OtherOperationsDeltaValue; set { SetField(ref _OtherOperationsDeltaValue, value); } }
     public string OtherOperationsDelta => FormatValue(_OtherOperationsDeltaValue, FormatValueTypes.Number, true);
     /* Disk Related Properties */
     private ulong _DiskReadValue, _DiskWriteValue, _DiskReadDeltaValue, _DiskWriteDeltaValue, _DiskReadRateValue, _DiskWriteRateValue;
-    private ulong DiskReadValue { get => _DiskReadValue; set { SetField(ref _DiskReadValue, value); } }
+    public ulong DiskReadValue { get => _DiskReadValue; set { SetField(ref _DiskReadValue, value); } }
     public string DiskRead => FormatValue(_DiskReadValue, FormatValueTypes.AutoBytes);
-    private ulong DiskReadDeltaValue { get => _DiskReadDeltaValue; set { SetField(ref _DiskReadDeltaValue, value); } }
+    public ulong DiskReadDeltaValue { get => _DiskReadDeltaValue; set { SetField(ref _DiskReadDeltaValue, value); } }
     public string DiskReadDelta => FormatValue(_DiskReadDeltaValue, FormatValueTypes.AutoBytes);
-    private ulong DiskReadRateValue { get => _DiskReadRateValue; set { SetField(ref _DiskReadRateValue, value); } }
+    public ulong DiskReadRateValue { get => _DiskReadRateValue; set { SetField(ref _DiskReadRateValue, value); } }
     public string DiskReadRate => FormatValue(_DiskReadRateValue, FormatValueTypes.Kbps);
-    private ulong DiskWriteValue { get => _DiskWriteValue; set { SetField(ref _DiskWriteValue, value); } }
+    public ulong DiskWriteValue { get => _DiskWriteValue; set { SetField(ref _DiskWriteValue, value); } }
     public string DiskWrite => FormatValue(_DiskWriteValue, FormatValueTypes.AutoBytes);
-    private ulong DiskWriteDeltaValue { get => _DiskWriteDeltaValue; set { SetField(ref _DiskWriteDeltaValue, value); } }
+    public ulong DiskWriteDeltaValue { get => _DiskWriteDeltaValue; set { SetField(ref _DiskWriteDeltaValue, value); } }
     public string DiskWriteDelta => FormatValue(_DiskWriteDeltaValue, FormatValueTypes.AutoBytes);
-    private ulong DiskWriteRateValue { get => _DiskWriteRateValue; set { SetField(ref _DiskWriteRateValue, value); } }
+    public ulong DiskWriteRateValue { get => _DiskWriteRateValue; set { SetField(ref _DiskWriteRateValue, value); } }
     public string DiskWriteRate => FormatValue(_DiskWriteRateValue, FormatValueTypes.Kbps);
     /* Net Related Properties */
     private ulong _NetSentValue, _NetRcvdValue, _NetSentDeltaValue, _NetRcvdDeltaValue, _NetSentRateValue, _NetRcvdRateValue;
-    private ulong NetSentValue { get => _NetSentValue; set { SetField(ref _NetSentValue, value); } }
+    public ulong NetSentValue { get => _NetSentValue; set { SetField(ref _NetSentValue, value); } }
     public string NetSent => FormatValue(_NetSentValue, FormatValueTypes.AutoBytes);
-    private ulong NetSentDeltaValue { get => _NetSentDeltaValue; set { SetField(ref _NetSentDeltaValue, value); } }
+    public ulong NetSentDeltaValue { get => _NetSentDeltaValue; set { SetField(ref _NetSentDeltaValue, value); } }
     public string NetSentDelta => FormatValue(_NetSentDeltaValue, FormatValueTypes.AutoBytes);
-    private ulong NetSentRateValue { get => _NetSentRateValue; set { SetField(ref _NetSentRateValue, value); } }
+    public ulong NetSentRateValue { get => _NetSentRateValue; set { SetField(ref _NetSentRateValue, value); } }
     public string NetSentRate => FormatValue(_NetSentRateValue, FormatValueTypes.Kbps);
-    private ulong NetRcvdValue { get => _NetRcvdValue; set { SetField(ref _NetRcvdValue, value); } }
+    public ulong NetRcvdValue { get => _NetRcvdValue; set { SetField(ref _NetRcvdValue, value); } }
     public string NetRcvd => FormatValue(_NetRcvdValue, FormatValueTypes.AutoBytes);
-    private ulong NetRcvdDeltaValue { get => _NetRcvdDeltaValue; set { SetField(ref _NetRcvdDeltaValue, value); } }
+    public ulong NetRcvdDeltaValue { get => _NetRcvdDeltaValue; set { SetField(ref _NetRcvdDeltaValue, value); } }
     public string NetRcvdDelta => FormatValue(_NetRcvdDeltaValue, FormatValueTypes.AutoBytes);
-    private ulong NetRcvdRateValue { get => _NetRcvdRateValue; set { SetField(ref _NetRcvdRateValue, value); } }
+    public ulong NetRcvdRateValue { get => _NetRcvdRateValue; set { SetField(ref _NetRcvdRateValue, value); } }
     public string NetRcvdRate => FormatValue(_NetRcvdRateValue, FormatValueTypes.Kbps);
     /* Product Related Properties */
     private FileVersionInfo? _FileVersionInfo = null;
@@ -164,7 +163,6 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
     public string ProductVersion => (_FileVersionInfo == null || _FileVersionInfo.ProductVersion == null) ? "n/a." : _FileVersionInfo.ProductVersion;
     public string ProductCompany => (_FileVersionInfo == null || _FileVersionInfo.CompanyName == null) ? "n/a." : _FileVersionInfo.CompanyName;
     public string ProductLanguage => (_FileVersionInfo == null || _FileVersionInfo.Language == null) ? "n/a." : _FileVersionInfo.Language;
-#pragma warning restore IDE0052
 
     /* Public Methods */
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -238,9 +236,12 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
         if (vv.Contains("Handles")) Handles = spi.HandleCount;
         if (vv.Contains("Threads")) Threads = spi.NumberOfThreads;
         // General Memory Values
-        if (vv.Contains("WorkingSet")) WorkingSetValue = spi.WorkingSetSize;
-        if (vv.Contains("WorkingSetPeak")) WorkingSetPeakValue = spi.PeakWorkingSetSize;
-        if (vv.Contains("WorkingSetPrivate") || vv.Contains("WorkingSetShareable")) WorkingSetPrivateValue = spi.WorkingSetPrivateSize;
+        if (vv.Contains("WorkingSet") || vv.Contains("WorkingSetPeak") || vv.Contains("WorkingSetPrivate") || vv.Contains("WorkingSetShareable")) {
+            WorkingSetValue = spi.WorkingSetSize;
+            WorkingSetPeakValue = spi.PeakWorkingSetSize;
+            WorkingSetPrivateValue = spi.WorkingSetPrivateSize;
+            WorkingSetShareableValue = spi.WorkingSetSize - spi.WorkingSetPrivateSize;
+        }
         if (vv.Contains("PagedMemory")) PagedMemoryValue = spi.PagefileUsage;
         if (vv.Contains("PagedMemoryPeak")) PagedMemoryPeakValue = spi.PeakPagefileUsage;
         if (vv.Contains("PagedPool")) PagedPoolValue = spi.QuotaPagedPoolUsage;

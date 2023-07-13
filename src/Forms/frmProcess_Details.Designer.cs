@@ -108,9 +108,9 @@ partial class frmProcess_Details {
         p_ChartUser = new Controls.sMkPerfChart();
         tpIO = new TabPage();
         i_TableLayout1 = new TableLayoutPanel();
-        sMkPerfChart3 = new Controls.sMkPerfChart();
-        sMkPerfChart2 = new Controls.sMkPerfChart();
-        sMkPerfChart1 = new Controls.sMkPerfChart();
+        i_ChartOthers = new Controls.sMkPerfChart();
+        i_ChartWrites = new Controls.sMkPerfChart();
+        i_ChartReads = new Controls.sMkPerfChart();
         i_Label06 = new Label();
         i_Label05 = new Label();
         i_Label04 = new Label();
@@ -149,9 +149,67 @@ partial class frmProcess_Details {
         i_Label12 = new Label();
         i_Label11 = new Label();
         tpDiskNet = new TabPage();
+        d_TableLayout1 = new TableLayoutPanel();
+        d_ChartNet = new Controls.sMkPerfChart();
+        d_ChartDisk = new Controls.sMkPerfChart();
+        d_Label04 = new Label();
+        d_Label03 = new Label();
+        d_PerfDisk = new Controls.sMkPerfMeter();
+        d_PerfNet = new Controls.sMkPerfMeter();
+        d_Label02 = new Label();
+        d_Label01 = new Label();
+        d_TableLayout2 = new TableLayoutPanel();
+        d_GroupBox2 = new GroupBox();
+        d_lblNetRcvdRate = new Label();
+        d_lblNetRcvdDelta = new Label();
+        d_lblNetRcvd = new Label();
+        d_Label26 = new Label();
+        d_Label25 = new Label();
+        d_Label24 = new Label();
+        d_lblNetSendRate = new Label();
+        d_lblNetSendDelta = new Label();
+        d_lblNetSend = new Label();
+        d_lblDivider2 = new Label();
+        d_Label23 = new Label();
+        d_Label22 = new Label();
+        d_Label21 = new Label();
+        d_GroupBox1 = new GroupBox();
+        d_lblDiskWriteRate = new Label();
+        d_lblDiskWriteDelta = new Label();
+        d_lblDiskWrite = new Label();
+        d_Label15 = new Label();
+        d_Label14 = new Label();
+        d_Label13 = new Label();
+        d_lblDiskReadRate = new Label();
+        d_lblDiskReadDelta = new Label();
+        d_lblDiskRead = new Label();
+        d_lblDivider1 = new Label();
+        d_Label12 = new Label();
+        d_Label11 = new Label();
+        d_Label10 = new Label();
         tpModules = new TabPage();
+        lvModules = new ListView();
+        colModules_Name = new ColumnHeader();
+        colModules_Version = new ColumnHeader();
+        colModules_Type = new ColumnHeader();
+        colModules_Address = new ColumnHeader();
+        colModules_Memory = new ColumnHeader();
+        colModules_Description = new ColumnHeader();
+        colModules_Path = new ColumnHeader();
+        colModules_Company = new ColumnHeader();
+        colModules_Language = new ColumnHeader();
         tpThreads = new TabPage();
+        lvThreads = new ListView();
+        colThreads_ID = new ColumnHeader();
+        colThreads_Priority = new ColumnHeader();
+        colThreads_State = new ColumnHeader();
+        colThreads_Reason = new ColumnHeader();
+        colThreads_StartTime = new ColumnHeader();
+        colThreads_RunTime = new ColumnHeader();
         tpLocked = new TabPage();
+        lvLockedFiles = new ListView();
+        colLockedFiles_Filename = new ColumnHeader();
+        colLockedFiles_Path = new ColumnHeader();
         btnOK = new Button();
         btnCancel = new Button();
         lblSpeed = new Label();
@@ -181,6 +239,14 @@ partial class frmProcess_Details {
         i_GroupBox3.SuspendLayout();
         i_GroupBox2.SuspendLayout();
         i_GroupBox1.SuspendLayout();
+        tpDiskNet.SuspendLayout();
+        d_TableLayout1.SuspendLayout();
+        d_TableLayout2.SuspendLayout();
+        d_GroupBox2.SuspendLayout();
+        d_GroupBox1.SuspendLayout();
+        tpModules.SuspendLayout();
+        tpThreads.SuspendLayout();
+        tpLocked.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)tbSpeed).BeginInit();
         SuspendLayout();
         // 
@@ -225,12 +291,12 @@ partial class frmProcess_Details {
         g_TableLayout1.Controls.Add(g_gpVmMemory, 1, 1);
         g_TableLayout1.Controls.Add(g_gpPhMemory, 0, 1);
         g_TableLayout1.Controls.Add(g_gpResources, 1, 0);
-        g_TableLayout1.Location = new Point(4, 192);
+        g_TableLayout1.Location = new Point(3, 192);
         g_TableLayout1.Name = "g_TableLayout1";
         g_TableLayout1.RowCount = 2;
         g_TableLayout1.RowStyles.Add(new RowStyle(SizeType.Absolute, 142F));
         g_TableLayout1.RowStyles.Add(new RowStyle(SizeType.Absolute, 80F));
-        g_TableLayout1.Size = new Size(454, 238);
+        g_TableLayout1.Size = new Size(455, 238);
         g_TableLayout1.TabIndex = 1;
         // 
         // g_gpCPU
@@ -414,7 +480,7 @@ partial class frmProcess_Details {
         g_gpVmMemory.Location = new Point(230, 145);
         g_gpVmMemory.Margin = new Padding(3, 3, 0, 1);
         g_gpVmMemory.Name = "g_gpVmMemory";
-        g_gpVmMemory.Size = new Size(224, 92);
+        g_gpVmMemory.Size = new Size(225, 92);
         g_gpVmMemory.TabIndex = 1;
         g_gpVmMemory.TabStop = false;
         g_gpVmMemory.Text = "Virtual Memory";
@@ -425,7 +491,7 @@ partial class frmProcess_Details {
         g_lblPageFaultsDelta.Location = new Point(109, 69);
         g_lblPageFaultsDelta.Margin = new Padding(3, 0, 3, 1);
         g_lblPageFaultsDelta.Name = "g_lblPageFaultsDelta";
-        g_lblPageFaultsDelta.Size = new Size(112, 16);
+        g_lblPageFaultsDelta.Size = new Size(113, 16);
         g_lblPageFaultsDelta.TabIndex = 7;
         g_lblPageFaultsDelta.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -435,7 +501,7 @@ partial class frmProcess_Details {
         g_lblPageFaults.Location = new Point(100, 52);
         g_lblPageFaults.Margin = new Padding(3, 0, 3, 1);
         g_lblPageFaults.Name = "g_lblPageFaults";
-        g_lblPageFaults.Size = new Size(121, 16);
+        g_lblPageFaults.Size = new Size(122, 16);
         g_lblPageFaults.TabIndex = 6;
         g_lblPageFaults.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -445,7 +511,7 @@ partial class frmProcess_Details {
         g_lblPagedMemory.Location = new Point(100, 35);
         g_lblPagedMemory.Margin = new Padding(3, 0, 3, 1);
         g_lblPagedMemory.Name = "g_lblPagedMemory";
-        g_lblPagedMemory.Size = new Size(121, 16);
+        g_lblPagedMemory.Size = new Size(122, 16);
         g_lblPagedMemory.TabIndex = 5;
         g_lblPagedMemory.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -455,7 +521,7 @@ partial class frmProcess_Details {
         g_lblVirtualMemory.Location = new Point(100, 18);
         g_lblVirtualMemory.Margin = new Padding(3, 0, 3, 1);
         g_lblVirtualMemory.Name = "g_lblVirtualMemory";
-        g_lblVirtualMemory.Size = new Size(121, 16);
+        g_lblVirtualMemory.Size = new Size(122, 16);
         g_lblVirtualMemory.TabIndex = 4;
         g_lblVirtualMemory.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -618,7 +684,7 @@ partial class frmProcess_Details {
         g_gpResources.Location = new Point(230, 1);
         g_gpResources.Margin = new Padding(3, 1, 0, 3);
         g_gpResources.Name = "g_gpResources";
-        g_gpResources.Size = new Size(224, 138);
+        g_gpResources.Size = new Size(225, 138);
         g_gpResources.TabIndex = 3;
         g_gpResources.TabStop = false;
         g_gpResources.Text = "Resources";
@@ -629,7 +695,7 @@ partial class frmProcess_Details {
         g_lblResUser.Location = new Point(92, 115);
         g_lblResUser.Margin = new Padding(3, 0, 3, 1);
         g_lblResUser.Name = "g_lblResUser";
-        g_lblResUser.Size = new Size(129, 16);
+        g_lblResUser.Size = new Size(130, 16);
         g_lblResUser.TabIndex = 12;
         g_lblResUser.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -639,7 +705,7 @@ partial class frmProcess_Details {
         g_lblResGDI.Location = new Point(92, 98);
         g_lblResGDI.Margin = new Padding(3, 0, 3, 1);
         g_lblResGDI.Name = "g_lblResGDI";
-        g_lblResGDI.Size = new Size(129, 16);
+        g_lblResGDI.Size = new Size(130, 16);
         g_lblResGDI.TabIndex = 11;
         g_lblResGDI.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -649,7 +715,7 @@ partial class frmProcess_Details {
         g_lblResHandlesPeak.Location = new Point(92, 75);
         g_lblResHandlesPeak.Margin = new Padding(3, 0, 3, 1);
         g_lblResHandlesPeak.Name = "g_lblResHandlesPeak";
-        g_lblResHandlesPeak.Size = new Size(129, 16);
+        g_lblResHandlesPeak.Size = new Size(130, 16);
         g_lblResHandlesPeak.TabIndex = 10;
         g_lblResHandlesPeak.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -659,7 +725,7 @@ partial class frmProcess_Details {
         g_lblResHandles.Location = new Point(92, 58);
         g_lblResHandles.Margin = new Padding(3, 0, 3, 1);
         g_lblResHandles.Name = "g_lblResHandles";
-        g_lblResHandles.Size = new Size(129, 16);
+        g_lblResHandles.Size = new Size(130, 16);
         g_lblResHandles.TabIndex = 9;
         g_lblResHandles.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -669,7 +735,7 @@ partial class frmProcess_Details {
         g_lblResThreadsPeak.Location = new Point(92, 35);
         g_lblResThreadsPeak.Margin = new Padding(3, 0, 3, 1);
         g_lblResThreadsPeak.Name = "g_lblResThreadsPeak";
-        g_lblResThreadsPeak.Size = new Size(129, 16);
+        g_lblResThreadsPeak.Size = new Size(130, 16);
         g_lblResThreadsPeak.TabIndex = 8;
         g_lblResThreadsPeak.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -679,7 +745,7 @@ partial class frmProcess_Details {
         g_lblResThreads.Location = new Point(92, 18);
         g_lblResThreads.Margin = new Padding(3, 0, 3, 1);
         g_lblResThreads.Name = "g_lblResThreads";
-        g_lblResThreads.Size = new Size(129, 16);
+        g_lblResThreads.Size = new Size(130, 16);
         g_lblResThreads.TabIndex = 7;
         g_lblResThreads.TextAlign = ContentAlignment.MiddleRight;
         // 
@@ -690,7 +756,7 @@ partial class frmProcess_Details {
         lblDivider4.Location = new Point(6, 94);
         lblDivider4.Margin = new Padding(3, 0, 3, 1);
         lblDivider4.Name = "lblDivider4";
-        lblDivider4.Size = new Size(212, 1);
+        lblDivider4.Size = new Size(213, 1);
         lblDivider4.TabIndex = 28;
         lblDivider4.TextAlign = ContentAlignment.MiddleLeft;
         // 
@@ -701,7 +767,7 @@ partial class frmProcess_Details {
         lblDivider3.Location = new Point(6, 54);
         lblDivider3.Margin = new Padding(3, 0, 3, 1);
         lblDivider3.Name = "lblDivider3";
-        lblDivider3.Size = new Size(212, 1);
+        lblDivider3.Size = new Size(213, 1);
         lblDivider3.TabIndex = 2;
         lblDivider3.TextAlign = ContentAlignment.MiddleLeft;
         // 
@@ -783,9 +849,9 @@ partial class frmProcess_Details {
         g_gpDetails.Controls.Add(g_txtPID);
         g_gpDetails.Controls.Add(g_Label02);
         g_gpDetails.Controls.Add(g_Label01);
-        g_gpDetails.Location = new Point(4, 6);
+        g_gpDetails.Location = new Point(3, 6);
         g_gpDetails.Name = "g_gpDetails";
-        g_gpDetails.Size = new Size(454, 180);
+        g_gpDetails.Size = new Size(455, 180);
         g_gpDetails.TabIndex = 0;
         g_gpDetails.TabStop = false;
         g_gpDetails.Text = "Process Details";
@@ -794,7 +860,7 @@ partial class frmProcess_Details {
         // 
         g_pbIcon.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         g_pbIcon.Image = Resources.Resources.pbProcessDetails;
-        g_pbIcon.Location = new Point(408, 10);
+        g_pbIcon.Location = new Point(401, 10);
         g_pbIcon.Name = "g_pbIcon";
         g_pbIcon.Size = new Size(40, 40);
         g_pbIcon.SizeMode = PictureBoxSizeMode.CenterImage;
@@ -806,11 +872,11 @@ partial class frmProcess_Details {
         g_txtDescription.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
         g_txtDescription.BackColor = SystemColors.Window;
         g_txtDescription.BorderStyle = BorderStyle.None;
-        g_txtDescription.Location = new Point(77, 128);
+        g_txtDescription.Location = new Point(77, 129);
         g_txtDescription.Multiline = true;
         g_txtDescription.Name = "g_txtDescription";
         g_txtDescription.ReadOnly = true;
-        g_txtDescription.Size = new Size(371, 46);
+        g_txtDescription.Size = new Size(364, 42);
         g_txtDescription.TabIndex = 13;
         // 
         // g_txtCompany
@@ -818,10 +884,10 @@ partial class frmProcess_Details {
         g_txtCompany.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
         g_txtCompany.BackColor = SystemColors.Window;
         g_txtCompany.BorderStyle = BorderStyle.None;
-        g_txtCompany.Location = new Point(80, 110);
+        g_txtCompany.Location = new Point(80, 111);
         g_txtCompany.Name = "g_txtCompany";
         g_txtCompany.ReadOnly = true;
-        g_txtCompany.Size = new Size(368, 16);
+        g_txtCompany.Size = new Size(361, 16);
         g_txtCompany.TabIndex = 11;
         // 
         // g_txtVersion
@@ -829,10 +895,10 @@ partial class frmProcess_Details {
         g_txtVersion.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
         g_txtVersion.BackColor = SystemColors.Window;
         g_txtVersion.BorderStyle = BorderStyle.None;
-        g_txtVersion.Location = new Point(80, 92);
+        g_txtVersion.Location = new Point(80, 93);
         g_txtVersion.Name = "g_txtVersion";
         g_txtVersion.ReadOnly = true;
-        g_txtVersion.Size = new Size(368, 16);
+        g_txtVersion.Size = new Size(361, 16);
         g_txtVersion.TabIndex = 9;
         // 
         // g_txtType
@@ -840,10 +906,10 @@ partial class frmProcess_Details {
         g_txtType.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
         g_txtType.BackColor = SystemColors.Window;
         g_txtType.BorderStyle = BorderStyle.None;
-        g_txtType.Location = new Point(80, 74);
+        g_txtType.Location = new Point(80, 75);
         g_txtType.Name = "g_txtType";
         g_txtType.ReadOnly = true;
-        g_txtType.Size = new Size(368, 16);
+        g_txtType.Size = new Size(361, 16);
         g_txtType.TabIndex = 7;
         // 
         // g_txtPath
@@ -851,10 +917,10 @@ partial class frmProcess_Details {
         g_txtPath.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
         g_txtPath.BackColor = SystemColors.Window;
         g_txtPath.BorderStyle = BorderStyle.None;
-        g_txtPath.Location = new Point(80, 56);
+        g_txtPath.Location = new Point(80, 57);
         g_txtPath.Name = "g_txtPath";
         g_txtPath.ReadOnly = true;
-        g_txtPath.Size = new Size(368, 16);
+        g_txtPath.Size = new Size(361, 16);
         g_txtPath.TabIndex = 5;
         // 
         // g_txtName
@@ -862,10 +928,10 @@ partial class frmProcess_Details {
         g_txtName.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
         g_txtName.BackColor = SystemColors.Window;
         g_txtName.BorderStyle = BorderStyle.None;
-        g_txtName.Location = new Point(80, 38);
+        g_txtName.Location = new Point(80, 39);
         g_txtName.Name = "g_txtName";
         g_txtName.ReadOnly = true;
-        g_txtName.Size = new Size(310, 16);
+        g_txtName.Size = new Size(303, 16);
         g_txtName.TabIndex = 3;
         // 
         // g_Label07
@@ -923,10 +989,10 @@ partial class frmProcess_Details {
         g_txtPID.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
         g_txtPID.BackColor = SystemColors.Window;
         g_txtPID.BorderStyle = BorderStyle.None;
-        g_txtPID.Location = new Point(80, 20);
+        g_txtPID.Location = new Point(80, 21);
         g_txtPID.Name = "g_txtPID";
         g_txtPID.ReadOnly = true;
-        g_txtPID.Size = new Size(310, 16);
+        g_txtPID.Size = new Size(303, 16);
         g_txtPID.TabIndex = 1;
         // 
         // g_Label02
@@ -980,8 +1046,8 @@ partial class frmProcess_Details {
         p_TableLayout1.Controls.Add(p_ChartUser, 1, 7);
         p_TableLayout1.Dock = DockStyle.Fill;
         p_TableLayout1.Location = new Point(0, 0);
-        p_TableLayout1.Margin = new Padding(0);
         p_TableLayout1.Name = "p_TableLayout1";
+        p_TableLayout1.Padding = new Padding(1, 0, 2, 0);
         p_TableLayout1.RowCount = 8;
         p_TableLayout1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
         p_TableLayout1.RowStyles.Add(new RowStyle(SizeType.Percent, 25F));
@@ -1009,13 +1075,13 @@ partial class frmProcess_Details {
         p_ChartGDI.GridSpacing = 10;
         p_ChartGDI.LegendSpacing = 17;
         p_ChartGDI.LightColors = false;
-        p_ChartGDI.Location = new Point(2, 346);
+        p_ChartGDI.Location = new Point(3, 346);
         p_ChartGDI.Margin = new Padding(2);
         p_ChartGDI.MaxValue = 0D;
         p_ChartGDI.Name = "p_ChartGDI";
         p_ChartGDI.ScaleMode = sMkTaskManager.Controls.sMkPerfChart.ScaleModes.Relative;
         p_ChartGDI.ShadeBackground = false;
-        p_ChartGDI.Size = new Size(227, 88);
+        p_ChartGDI.Size = new Size(226, 88);
         p_ChartGDI.TabIndex = 12;
         p_ChartGDI.ValueSpacing = 2;
         p_ChartGDI.ValuesSuffix = "K";
@@ -1025,10 +1091,10 @@ partial class frmProcess_Details {
         p_panel2.Controls.Add(p_lblWorkingSet);
         p_panel2.Controls.Add(p_Label02);
         p_panel2.Dock = DockStyle.Fill;
-        p_panel2.Location = new Point(1, 113);
+        p_panel2.Location = new Point(2, 113);
         p_panel2.Margin = new Padding(1);
         p_panel2.Name = "p_panel2";
-        p_panel2.Size = new Size(229, 14);
+        p_panel2.Size = new Size(228, 14);
         p_panel2.TabIndex = 3;
         // 
         // p_lblWorkingSet
@@ -1038,7 +1104,7 @@ partial class frmProcess_Details {
         p_lblWorkingSet.Location = new Point(90, 0);
         p_lblWorkingSet.Name = "p_lblWorkingSet";
         p_lblWorkingSet.Padding = new Padding(0, 0, 3, 0);
-        p_lblWorkingSet.Size = new Size(139, 14);
+        p_lblWorkingSet.Size = new Size(138, 14);
         p_lblWorkingSet.TabIndex = 1;
         p_lblWorkingSet.Text = "0";
         p_lblWorkingSet.TextAlign = ContentAlignment.BottomRight;
@@ -1062,7 +1128,7 @@ partial class frmProcess_Details {
         p_panel5.Location = new Point(232, 221);
         p_panel5.Margin = new Padding(1);
         p_panel5.Name = "p_panel5";
-        p_panel5.Size = new Size(230, 14);
+        p_panel5.Size = new Size(228, 14);
         p_panel5.TabIndex = 9;
         // 
         // p_lblPageFaults
@@ -1072,7 +1138,7 @@ partial class frmProcess_Details {
         p_lblPageFaults.Location = new Point(90, 0);
         p_lblPageFaults.Name = "p_lblPageFaults";
         p_lblPageFaults.Padding = new Padding(0, 0, 3, 0);
-        p_lblPageFaults.Size = new Size(140, 14);
+        p_lblPageFaults.Size = new Size(138, 14);
         p_lblPageFaults.TabIndex = 1;
         p_lblPageFaults.Text = "0";
         p_lblPageFaults.TextAlign = ContentAlignment.BottomRight;
@@ -1096,7 +1162,7 @@ partial class frmProcess_Details {
         p_panel3.Location = new Point(232, 113);
         p_panel3.Margin = new Padding(1);
         p_panel3.Name = "p_panel3";
-        p_panel3.Size = new Size(230, 14);
+        p_panel3.Size = new Size(228, 14);
         p_panel3.TabIndex = 5;
         // 
         // p_lblPrivateBytes
@@ -1106,7 +1172,7 @@ partial class frmProcess_Details {
         p_lblPrivateBytes.Location = new Point(90, 0);
         p_lblPrivateBytes.Name = "p_lblPrivateBytes";
         p_lblPrivateBytes.Padding = new Padding(0, 0, 3, 0);
-        p_lblPrivateBytes.Size = new Size(140, 14);
+        p_lblPrivateBytes.Size = new Size(138, 14);
         p_lblPrivateBytes.TabIndex = 1;
         p_lblPrivateBytes.Text = "0";
         p_lblPrivateBytes.TextAlign = ContentAlignment.BottomRight;
@@ -1130,7 +1196,7 @@ partial class frmProcess_Details {
         p_panel7.Location = new Point(232, 329);
         p_panel7.Margin = new Padding(1);
         p_panel7.Name = "p_panel7";
-        p_panel7.Size = new Size(230, 14);
+        p_panel7.Size = new Size(228, 14);
         p_panel7.TabIndex = 13;
         // 
         // p_lblUser
@@ -1140,7 +1206,7 @@ partial class frmProcess_Details {
         p_lblUser.Location = new Point(100, 0);
         p_lblUser.Name = "p_lblUser";
         p_lblUser.Padding = new Padding(0, 0, 3, 0);
-        p_lblUser.Size = new Size(130, 14);
+        p_lblUser.Size = new Size(128, 14);
         p_lblUser.TabIndex = 1;
         p_lblUser.Text = "0";
         p_lblUser.TextAlign = ContentAlignment.BottomRight;
@@ -1162,10 +1228,10 @@ partial class frmProcess_Details {
         p_panel1.Controls.Add(p_lblCpuUsage);
         p_panel1.Controls.Add(p_Label01);
         p_panel1.Dock = DockStyle.Fill;
-        p_panel1.Location = new Point(1, 1);
+        p_panel1.Location = new Point(2, 1);
         p_panel1.Margin = new Padding(1);
         p_panel1.Name = "p_panel1";
-        p_panel1.Size = new Size(461, 18);
+        p_panel1.Size = new Size(458, 18);
         p_panel1.TabIndex = 1;
         // 
         // p_lblCpuUsage
@@ -1175,7 +1241,7 @@ partial class frmProcess_Details {
         p_lblCpuUsage.Location = new Point(90, 0);
         p_lblCpuUsage.Name = "p_lblCpuUsage";
         p_lblCpuUsage.Padding = new Padding(0, 0, 3, 0);
-        p_lblCpuUsage.Size = new Size(371, 18);
+        p_lblCpuUsage.Size = new Size(368, 18);
         p_lblCpuUsage.TabIndex = 1;
         p_lblCpuUsage.Text = "0";
         p_lblCpuUsage.TextAlign = ContentAlignment.BottomRight;
@@ -1196,10 +1262,10 @@ partial class frmProcess_Details {
         p_panel6.Controls.Add(p_lblGDI);
         p_panel6.Controls.Add(p_Label06);
         p_panel6.Dock = DockStyle.Fill;
-        p_panel6.Location = new Point(1, 329);
+        p_panel6.Location = new Point(2, 329);
         p_panel6.Margin = new Padding(1);
         p_panel6.Name = "p_panel6";
-        p_panel6.Size = new Size(229, 14);
+        p_panel6.Size = new Size(228, 14);
         p_panel6.TabIndex = 11;
         // 
         // p_lblGDI
@@ -1209,7 +1275,7 @@ partial class frmProcess_Details {
         p_lblGDI.Location = new Point(100, 0);
         p_lblGDI.Name = "p_lblGDI";
         p_lblGDI.Padding = new Padding(0, 0, 3, 0);
-        p_lblGDI.Size = new Size(129, 14);
+        p_lblGDI.Size = new Size(128, 14);
         p_lblGDI.TabIndex = 1;
         p_lblGDI.Text = "0";
         p_lblGDI.TextAlign = ContentAlignment.BottomRight;
@@ -1230,10 +1296,10 @@ partial class frmProcess_Details {
         p_panel4.Controls.Add(p_lblVirtualMemory);
         p_panel4.Controls.Add(p_Label04);
         p_panel4.Dock = DockStyle.Fill;
-        p_panel4.Location = new Point(1, 221);
+        p_panel4.Location = new Point(2, 221);
         p_panel4.Margin = new Padding(1);
         p_panel4.Name = "p_panel4";
-        p_panel4.Size = new Size(229, 14);
+        p_panel4.Size = new Size(228, 14);
         p_panel4.TabIndex = 7;
         // 
         // p_lblVirtualMemory
@@ -1243,7 +1309,7 @@ partial class frmProcess_Details {
         p_lblVirtualMemory.Location = new Point(100, 0);
         p_lblVirtualMemory.Name = "p_lblVirtualMemory";
         p_lblVirtualMemory.Padding = new Padding(0, 0, 3, 0);
-        p_lblVirtualMemory.Size = new Size(129, 14);
+        p_lblVirtualMemory.Size = new Size(128, 14);
         p_lblVirtualMemory.TabIndex = 1;
         p_lblVirtualMemory.Text = "0";
         p_lblVirtualMemory.TextAlign = ContentAlignment.BottomRight;
@@ -1275,13 +1341,13 @@ partial class frmProcess_Details {
         p_ChartCPU.GridSpacing = 10;
         p_ChartCPU.LegendSpacing = 29;
         p_ChartCPU.LightColors = false;
-        p_ChartCPU.Location = new Point(2, 22);
+        p_ChartCPU.Location = new Point(3, 22);
         p_ChartCPU.Margin = new Padding(2);
         p_ChartCPU.MaxValue = 0D;
         p_ChartCPU.Name = "p_ChartCPU";
         p_ChartCPU.ScaleMode = sMkTaskManager.Controls.sMkPerfChart.ScaleModes.Absolute;
         p_ChartCPU.ShadeBackground = false;
-        p_ChartCPU.Size = new Size(459, 88);
+        p_ChartCPU.Size = new Size(456, 88);
         p_ChartCPU.TabIndex = 2;
         p_ChartCPU.ValueSpacing = 2;
         p_ChartCPU.ValuesSuffix = "";
@@ -1301,13 +1367,13 @@ partial class frmProcess_Details {
         p_ChartWS.GridSpacing = 10;
         p_ChartWS.LegendSpacing = 17;
         p_ChartWS.LightColors = false;
-        p_ChartWS.Location = new Point(2, 130);
+        p_ChartWS.Location = new Point(3, 130);
         p_ChartWS.Margin = new Padding(2);
         p_ChartWS.MaxValue = 0D;
         p_ChartWS.Name = "p_ChartWS";
         p_ChartWS.ScaleMode = sMkTaskManager.Controls.sMkPerfChart.ScaleModes.Relative;
         p_ChartWS.ShadeBackground = false;
-        p_ChartWS.Size = new Size(227, 88);
+        p_ChartWS.Size = new Size(226, 88);
         p_ChartWS.TabIndex = 4;
         p_ChartWS.ValueSpacing = 2;
         p_ChartWS.ValuesSuffix = "K";
@@ -1333,7 +1399,7 @@ partial class frmProcess_Details {
         p_ChartPB.Name = "p_ChartPB";
         p_ChartPB.ScaleMode = sMkTaskManager.Controls.sMkPerfChart.ScaleModes.Relative;
         p_ChartPB.ShadeBackground = false;
-        p_ChartPB.Size = new Size(228, 88);
+        p_ChartPB.Size = new Size(226, 88);
         p_ChartPB.TabIndex = 6;
         p_ChartPB.ValueSpacing = 2;
         p_ChartPB.ValuesSuffix = "K";
@@ -1353,13 +1419,13 @@ partial class frmProcess_Details {
         p_ChartVM.GridSpacing = 10;
         p_ChartVM.LegendSpacing = 17;
         p_ChartVM.LightColors = false;
-        p_ChartVM.Location = new Point(2, 238);
+        p_ChartVM.Location = new Point(3, 238);
         p_ChartVM.Margin = new Padding(2);
         p_ChartVM.MaxValue = 0D;
         p_ChartVM.Name = "p_ChartVM";
         p_ChartVM.ScaleMode = sMkTaskManager.Controls.sMkPerfChart.ScaleModes.Relative;
         p_ChartVM.ShadeBackground = false;
-        p_ChartVM.Size = new Size(227, 88);
+        p_ChartVM.Size = new Size(226, 88);
         p_ChartVM.TabIndex = 8;
         p_ChartVM.ValueSpacing = 2;
         p_ChartVM.ValuesSuffix = "K";
@@ -1385,7 +1451,7 @@ partial class frmProcess_Details {
         p_ChartPF.Name = "p_ChartPF";
         p_ChartPF.ScaleMode = sMkTaskManager.Controls.sMkPerfChart.ScaleModes.Relative;
         p_ChartPF.ShadeBackground = false;
-        p_ChartPF.Size = new Size(228, 88);
+        p_ChartPF.Size = new Size(226, 88);
         p_ChartPF.TabIndex = 10;
         p_ChartPF.ValueSpacing = 2;
         p_ChartPF.ValuesSuffix = "K";
@@ -1411,7 +1477,7 @@ partial class frmProcess_Details {
         p_ChartUser.Name = "p_ChartUser";
         p_ChartUser.ScaleMode = sMkTaskManager.Controls.sMkPerfChart.ScaleModes.Relative;
         p_ChartUser.ShadeBackground = false;
-        p_ChartUser.Size = new Size(228, 88);
+        p_ChartUser.Size = new Size(226, 88);
         p_ChartUser.TabIndex = 14;
         p_ChartUser.ValueSpacing = 2;
         p_ChartUser.ValuesSuffix = "K";
@@ -1431,9 +1497,9 @@ partial class frmProcess_Details {
         i_TableLayout1.ColumnCount = 2;
         i_TableLayout1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 78F));
         i_TableLayout1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
-        i_TableLayout1.Controls.Add(sMkPerfChart3, 1, 5);
-        i_TableLayout1.Controls.Add(sMkPerfChart2, 1, 3);
-        i_TableLayout1.Controls.Add(sMkPerfChart1, 1, 1);
+        i_TableLayout1.Controls.Add(i_ChartOthers, 1, 5);
+        i_TableLayout1.Controls.Add(i_ChartWrites, 1, 3);
+        i_TableLayout1.Controls.Add(i_ChartReads, 1, 1);
         i_TableLayout1.Controls.Add(i_Label06, 1, 4);
         i_TableLayout1.Controls.Add(i_Label05, 0, 4);
         i_TableLayout1.Controls.Add(i_Label04, 1, 2);
@@ -1448,6 +1514,7 @@ partial class frmProcess_Details {
         i_TableLayout1.Location = new Point(0, 0);
         i_TableLayout1.Margin = new Padding(0);
         i_TableLayout1.Name = "i_TableLayout1";
+        i_TableLayout1.Padding = new Padding(0, 0, 2, 0);
         i_TableLayout1.RowCount = 7;
         i_TableLayout1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
         i_TableLayout1.RowStyles.Add(new RowStyle(SizeType.Percent, 33.3333321F));
@@ -1459,90 +1526,90 @@ partial class frmProcess_Details {
         i_TableLayout1.Size = new Size(463, 436);
         i_TableLayout1.TabIndex = 0;
         // 
-        // sMkPerfChart3
+        // i_ChartOthers
         // 
-        sMkPerfChart3.AntiAliasing = true;
-        sMkPerfChart3.BackColor = Color.Black;
-        sMkPerfChart3.BackColorShade = Color.FromArgb(0, 0, 0);
-        sMkPerfChart3.BackSolid = true;
-        sMkPerfChart3.BorderStyle = Border3DStyle.Sunken;
-        sMkPerfChart3.DetailsOnHover = false;
-        sMkPerfChart3.DisplayAverage = false;
-        sMkPerfChart3.DisplayIndexes = false;
-        sMkPerfChart3.DisplayLegends = true;
-        sMkPerfChart3.Dock = DockStyle.Fill;
-        sMkPerfChart3.GridSpacing = 10;
-        sMkPerfChart3.LegendSpacing = 17;
-        sMkPerfChart3.LightColors = false;
-        sMkPerfChart3.Location = new Point(80, 246);
-        sMkPerfChart3.Margin = new Padding(2);
-        sMkPerfChart3.MaxValue = 0D;
-        sMkPerfChart3.Name = "sMkPerfChart3";
-        sMkPerfChart3.ScaleMode = sMkTaskManager.Controls.sMkPerfChart.ScaleModes.Relative;
-        sMkPerfChart3.ShadeBackground = false;
-        sMkPerfChart3.Size = new Size(381, 92);
-        sMkPerfChart3.TabIndex = 11;
-        sMkPerfChart3.ValueSpacing = 2;
-        sMkPerfChart3.ValuesSuffix = "K";
+        i_ChartOthers.AntiAliasing = true;
+        i_ChartOthers.BackColor = Color.Black;
+        i_ChartOthers.BackColorShade = Color.FromArgb(0, 0, 0);
+        i_ChartOthers.BackSolid = true;
+        i_ChartOthers.BorderStyle = Border3DStyle.Sunken;
+        i_ChartOthers.DetailsOnHover = false;
+        i_ChartOthers.DisplayAverage = false;
+        i_ChartOthers.DisplayIndexes = false;
+        i_ChartOthers.DisplayLegends = true;
+        i_ChartOthers.Dock = DockStyle.Fill;
+        i_ChartOthers.GridSpacing = 10;
+        i_ChartOthers.LegendSpacing = 17;
+        i_ChartOthers.LightColors = false;
+        i_ChartOthers.Location = new Point(80, 246);
+        i_ChartOthers.Margin = new Padding(2);
+        i_ChartOthers.MaxValue = 0D;
+        i_ChartOthers.Name = "i_ChartOthers";
+        i_ChartOthers.ScaleMode = sMkTaskManager.Controls.sMkPerfChart.ScaleModes.Relative;
+        i_ChartOthers.ShadeBackground = false;
+        i_ChartOthers.Size = new Size(379, 92);
+        i_ChartOthers.TabIndex = 11;
+        i_ChartOthers.ValueSpacing = 2;
+        i_ChartOthers.ValuesSuffix = "K";
         // 
-        // sMkPerfChart2
+        // i_ChartWrites
         // 
-        sMkPerfChart2.AntiAliasing = true;
-        sMkPerfChart2.BackColor = Color.Black;
-        sMkPerfChart2.BackColorShade = Color.FromArgb(0, 0, 0);
-        sMkPerfChart2.BackSolid = true;
-        sMkPerfChart2.BorderStyle = Border3DStyle.Sunken;
-        sMkPerfChart2.DetailsOnHover = false;
-        sMkPerfChart2.DisplayAverage = false;
-        sMkPerfChart2.DisplayIndexes = false;
-        sMkPerfChart2.DisplayLegends = true;
-        sMkPerfChart2.Dock = DockStyle.Fill;
-        sMkPerfChart2.GridSpacing = 10;
-        sMkPerfChart2.LegendSpacing = 17;
-        sMkPerfChart2.LightColors = false;
-        sMkPerfChart2.Location = new Point(80, 134);
-        sMkPerfChart2.Margin = new Padding(2);
-        sMkPerfChart2.MaxValue = 0D;
-        sMkPerfChart2.Name = "sMkPerfChart2";
-        sMkPerfChart2.ScaleMode = sMkTaskManager.Controls.sMkPerfChart.ScaleModes.Relative;
-        sMkPerfChart2.ShadeBackground = false;
-        sMkPerfChart2.Size = new Size(381, 92);
-        sMkPerfChart2.TabIndex = 7;
-        sMkPerfChart2.ValueSpacing = 2;
-        sMkPerfChart2.ValuesSuffix = "K";
+        i_ChartWrites.AntiAliasing = true;
+        i_ChartWrites.BackColor = Color.Black;
+        i_ChartWrites.BackColorShade = Color.FromArgb(0, 0, 0);
+        i_ChartWrites.BackSolid = true;
+        i_ChartWrites.BorderStyle = Border3DStyle.Sunken;
+        i_ChartWrites.DetailsOnHover = false;
+        i_ChartWrites.DisplayAverage = false;
+        i_ChartWrites.DisplayIndexes = false;
+        i_ChartWrites.DisplayLegends = true;
+        i_ChartWrites.Dock = DockStyle.Fill;
+        i_ChartWrites.GridSpacing = 10;
+        i_ChartWrites.LegendSpacing = 17;
+        i_ChartWrites.LightColors = false;
+        i_ChartWrites.Location = new Point(80, 134);
+        i_ChartWrites.Margin = new Padding(2);
+        i_ChartWrites.MaxValue = 0D;
+        i_ChartWrites.Name = "i_ChartWrites";
+        i_ChartWrites.ScaleMode = sMkTaskManager.Controls.sMkPerfChart.ScaleModes.Relative;
+        i_ChartWrites.ShadeBackground = false;
+        i_ChartWrites.Size = new Size(379, 92);
+        i_ChartWrites.TabIndex = 7;
+        i_ChartWrites.ValueSpacing = 2;
+        i_ChartWrites.ValuesSuffix = "K";
         // 
-        // sMkPerfChart1
+        // i_ChartReads
         // 
-        sMkPerfChart1.AntiAliasing = true;
-        sMkPerfChart1.BackColor = Color.Black;
-        sMkPerfChart1.BackColorShade = Color.FromArgb(0, 0, 0);
-        sMkPerfChart1.BackSolid = true;
-        sMkPerfChart1.BorderStyle = Border3DStyle.Sunken;
-        sMkPerfChart1.DetailsOnHover = false;
-        sMkPerfChart1.DisplayAverage = false;
-        sMkPerfChart1.DisplayIndexes = false;
-        sMkPerfChart1.DisplayLegends = true;
-        sMkPerfChart1.Dock = DockStyle.Fill;
-        sMkPerfChart1.GridSpacing = 10;
-        sMkPerfChart1.LegendSpacing = 17;
-        sMkPerfChart1.LightColors = false;
-        sMkPerfChart1.Location = new Point(80, 22);
-        sMkPerfChart1.Margin = new Padding(2);
-        sMkPerfChart1.MaxValue = 0D;
-        sMkPerfChart1.Name = "sMkPerfChart1";
-        sMkPerfChart1.ScaleMode = sMkTaskManager.Controls.sMkPerfChart.ScaleModes.Relative;
-        sMkPerfChart1.ShadeBackground = false;
-        sMkPerfChart1.Size = new Size(381, 92);
-        sMkPerfChart1.TabIndex = 3;
-        sMkPerfChart1.ValueSpacing = 2;
-        sMkPerfChart1.ValuesSuffix = "K";
+        i_ChartReads.AntiAliasing = true;
+        i_ChartReads.BackColor = Color.Black;
+        i_ChartReads.BackColorShade = Color.FromArgb(0, 0, 0);
+        i_ChartReads.BackSolid = true;
+        i_ChartReads.BorderStyle = Border3DStyle.Sunken;
+        i_ChartReads.DetailsOnHover = false;
+        i_ChartReads.DisplayAverage = false;
+        i_ChartReads.DisplayIndexes = false;
+        i_ChartReads.DisplayLegends = true;
+        i_ChartReads.Dock = DockStyle.Fill;
+        i_ChartReads.GridSpacing = 10;
+        i_ChartReads.LegendSpacing = 17;
+        i_ChartReads.LightColors = false;
+        i_ChartReads.Location = new Point(80, 22);
+        i_ChartReads.Margin = new Padding(2);
+        i_ChartReads.MaxValue = 0D;
+        i_ChartReads.Name = "i_ChartReads";
+        i_ChartReads.ScaleMode = sMkTaskManager.Controls.sMkPerfChart.ScaleModes.Relative;
+        i_ChartReads.ShadeBackground = false;
+        i_ChartReads.Size = new Size(379, 92);
+        i_ChartReads.TabIndex = 3;
+        i_ChartReads.ValueSpacing = 2;
+        i_ChartReads.ValuesSuffix = "K";
         // 
         // i_Label06
         // 
         i_Label06.Dock = DockStyle.Fill;
         i_Label06.Location = new Point(81, 228);
         i_Label06.Name = "i_Label06";
-        i_Label06.Size = new Size(379, 16);
+        i_Label06.Size = new Size(377, 16);
         i_Label06.TabIndex = 9;
         i_Label06.Text = "Others Bytes Rate";
         i_Label06.TextAlign = ContentAlignment.BottomLeft;
@@ -1563,7 +1630,7 @@ partial class frmProcess_Details {
         i_Label04.Dock = DockStyle.Fill;
         i_Label04.Location = new Point(81, 116);
         i_Label04.Name = "i_Label04";
-        i_Label04.Size = new Size(379, 16);
+        i_Label04.Size = new Size(377, 16);
         i_Label04.TabIndex = 5;
         i_Label04.Text = "Writes Bytes Rate";
         i_Label04.TextAlign = ContentAlignment.BottomLeft;
@@ -1584,7 +1651,7 @@ partial class frmProcess_Details {
         i_Label02.Dock = DockStyle.Fill;
         i_Label02.Location = new Point(81, 0);
         i_Label02.Name = "i_Label02";
-        i_Label02.Size = new Size(379, 20);
+        i_Label02.Size = new Size(377, 20);
         i_Label02.TabIndex = 1;
         i_Label02.Text = "Reads Bytes Rate";
         i_Label02.TextAlign = ContentAlignment.BottomLeft;
@@ -1641,8 +1708,8 @@ partial class frmProcess_Details {
         i_PerfOthers.BorderStyle = Border3DStyle.Sunken;
         i_PerfOthers.HistoryValues = 10;
         i_PerfOthers.LightColors = false;
-        i_PerfOthers.Location = new Point(4, 246);
-        i_PerfOthers.Margin = new Padding(2);
+        i_PerfOthers.Location = new Point(3, 246);
+        i_PerfOthers.Margin = new Padding(0, 2, 2, 2);
         i_PerfOthers.Name = "i_PerfOthers";
         i_PerfOthers.ScaleMode = sMkTaskManager.Controls.sMkPerfMeter.ScaleModes.Relative;
         i_PerfOthers.Size = new Size(70, 92);
@@ -1665,7 +1732,7 @@ partial class frmProcess_Details {
         i_TableLayout2.RowCount = 1;
         i_TableLayout2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
         i_TableLayout2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
-        i_TableLayout2.Size = new Size(463, 96);
+        i_TableLayout2.Size = new Size(461, 96);
         i_TableLayout2.TabIndex = 12;
         // 
         // i_GroupBox3
@@ -1679,7 +1746,7 @@ partial class frmProcess_Details {
         i_GroupBox3.Controls.Add(i_Label32);
         i_GroupBox3.Controls.Add(i_Label31);
         i_GroupBox3.Dock = DockStyle.Fill;
-        i_GroupBox3.Location = new Point(311, 3);
+        i_GroupBox3.Location = new Point(309, 3);
         i_GroupBox3.Name = "i_GroupBox3";
         i_GroupBox3.Size = new Size(149, 90);
         i_GroupBox3.TabIndex = 2;
@@ -1781,9 +1848,9 @@ partial class frmProcess_Details {
         i_GroupBox2.Controls.Add(i_Label22);
         i_GroupBox2.Controls.Add(i_Label21);
         i_GroupBox2.Dock = DockStyle.Fill;
-        i_GroupBox2.Location = new Point(157, 3);
+        i_GroupBox2.Location = new Point(156, 3);
         i_GroupBox2.Name = "i_GroupBox2";
-        i_GroupBox2.Size = new Size(148, 90);
+        i_GroupBox2.Size = new Size(147, 90);
         i_GroupBox2.TabIndex = 1;
         i_GroupBox2.TabStop = false;
         i_GroupBox2.Text = "Read Operations";
@@ -1794,7 +1861,7 @@ partial class frmProcess_Details {
         i_lblWriteBytesDelta.Location = new Point(73, 69);
         i_lblWriteBytesDelta.Margin = new Padding(3, 0, 3, 1);
         i_lblWriteBytesDelta.Name = "i_lblWriteBytesDelta";
-        i_lblWriteBytesDelta.Size = new Size(72, 16);
+        i_lblWriteBytesDelta.Size = new Size(71, 16);
         i_lblWriteBytesDelta.TabIndex = 7;
         i_lblWriteBytesDelta.Text = "0";
         i_lblWriteBytesDelta.TextAlign = ContentAlignment.MiddleRight;
@@ -1805,7 +1872,7 @@ partial class frmProcess_Details {
         i_lblWriteBytes.Location = new Point(48, 54);
         i_lblWriteBytes.Margin = new Padding(3, 0, 3, 1);
         i_lblWriteBytes.Name = "i_lblWriteBytes";
-        i_lblWriteBytes.Size = new Size(97, 16);
+        i_lblWriteBytes.Size = new Size(96, 16);
         i_lblWriteBytes.TabIndex = 5;
         i_lblWriteBytes.Text = "0";
         i_lblWriteBytes.TextAlign = ContentAlignment.MiddleRight;
@@ -1816,7 +1883,7 @@ partial class frmProcess_Details {
         i_lblWriteCountDelta.Location = new Point(77, 34);
         i_lblWriteCountDelta.Margin = new Padding(3, 0, 3, 1);
         i_lblWriteCountDelta.Name = "i_lblWriteCountDelta";
-        i_lblWriteCountDelta.Size = new Size(68, 16);
+        i_lblWriteCountDelta.Size = new Size(67, 16);
         i_lblWriteCountDelta.TabIndex = 3;
         i_lblWriteCountDelta.Text = "0";
         i_lblWriteCountDelta.TextAlign = ContentAlignment.MiddleRight;
@@ -1827,7 +1894,7 @@ partial class frmProcess_Details {
         i_lblWriteCount.Location = new Point(48, 19);
         i_lblWriteCount.Margin = new Padding(3, 0, 3, 1);
         i_lblWriteCount.Name = "i_lblWriteCount";
-        i_lblWriteCount.Size = new Size(97, 16);
+        i_lblWriteCount.Size = new Size(96, 16);
         i_lblWriteCount.TabIndex = 1;
         i_lblWriteCount.Text = "0";
         i_lblWriteCount.TextAlign = ContentAlignment.MiddleRight;
@@ -1885,7 +1952,7 @@ partial class frmProcess_Details {
         i_GroupBox1.Dock = DockStyle.Fill;
         i_GroupBox1.Location = new Point(3, 3);
         i_GroupBox1.Name = "i_GroupBox1";
-        i_GroupBox1.Size = new Size(148, 90);
+        i_GroupBox1.Size = new Size(147, 90);
         i_GroupBox1.TabIndex = 0;
         i_GroupBox1.TabStop = false;
         i_GroupBox1.Text = "Read Operations";
@@ -1896,7 +1963,7 @@ partial class frmProcess_Details {
         i_lblReadBytesDelta.Location = new Point(73, 69);
         i_lblReadBytesDelta.Margin = new Padding(3, 0, 3, 1);
         i_lblReadBytesDelta.Name = "i_lblReadBytesDelta";
-        i_lblReadBytesDelta.Size = new Size(72, 16);
+        i_lblReadBytesDelta.Size = new Size(71, 16);
         i_lblReadBytesDelta.TabIndex = 7;
         i_lblReadBytesDelta.Text = "0";
         i_lblReadBytesDelta.TextAlign = ContentAlignment.MiddleRight;
@@ -1907,7 +1974,7 @@ partial class frmProcess_Details {
         i_lblReadBytes.Location = new Point(48, 54);
         i_lblReadBytes.Margin = new Padding(3, 0, 3, 1);
         i_lblReadBytes.Name = "i_lblReadBytes";
-        i_lblReadBytes.Size = new Size(97, 16);
+        i_lblReadBytes.Size = new Size(96, 16);
         i_lblReadBytes.TabIndex = 5;
         i_lblReadBytes.Text = "0";
         i_lblReadBytes.TextAlign = ContentAlignment.MiddleRight;
@@ -1918,7 +1985,7 @@ partial class frmProcess_Details {
         i_lblReadCountDelta.Location = new Point(77, 34);
         i_lblReadCountDelta.Margin = new Padding(3, 0, 3, 1);
         i_lblReadCountDelta.Name = "i_lblReadCountDelta";
-        i_lblReadCountDelta.Size = new Size(68, 16);
+        i_lblReadCountDelta.Size = new Size(67, 16);
         i_lblReadCountDelta.TabIndex = 3;
         i_lblReadCountDelta.Text = "0";
         i_lblReadCountDelta.TextAlign = ContentAlignment.MiddleRight;
@@ -1929,7 +1996,7 @@ partial class frmProcess_Details {
         i_lblReadCount.Location = new Point(48, 19);
         i_lblReadCount.Margin = new Padding(3, 0, 3, 1);
         i_lblReadCount.Name = "i_lblReadCount";
-        i_lblReadCount.Size = new Size(97, 16);
+        i_lblReadCount.Size = new Size(96, 16);
         i_lblReadCount.TabIndex = 1;
         i_lblReadCount.Text = "0";
         i_lblReadCount.TextAlign = ContentAlignment.MiddleRight;
@@ -1976,6 +2043,7 @@ partial class frmProcess_Details {
         // 
         // tpDiskNet
         // 
+        tpDiskNet.Controls.Add(d_TableLayout1);
         tpDiskNet.Location = new Point(4, 24);
         tpDiskNet.Name = "tpDiskNet";
         tpDiskNet.Size = new Size(463, 436);
@@ -1983,8 +2051,501 @@ partial class frmProcess_Details {
         tpDiskNet.Text = "Disk & Network";
         tpDiskNet.UseVisualStyleBackColor = true;
         // 
+        // d_TableLayout1
+        // 
+        d_TableLayout1.ColumnCount = 2;
+        d_TableLayout1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 78F));
+        d_TableLayout1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
+        d_TableLayout1.Controls.Add(d_ChartNet, 1, 3);
+        d_TableLayout1.Controls.Add(d_ChartDisk, 1, 1);
+        d_TableLayout1.Controls.Add(d_Label04, 1, 2);
+        d_TableLayout1.Controls.Add(d_Label03, 0, 2);
+        d_TableLayout1.Controls.Add(d_PerfDisk, 0, 1);
+        d_TableLayout1.Controls.Add(d_PerfNet, 0, 3);
+        d_TableLayout1.Controls.Add(d_Label02, 1, 0);
+        d_TableLayout1.Controls.Add(d_Label01, 0, 0);
+        d_TableLayout1.Controls.Add(d_TableLayout2, 0, 4);
+        d_TableLayout1.Dock = DockStyle.Fill;
+        d_TableLayout1.Location = new Point(0, 0);
+        d_TableLayout1.Margin = new Padding(0);
+        d_TableLayout1.Name = "d_TableLayout1";
+        d_TableLayout1.Padding = new Padding(0, 0, 2, 0);
+        d_TableLayout1.RowCount = 5;
+        d_TableLayout1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+        d_TableLayout1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+        d_TableLayout1.RowStyles.Add(new RowStyle(SizeType.Absolute, 16F));
+        d_TableLayout1.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
+        d_TableLayout1.RowStyles.Add(new RowStyle(SizeType.Absolute, 130F));
+        d_TableLayout1.Size = new Size(463, 436);
+        d_TableLayout1.TabIndex = 0;
+        // 
+        // d_ChartNet
+        // 
+        d_ChartNet.AntiAliasing = true;
+        d_ChartNet.BackColor = Color.Black;
+        d_ChartNet.BackColorShade = Color.FromArgb(0, 0, 0);
+        d_ChartNet.BackSolid = true;
+        d_ChartNet.BorderStyle = Border3DStyle.Sunken;
+        d_ChartNet.DetailsOnHover = false;
+        d_ChartNet.DisplayAverage = false;
+        d_ChartNet.DisplayIndexes = false;
+        d_ChartNet.DisplayLegends = true;
+        d_ChartNet.Dock = DockStyle.Fill;
+        d_ChartNet.GridSpacing = 10;
+        d_ChartNet.LegendSpacing = 17;
+        d_ChartNet.LightColors = false;
+        d_ChartNet.Location = new Point(80, 173);
+        d_ChartNet.Margin = new Padding(2);
+        d_ChartNet.MaxValue = 0D;
+        d_ChartNet.Name = "d_ChartNet";
+        d_ChartNet.ScaleMode = sMkTaskManager.Controls.sMkPerfChart.ScaleModes.Relative;
+        d_ChartNet.ShadeBackground = false;
+        d_ChartNet.Size = new Size(379, 131);
+        d_ChartNet.TabIndex = 7;
+        d_ChartNet.ValueSpacing = 2;
+        d_ChartNet.ValuesSuffix = "K";
+        // 
+        // d_ChartDisk
+        // 
+        d_ChartDisk.AntiAliasing = true;
+        d_ChartDisk.BackColor = Color.Black;
+        d_ChartDisk.BackColorShade = Color.FromArgb(0, 0, 0);
+        d_ChartDisk.BackSolid = true;
+        d_ChartDisk.BorderStyle = Border3DStyle.Sunken;
+        d_ChartDisk.DetailsOnHover = false;
+        d_ChartDisk.DisplayAverage = false;
+        d_ChartDisk.DisplayIndexes = false;
+        d_ChartDisk.DisplayLegends = true;
+        d_ChartDisk.Dock = DockStyle.Fill;
+        d_ChartDisk.GridSpacing = 10;
+        d_ChartDisk.LegendSpacing = 17;
+        d_ChartDisk.LightColors = false;
+        d_ChartDisk.Location = new Point(80, 22);
+        d_ChartDisk.Margin = new Padding(2);
+        d_ChartDisk.MaxValue = 0D;
+        d_ChartDisk.Name = "d_ChartDisk";
+        d_ChartDisk.ScaleMode = sMkTaskManager.Controls.sMkPerfChart.ScaleModes.Relative;
+        d_ChartDisk.ShadeBackground = false;
+        d_ChartDisk.Size = new Size(379, 131);
+        d_ChartDisk.TabIndex = 3;
+        d_ChartDisk.ValueSpacing = 2;
+        d_ChartDisk.ValuesSuffix = "K";
+        // 
+        // d_Label04
+        // 
+        d_Label04.Dock = DockStyle.Fill;
+        d_Label04.Location = new Point(81, 155);
+        d_Label04.Name = "d_Label04";
+        d_Label04.Size = new Size(377, 16);
+        d_Label04.TabIndex = 5;
+        d_Label04.Text = "Network Usage History";
+        d_Label04.TextAlign = ContentAlignment.BottomLeft;
+        // 
+        // d_Label03
+        // 
+        d_Label03.Dock = DockStyle.Fill;
+        d_Label03.Location = new Point(0, 155);
+        d_Label03.Margin = new Padding(0);
+        d_Label03.Name = "d_Label03";
+        d_Label03.Size = new Size(78, 16);
+        d_Label03.TabIndex = 4;
+        d_Label03.Text = "Net Delta";
+        d_Label03.TextAlign = ContentAlignment.BottomCenter;
+        // 
+        // d_PerfDisk
+        // 
+        d_PerfDisk.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
+        d_PerfDisk.BackColor = Color.Black;
+        d_PerfDisk.BarBackColor = Color.Sienna;
+        d_PerfDisk.BarForeColor = Color.SandyBrown;
+        d_PerfDisk.BorderStyle = Border3DStyle.Sunken;
+        d_PerfDisk.HistoryValues = 10;
+        d_PerfDisk.LightColors = false;
+        d_PerfDisk.Location = new Point(3, 22);
+        d_PerfDisk.Margin = new Padding(0, 2, 2, 2);
+        d_PerfDisk.Name = "d_PerfDisk";
+        d_PerfDisk.ScaleMode = sMkTaskManager.Controls.sMkPerfMeter.ScaleModes.Relative;
+        d_PerfDisk.Size = new Size(70, 131);
+        d_PerfDisk.TabIndex = 2;
+        // 
+        // d_PerfNet
+        // 
+        d_PerfNet.Anchor = AnchorStyles.Top | AnchorStyles.Bottom;
+        d_PerfNet.BackColor = Color.Black;
+        d_PerfNet.BarBackColor = Color.Indigo;
+        d_PerfNet.BarForeColor = Color.Violet;
+        d_PerfNet.BorderStyle = Border3DStyle.Sunken;
+        d_PerfNet.HistoryValues = 10;
+        d_PerfNet.LightColors = false;
+        d_PerfNet.Location = new Point(3, 173);
+        d_PerfNet.Margin = new Padding(0, 2, 2, 2);
+        d_PerfNet.Name = "d_PerfNet";
+        d_PerfNet.ScaleMode = sMkTaskManager.Controls.sMkPerfMeter.ScaleModes.Relative;
+        d_PerfNet.Size = new Size(70, 131);
+        d_PerfNet.TabIndex = 6;
+        // 
+        // d_Label02
+        // 
+        d_Label02.Dock = DockStyle.Fill;
+        d_Label02.Location = new Point(81, 0);
+        d_Label02.Name = "d_Label02";
+        d_Label02.Size = new Size(377, 20);
+        d_Label02.TabIndex = 1;
+        d_Label02.Text = "Disk Usage History";
+        d_Label02.TextAlign = ContentAlignment.BottomLeft;
+        // 
+        // d_Label01
+        // 
+        d_Label01.Dock = DockStyle.Fill;
+        d_Label01.Location = new Point(0, 0);
+        d_Label01.Margin = new Padding(0);
+        d_Label01.Name = "d_Label01";
+        d_Label01.Size = new Size(78, 20);
+        d_Label01.TabIndex = 0;
+        d_Label01.Text = "Disk Delta";
+        d_Label01.TextAlign = ContentAlignment.BottomCenter;
+        // 
+        // d_TableLayout2
+        // 
+        d_TableLayout2.ColumnCount = 2;
+        d_TableLayout1.SetColumnSpan(d_TableLayout2, 2);
+        d_TableLayout2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+        d_TableLayout2.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+        d_TableLayout2.Controls.Add(d_GroupBox2, 1, 0);
+        d_TableLayout2.Controls.Add(d_GroupBox1, 0, 0);
+        d_TableLayout2.Dock = DockStyle.Fill;
+        d_TableLayout2.Location = new Point(0, 306);
+        d_TableLayout2.Margin = new Padding(0);
+        d_TableLayout2.Name = "d_TableLayout2";
+        d_TableLayout2.RowCount = 1;
+        d_TableLayout2.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+        d_TableLayout2.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+        d_TableLayout2.Size = new Size(461, 130);
+        d_TableLayout2.TabIndex = 8;
+        // 
+        // d_GroupBox2
+        // 
+        d_GroupBox2.Controls.Add(d_lblNetRcvdRate);
+        d_GroupBox2.Controls.Add(d_lblNetRcvdDelta);
+        d_GroupBox2.Controls.Add(d_lblNetRcvd);
+        d_GroupBox2.Controls.Add(d_Label26);
+        d_GroupBox2.Controls.Add(d_Label25);
+        d_GroupBox2.Controls.Add(d_Label24);
+        d_GroupBox2.Controls.Add(d_lblNetSendRate);
+        d_GroupBox2.Controls.Add(d_lblNetSendDelta);
+        d_GroupBox2.Controls.Add(d_lblNetSend);
+        d_GroupBox2.Controls.Add(d_lblDivider2);
+        d_GroupBox2.Controls.Add(d_Label23);
+        d_GroupBox2.Controls.Add(d_Label22);
+        d_GroupBox2.Controls.Add(d_Label21);
+        d_GroupBox2.Dock = DockStyle.Fill;
+        d_GroupBox2.Location = new Point(233, 3);
+        d_GroupBox2.Name = "d_GroupBox2";
+        d_GroupBox2.Size = new Size(225, 124);
+        d_GroupBox2.TabIndex = 0;
+        d_GroupBox2.TabStop = false;
+        d_GroupBox2.Text = "Network Usage Statistics";
+        // 
+        // d_lblNetRcvdRate
+        // 
+        d_lblNetRcvdRate.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        d_lblNetRcvdRate.Location = new Point(95, 103);
+        d_lblNetRcvdRate.Margin = new Padding(3, 0, 3, 1);
+        d_lblNetRcvdRate.Name = "d_lblNetRcvdRate";
+        d_lblNetRcvdRate.Size = new Size(126, 16);
+        d_lblNetRcvdRate.TabIndex = 12;
+        d_lblNetRcvdRate.Text = "0Kb.";
+        d_lblNetRcvdRate.TextAlign = ContentAlignment.MiddleRight;
+        // 
+        // d_lblNetRcvdDelta
+        // 
+        d_lblNetRcvdDelta.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        d_lblNetRcvdDelta.Location = new Point(95, 88);
+        d_lblNetRcvdDelta.Margin = new Padding(3, 0, 3, 1);
+        d_lblNetRcvdDelta.Name = "d_lblNetRcvdDelta";
+        d_lblNetRcvdDelta.Size = new Size(126, 16);
+        d_lblNetRcvdDelta.TabIndex = 10;
+        d_lblNetRcvdDelta.Text = "0Kb.";
+        d_lblNetRcvdDelta.TextAlign = ContentAlignment.MiddleRight;
+        // 
+        // d_lblNetRcvd
+        // 
+        d_lblNetRcvd.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        d_lblNetRcvd.Location = new Point(95, 73);
+        d_lblNetRcvd.Margin = new Padding(3, 0, 3, 1);
+        d_lblNetRcvd.Name = "d_lblNetRcvd";
+        d_lblNetRcvd.Size = new Size(126, 16);
+        d_lblNetRcvd.TabIndex = 8;
+        d_lblNetRcvd.Text = "0Kb.";
+        d_lblNetRcvd.TextAlign = ContentAlignment.MiddleRight;
+        // 
+        // d_Label26
+        // 
+        d_Label26.Location = new Point(4, 103);
+        d_Label26.Margin = new Padding(3, 0, 3, 1);
+        d_Label26.Name = "d_Label26";
+        d_Label26.Size = new Size(90, 16);
+        d_Label26.TabIndex = 11;
+        d_Label26.Text = "Received Rate:";
+        d_Label26.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // d_Label25
+        // 
+        d_Label25.Location = new Point(4, 88);
+        d_Label25.Margin = new Padding(3, 0, 3, 1);
+        d_Label25.Name = "d_Label25";
+        d_Label25.Size = new Size(90, 16);
+        d_Label25.TabIndex = 9;
+        d_Label25.Text = "Received Delta:";
+        d_Label25.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // d_Label24
+        // 
+        d_Label24.Location = new Point(4, 73);
+        d_Label24.Margin = new Padding(3, 0, 3, 1);
+        d_Label24.Name = "d_Label24";
+        d_Label24.Size = new Size(90, 16);
+        d_Label24.TabIndex = 7;
+        d_Label24.Text = "Total Received:";
+        d_Label24.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // d_lblNetSendRate
+        // 
+        d_lblNetSendRate.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        d_lblNetSendRate.Location = new Point(80, 49);
+        d_lblNetSendRate.Margin = new Padding(3, 0, 3, 1);
+        d_lblNetSendRate.Name = "d_lblNetSendRate";
+        d_lblNetSendRate.Size = new Size(141, 16);
+        d_lblNetSendRate.TabIndex = 5;
+        d_lblNetSendRate.Text = "0Kb.";
+        d_lblNetSendRate.TextAlign = ContentAlignment.MiddleRight;
+        // 
+        // d_lblNetSendDelta
+        // 
+        d_lblNetSendDelta.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        d_lblNetSendDelta.Location = new Point(80, 34);
+        d_lblNetSendDelta.Margin = new Padding(3, 0, 3, 1);
+        d_lblNetSendDelta.Name = "d_lblNetSendDelta";
+        d_lblNetSendDelta.Size = new Size(141, 16);
+        d_lblNetSendDelta.TabIndex = 3;
+        d_lblNetSendDelta.Text = "0Kb.";
+        d_lblNetSendDelta.TextAlign = ContentAlignment.MiddleRight;
+        // 
+        // d_lblNetSend
+        // 
+        d_lblNetSend.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        d_lblNetSend.Location = new Point(80, 19);
+        d_lblNetSend.Margin = new Padding(3, 0, 3, 1);
+        d_lblNetSend.Name = "d_lblNetSend";
+        d_lblNetSend.Size = new Size(141, 16);
+        d_lblNetSend.TabIndex = 1;
+        d_lblNetSend.Text = "0Kb.";
+        d_lblNetSend.TextAlign = ContentAlignment.MiddleRight;
+        // 
+        // d_lblDivider2
+        // 
+        d_lblDivider2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        d_lblDivider2.BackColor = SystemColors.ControlDark;
+        d_lblDivider2.Location = new Point(6, 69);
+        d_lblDivider2.Margin = new Padding(3, 0, 3, 1);
+        d_lblDivider2.Name = "d_lblDivider2";
+        d_lblDivider2.Size = new Size(212, 1);
+        d_lblDivider2.TabIndex = 6;
+        d_lblDivider2.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // d_Label23
+        // 
+        d_Label23.Location = new Point(4, 49);
+        d_Label23.Margin = new Padding(3, 0, 3, 1);
+        d_Label23.Name = "d_Label23";
+        d_Label23.Size = new Size(75, 16);
+        d_Label23.TabIndex = 4;
+        d_Label23.Text = "Sent Rate:";
+        d_Label23.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // d_Label22
+        // 
+        d_Label22.Location = new Point(4, 34);
+        d_Label22.Margin = new Padding(3, 0, 3, 1);
+        d_Label22.Name = "d_Label22";
+        d_Label22.Size = new Size(75, 16);
+        d_Label22.TabIndex = 2;
+        d_Label22.Text = "Sent Delta:";
+        d_Label22.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // d_Label21
+        // 
+        d_Label21.Location = new Point(4, 19);
+        d_Label21.Margin = new Padding(3, 0, 3, 1);
+        d_Label21.Name = "d_Label21";
+        d_Label21.Size = new Size(75, 16);
+        d_Label21.TabIndex = 0;
+        d_Label21.Text = "Total Sent:";
+        d_Label21.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // d_GroupBox1
+        // 
+        d_GroupBox1.Controls.Add(d_lblDiskWriteRate);
+        d_GroupBox1.Controls.Add(d_lblDiskWriteDelta);
+        d_GroupBox1.Controls.Add(d_lblDiskWrite);
+        d_GroupBox1.Controls.Add(d_Label15);
+        d_GroupBox1.Controls.Add(d_Label14);
+        d_GroupBox1.Controls.Add(d_Label13);
+        d_GroupBox1.Controls.Add(d_lblDiskReadRate);
+        d_GroupBox1.Controls.Add(d_lblDiskReadDelta);
+        d_GroupBox1.Controls.Add(d_lblDiskRead);
+        d_GroupBox1.Controls.Add(d_lblDivider1);
+        d_GroupBox1.Controls.Add(d_Label12);
+        d_GroupBox1.Controls.Add(d_Label11);
+        d_GroupBox1.Controls.Add(d_Label10);
+        d_GroupBox1.Dock = DockStyle.Fill;
+        d_GroupBox1.Location = new Point(3, 3);
+        d_GroupBox1.Name = "d_GroupBox1";
+        d_GroupBox1.Size = new Size(224, 124);
+        d_GroupBox1.TabIndex = 0;
+        d_GroupBox1.TabStop = false;
+        d_GroupBox1.Text = "Disk Usage Statistics";
+        // 
+        // d_lblDiskWriteRate
+        // 
+        d_lblDiskWriteRate.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        d_lblDiskWriteRate.Location = new Point(80, 103);
+        d_lblDiskWriteRate.Margin = new Padding(3, 0, 3, 1);
+        d_lblDiskWriteRate.Name = "d_lblDiskWriteRate";
+        d_lblDiskWriteRate.Size = new Size(141, 16);
+        d_lblDiskWriteRate.TabIndex = 12;
+        d_lblDiskWriteRate.Text = "0Kb.";
+        d_lblDiskWriteRate.TextAlign = ContentAlignment.MiddleRight;
+        // 
+        // d_lblDiskWriteDelta
+        // 
+        d_lblDiskWriteDelta.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        d_lblDiskWriteDelta.Location = new Point(80, 88);
+        d_lblDiskWriteDelta.Margin = new Padding(3, 0, 3, 1);
+        d_lblDiskWriteDelta.Name = "d_lblDiskWriteDelta";
+        d_lblDiskWriteDelta.Size = new Size(141, 16);
+        d_lblDiskWriteDelta.TabIndex = 10;
+        d_lblDiskWriteDelta.Text = "0Kb.";
+        d_lblDiskWriteDelta.TextAlign = ContentAlignment.MiddleRight;
+        // 
+        // d_lblDiskWrite
+        // 
+        d_lblDiskWrite.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        d_lblDiskWrite.Location = new Point(80, 73);
+        d_lblDiskWrite.Margin = new Padding(3, 0, 3, 1);
+        d_lblDiskWrite.Name = "d_lblDiskWrite";
+        d_lblDiskWrite.Size = new Size(141, 16);
+        d_lblDiskWrite.TabIndex = 8;
+        d_lblDiskWrite.Text = "0Kb.";
+        d_lblDiskWrite.TextAlign = ContentAlignment.MiddleRight;
+        // 
+        // d_Label15
+        // 
+        d_Label15.Location = new Point(4, 103);
+        d_Label15.Margin = new Padding(3, 0, 3, 1);
+        d_Label15.Name = "d_Label15";
+        d_Label15.Size = new Size(75, 16);
+        d_Label15.TabIndex = 11;
+        d_Label15.Text = "Write Rate:";
+        d_Label15.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // d_Label14
+        // 
+        d_Label14.Location = new Point(4, 88);
+        d_Label14.Margin = new Padding(3, 0, 3, 1);
+        d_Label14.Name = "d_Label14";
+        d_Label14.Size = new Size(75, 16);
+        d_Label14.TabIndex = 9;
+        d_Label14.Text = "Write Delta:";
+        d_Label14.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // d_Label13
+        // 
+        d_Label13.Location = new Point(4, 73);
+        d_Label13.Margin = new Padding(3, 0, 3, 1);
+        d_Label13.Name = "d_Label13";
+        d_Label13.Size = new Size(75, 16);
+        d_Label13.TabIndex = 7;
+        d_Label13.Text = "Total Write:";
+        d_Label13.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // d_lblDiskReadRate
+        // 
+        d_lblDiskReadRate.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        d_lblDiskReadRate.Location = new Point(80, 49);
+        d_lblDiskReadRate.Margin = new Padding(3, 0, 3, 1);
+        d_lblDiskReadRate.Name = "d_lblDiskReadRate";
+        d_lblDiskReadRate.Size = new Size(141, 16);
+        d_lblDiskReadRate.TabIndex = 5;
+        d_lblDiskReadRate.Text = "0Kb.";
+        d_lblDiskReadRate.TextAlign = ContentAlignment.MiddleRight;
+        // 
+        // d_lblDiskReadDelta
+        // 
+        d_lblDiskReadDelta.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        d_lblDiskReadDelta.Location = new Point(80, 34);
+        d_lblDiskReadDelta.Margin = new Padding(3, 0, 3, 1);
+        d_lblDiskReadDelta.Name = "d_lblDiskReadDelta";
+        d_lblDiskReadDelta.Size = new Size(141, 16);
+        d_lblDiskReadDelta.TabIndex = 3;
+        d_lblDiskReadDelta.Text = "0Kb.";
+        d_lblDiskReadDelta.TextAlign = ContentAlignment.MiddleRight;
+        // 
+        // d_lblDiskRead
+        // 
+        d_lblDiskRead.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        d_lblDiskRead.Location = new Point(80, 19);
+        d_lblDiskRead.Margin = new Padding(3, 0, 3, 1);
+        d_lblDiskRead.Name = "d_lblDiskRead";
+        d_lblDiskRead.Size = new Size(141, 16);
+        d_lblDiskRead.TabIndex = 1;
+        d_lblDiskRead.Text = "0Kb.";
+        d_lblDiskRead.TextAlign = ContentAlignment.MiddleRight;
+        // 
+        // d_lblDivider1
+        // 
+        d_lblDivider1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        d_lblDivider1.BackColor = SystemColors.ControlDark;
+        d_lblDivider1.Location = new Point(6, 69);
+        d_lblDivider1.Margin = new Padding(3, 0, 3, 1);
+        d_lblDivider1.Name = "d_lblDivider1";
+        d_lblDivider1.Size = new Size(212, 1);
+        d_lblDivider1.TabIndex = 6;
+        d_lblDivider1.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // d_Label12
+        // 
+        d_Label12.Location = new Point(4, 49);
+        d_Label12.Margin = new Padding(3, 0, 3, 1);
+        d_Label12.Name = "d_Label12";
+        d_Label12.Size = new Size(75, 16);
+        d_Label12.TabIndex = 4;
+        d_Label12.Text = "Read Rate:";
+        d_Label12.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // d_Label11
+        // 
+        d_Label11.Location = new Point(4, 34);
+        d_Label11.Margin = new Padding(3, 0, 3, 1);
+        d_Label11.Name = "d_Label11";
+        d_Label11.Size = new Size(75, 16);
+        d_Label11.TabIndex = 2;
+        d_Label11.Text = "Read Delta:";
+        d_Label11.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // d_Label10
+        // 
+        d_Label10.Location = new Point(4, 19);
+        d_Label10.Margin = new Padding(3, 0, 3, 1);
+        d_Label10.Name = "d_Label10";
+        d_Label10.Size = new Size(75, 16);
+        d_Label10.TabIndex = 0;
+        d_Label10.Text = "Total Read:";
+        d_Label10.TextAlign = ContentAlignment.MiddleLeft;
+        // 
         // tpModules
         // 
+        tpModules.Controls.Add(lvModules);
         tpModules.Location = new Point(4, 24);
         tpModules.Name = "tpModules";
         tpModules.Size = new Size(463, 436);
@@ -1992,8 +2553,77 @@ partial class frmProcess_Details {
         tpModules.Text = "Modules";
         tpModules.UseVisualStyleBackColor = true;
         // 
+        // lvModules
+        // 
+        lvModules.BorderStyle = BorderStyle.None;
+        lvModules.Columns.AddRange(new ColumnHeader[] { colModules_Name, colModules_Version, colModules_Type, colModules_Address, colModules_Memory, colModules_Description, colModules_Path, colModules_Company, colModules_Language });
+        lvModules.Dock = DockStyle.Fill;
+        lvModules.LabelWrap = false;
+        lvModules.Location = new Point(0, 0);
+        lvModules.MultiSelect = false;
+        lvModules.Name = "lvModules";
+        lvModules.Size = new Size(463, 436);
+        lvModules.TabIndex = 0;
+        lvModules.UseCompatibleStateImageBehavior = false;
+        lvModules.View = View.Details;
+        // 
+        // colModules_Name
+        // 
+        colModules_Name.Tag = "Name";
+        colModules_Name.Text = "Module Name";
+        colModules_Name.Width = 90;
+        // 
+        // colModules_Version
+        // 
+        colModules_Version.Tag = "Version";
+        colModules_Version.Text = "Version";
+        colModules_Version.Width = 70;
+        // 
+        // colModules_Type
+        // 
+        colModules_Type.Tag = "Type";
+        colModules_Type.Text = "Type";
+        // 
+        // colModules_Address
+        // 
+        colModules_Address.Tag = "Address";
+        colModules_Address.Text = "Base Address";
+        colModules_Address.TextAlign = HorizontalAlignment.Right;
+        colModules_Address.Width = 90;
+        // 
+        // colModules_Memory
+        // 
+        colModules_Memory.Tag = "Memory";
+        colModules_Memory.Text = "Memory";
+        colModules_Memory.TextAlign = HorizontalAlignment.Right;
+        colModules_Memory.Width = 70;
+        // 
+        // colModules_Description
+        // 
+        colModules_Description.Tag = "Description";
+        colModules_Description.Text = "Description";
+        colModules_Description.Width = 80;
+        // 
+        // colModules_Path
+        // 
+        colModules_Path.Tag = "Path";
+        colModules_Path.Text = "Path";
+        // 
+        // colModules_Company
+        // 
+        colModules_Company.Tag = "Company";
+        colModules_Company.Text = "Company";
+        colModules_Company.Width = 70;
+        // 
+        // colModules_Language
+        // 
+        colModules_Language.Tag = "Language";
+        colModules_Language.Text = "Language";
+        colModules_Language.Width = 80;
+        // 
         // tpThreads
         // 
+        tpThreads.Controls.Add(lvThreads);
         tpThreads.Location = new Point(4, 24);
         tpThreads.Name = "tpThreads";
         tpThreads.Size = new Size(463, 436);
@@ -2001,14 +2631,91 @@ partial class frmProcess_Details {
         tpThreads.Text = "Threads";
         tpThreads.UseVisualStyleBackColor = true;
         // 
+        // lvThreads
+        // 
+        lvThreads.BorderStyle = BorderStyle.None;
+        lvThreads.Columns.AddRange(new ColumnHeader[] { colThreads_ID, colThreads_Priority, colThreads_State, colThreads_Reason, colThreads_StartTime, colThreads_RunTime });
+        lvThreads.Dock = DockStyle.Fill;
+        lvThreads.LabelWrap = false;
+        lvThreads.Location = new Point(0, 0);
+        lvThreads.MultiSelect = false;
+        lvThreads.Name = "lvThreads";
+        lvThreads.Size = new Size(463, 436);
+        lvThreads.TabIndex = 1;
+        lvThreads.UseCompatibleStateImageBehavior = false;
+        lvThreads.View = View.Details;
+        // 
+        // colThreads_ID
+        // 
+        colThreads_ID.Tag = "ID";
+        colThreads_ID.Text = "TID";
+        colThreads_ID.Width = 50;
+        // 
+        // colThreads_Priority
+        // 
+        colThreads_Priority.Tag = "Priority";
+        colThreads_Priority.Text = "Priority";
+        colThreads_Priority.Width = 70;
+        // 
+        // colThreads_State
+        // 
+        colThreads_State.Tag = "State";
+        colThreads_State.Text = "State";
+        colThreads_State.Width = 70;
+        // 
+        // colThreads_Reason
+        // 
+        colThreads_Reason.Tag = "WaitReason";
+        colThreads_Reason.Text = "Wait Reason";
+        colThreads_Reason.Width = 90;
+        // 
+        // colThreads_StartTime
+        // 
+        colThreads_StartTime.Tag = "StartTime";
+        colThreads_StartTime.Text = "Start Time";
+        colThreads_StartTime.Width = 80;
+        // 
+        // colThreads_RunTime
+        // 
+        colThreads_RunTime.Tag = "RunTime";
+        colThreads_RunTime.Text = "Run Time";
+        colThreads_RunTime.Width = 80;
+        // 
         // tpLocked
         // 
+        tpLocked.Controls.Add(lvLockedFiles);
         tpLocked.Location = new Point(4, 24);
         tpLocked.Name = "tpLocked";
         tpLocked.Size = new Size(463, 436);
         tpLocked.TabIndex = 6;
         tpLocked.Text = "Locked Files";
         tpLocked.UseVisualStyleBackColor = true;
+        // 
+        // lvLockedFiles
+        // 
+        lvLockedFiles.BorderStyle = BorderStyle.None;
+        lvLockedFiles.Columns.AddRange(new ColumnHeader[] { colLockedFiles_Filename, colLockedFiles_Path });
+        lvLockedFiles.Dock = DockStyle.Fill;
+        lvLockedFiles.LabelWrap = false;
+        lvLockedFiles.Location = new Point(0, 0);
+        lvLockedFiles.MultiSelect = false;
+        lvLockedFiles.Name = "lvLockedFiles";
+        lvLockedFiles.Size = new Size(463, 436);
+        lvLockedFiles.TabIndex = 2;
+        lvLockedFiles.UseCompatibleStateImageBehavior = false;
+        lvLockedFiles.View = View.Details;
+        // 
+        // colLockedFiles_Filename
+        // 
+        colLockedFiles_Filename.Tag = "Filename";
+        colLockedFiles_Filename.Text = "Filename";
+        colLockedFiles_Filename.Width = 90;
+        // 
+        // colLockedFiles_Path
+        // 
+        colLockedFiles_Path.Tag = "Path";
+        colLockedFiles_Path.Text = "Full Path";
+        colLockedFiles_Path.Width = 350;
         // 
         // btnOK
         // 
@@ -2117,6 +2824,14 @@ partial class frmProcess_Details {
         i_GroupBox3.ResumeLayout(false);
         i_GroupBox2.ResumeLayout(false);
         i_GroupBox1.ResumeLayout(false);
+        tpDiskNet.ResumeLayout(false);
+        d_TableLayout1.ResumeLayout(false);
+        d_TableLayout2.ResumeLayout(false);
+        d_GroupBox2.ResumeLayout(false);
+        d_GroupBox1.ResumeLayout(false);
+        tpModules.ResumeLayout(false);
+        tpThreads.ResumeLayout(false);
+        tpLocked.ResumeLayout(false);
         ((System.ComponentModel.ISupportInitialize)tbSpeed).EndInit();
         ResumeLayout(false);
     }
@@ -2235,9 +2950,9 @@ partial class frmProcess_Details {
     private Label i_Label04;
     private Label i_Label03;
     private Label i_Label02;
-    private Controls.sMkPerfChart sMkPerfChart3;
-    private Controls.sMkPerfChart sMkPerfChart2;
-    private Controls.sMkPerfChart sMkPerfChart1;
+    private Controls.sMkPerfChart i_ChartOthers;
+    private Controls.sMkPerfChart i_ChartWrites;
+    private Controls.sMkPerfChart i_ChartReads;
     private Controls.sMkPerfMeter i_PerfReads;
     private Controls.sMkPerfMeter i_PerfWrites;
     private Controls.sMkPerfMeter i_PerfOthers;
@@ -2269,4 +2984,62 @@ partial class frmProcess_Details {
     private Label i_Label23;
     private Label i_Label22;
     private Label i_Label21;
+    private TableLayoutPanel d_TableLayout1;
+    private Controls.sMkPerfChart d_ChartNet;
+    private Controls.sMkPerfChart d_ChartDisk;
+    private Label d_Label04;
+    private Label d_Label03;
+    private Controls.sMkPerfMeter d_PerfDisk;
+    private Controls.sMkPerfMeter d_PerfNet;
+    private Label d_Label02;
+    private Label d_Label01;
+    private TableLayoutPanel d_TableLayout2;
+    private GroupBox d_GroupBox2;
+    private GroupBox d_GroupBox1;
+    private Label d_lblDiskReadRate;
+    private Label d_lblDiskReadDelta;
+    private Label d_lblDiskRead;
+    private Label d_lblDivider1;
+    private Label d_Label12;
+    private Label d_Label11;
+    private Label d_Label10;
+    private Label d_lblNetRcvdRate;
+    private Label d_lblNetRcvdDelta;
+    private Label d_lblNetRcvd;
+    private Label d_Label26;
+    private Label d_Label25;
+    private Label d_Label24;
+    private Label d_lblNetSendRate;
+    private Label d_lblNetSendDelta;
+    private Label d_lblNetSend;
+    private Label d_lblDivider2;
+    private Label d_Label23;
+    private Label d_Label22;
+    private Label d_Label21;
+    private Label d_lblDiskWriteRate;
+    private Label d_lblDiskWriteDelta;
+    private Label d_lblDiskWrite;
+    private Label d_Label15;
+    private Label d_Label14;
+    private Label d_Label13;
+    private ListView lvModules;
+    private ColumnHeader colModules_Name;
+    private ColumnHeader colModules_Version;
+    private ColumnHeader colModules_Type;
+    private ColumnHeader colModules_Address;
+    private ColumnHeader colModules_Memory;
+    private ColumnHeader colModules_Description;
+    private ColumnHeader colModules_Path;
+    private ColumnHeader colModules_Company;
+    private ColumnHeader colModules_Language;
+    private ListView lvThreads;
+    private ColumnHeader colThreads_ID;
+    private ColumnHeader colThreads_Priority;
+    private ColumnHeader colThreads_State;
+    private ColumnHeader colThreads_Reason;
+    private ColumnHeader colThreads_StartTime;
+    private ColumnHeader colThreads_RunTime;
+    private ListView lvLockedFiles;
+    private ColumnHeader colLockedFiles_Filename;
+    private ColumnHeader colLockedFiles_Path;
 }

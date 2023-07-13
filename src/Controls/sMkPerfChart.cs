@@ -162,6 +162,9 @@ public class sMkPerfChart : UserControl {
     public void AddValue(Int128 idx1Value, Int128? idx2Value = null, Int128? idx3Value = null, Int128? idx4Value = null, Int128? idx5Value = null) {
         AddValue((double)idx1Value, (double?)idx2Value, (double?)idx3Value, (double?)idx4Value, (double?)idx5Value);
     }
+    public void AddValue(int idx1Value, int? idx2Value = null, int? idx3Value = null, int? idx4Value = null, int? idx5Value = null) {
+        AddValue((double)idx1Value, idx2Value, idx3Value, idx4Value, idx5Value);
+    }
 
     public void AddValue(double idx1Value, double? idx2Value = null, double? idx3Value = null, double? idx4Value = null, double? idx5Value = null) {
         var vals = new List<double?>() { 0, idx1Value, idx2Value, idx3Value, idx4Value, idx5Value };
@@ -199,6 +202,9 @@ public class sMkPerfChart : UserControl {
         if (!string.IsNullOrEmpty(idx3Name)) { _Indexes.Add(3, idx3Name); _Values.Add(3, new(MAX_VALUE_COUNT)); _AvgValue.Add(3, 0); _MaxValue.Add(3, 0); }
         if (!string.IsNullOrEmpty(idx4Name)) { _Indexes.Add(4, idx4Name); _Values.Add(4, new(MAX_VALUE_COUNT)); _AvgValue.Add(4, 0); _MaxValue.Add(4, 0); }
         if (!string.IsNullOrEmpty(idx5Name)) { _Indexes.Add(5, idx5Name); _Values.Add(5, new(MAX_VALUE_COUNT)); _AvgValue.Add(5, 0); _MaxValue.Add(5, 0); }
+        for (short i = 1; i <= _Indexes.Count; i++) {
+            if (_Indexes[i].Trim() != "" && !_Indexes[i].Trim().EndsWith(":")) { _Indexes[i] = _Indexes[i] + ": "; }
+        }
     }
     public void CopySettings(sMkPerfChart OtherChart, bool IncludeEverything = false) {
         BorderStyle = OtherChart.BorderStyle;
@@ -348,7 +354,7 @@ public class sMkPerfChart : UserControl {
         for (short i = 1; i <= 5; i++) {
             if (!_Values.ContainsKey(i)) continue;
             using Brush sb = new SolidBrush(_PenGraphs[i].Color);
-            g.DrawString(_Indexes[i] + ": " + Math.Round(_LastValue[i], 1) + ((ScaleMode == ScaleModes.Absolute) ? "%" : ValuesSuffix), Font, sb, posX, posY);
+            g.DrawString(_Indexes[i] + Math.Round(_LastValue[i], 1) + ((ScaleMode == ScaleModes.Absolute) ? "%" : ValuesSuffix), Font, sb, posX, posY);
             posY += 13;
         }
     }
