@@ -12,7 +12,7 @@ public partial class frmMain : Form {
     private readonly List<Task> _MonitorTasks = new();
     private readonly System.Windows.Forms.Timer StatusTimer = new();
     private readonly Stopwatch _StopWatch1 = new(), _StopWatch2 = new();
-    private System.Timers.Timer _MonitorTriggerTimer;
+    private System.Timers.Timer _MonitorTriggerTimer, _TrayUpdateTimer;
     private Size? _prevSize, _prevMinSize, _fullScreenSize;
     private Point? _prevLocation, _fullScreenLocation;
     private BackgroundWorker _InitWorker;
@@ -51,6 +51,9 @@ public partial class frmMain : Form {
         // Initialize any remaining object
         _MonitorTriggerTimer = new() { Enabled = false };
         _MonitorTriggerTimer.Elapsed += MonitorTriggerExecutor;
+        _TrayUpdateTimer = new() { Enabled = false, Interval = 1000 };
+        _TrayUpdateTimer.Elapsed += TrayUpdaterExecutor;
+
         _InitWorker = new BackgroundWorker();
         _InitWorker.DoWork += OnLoadParallelInit;
         // Load Settings and then Fork
@@ -59,6 +62,7 @@ public partial class frmMain : Form {
         OnLoadCreateTabs();
         OnLoadAddHandlers();
         Settings_Apply();
+        FullScreen = Settings.inFullScreen;
         // At this point, we can follow with Parallel Worker;
         _InitWorker.RunWorkerAsync();
         Shared.LoadComplete = true;
@@ -181,6 +185,7 @@ public partial class frmMain : Form {
             Extensions.StartMeasure(_StopWatch2);
             // If monitor is running we must stop it right now...
             if (MonitorRunning) MonitorToggle();
+            if (_TrayUpdateTimer.Enabled) { _TrayUpdateTimer.Stop(); }
             if (ETW.Running) ETW.Stop();
             // Save Window Position & Tab...
             if (Settings.RememberPositions) {
@@ -195,6 +200,8 @@ public partial class frmMain : Form {
             // Save Settings and Columns Information...
             Settings.SaveAll();
             foreach (ITaskManagerTab? t in Tabs.Tab.Values) { t?.SaveSettings(); }
+            // Hide Tray Icons
+            if (niTray.Visible) niTray.Visible = false;
             Extensions.StopMeasure(_StopWatch2, "Close Time");
         }
     }
@@ -207,6 +214,13 @@ public partial class frmMain : Form {
     }
     private void evStatusBarStateDoubleClick(object? sender, EventArgs e) {
         MonitorRunning = !MonitorRunning;
+    }
+    private void evTrayMouseClick(object sender, MouseEventArgs e) {
+        if (Settings.DblClickToRestore) return;
+        if (e.Button == MouseButtons.Left && e.Clicks == 1) Feature_ActivateMainWindow();
+    }
+    private void evTrayMouseDoubleClick(object sender, MouseEventArgs e) {
+        if (e.Button == MouseButtons.Left && e.Clicks == 2) Feature_ActivateMainWindow();
     }
     private void evtabPerf_MouseDoubleClick(object? sender, MouseEventArgs e) {
         if (e.Button == MouseButtons.Left && e.Clicks > 1) { FullScreen = !FullScreen; }
@@ -221,6 +235,8 @@ public partial class frmMain : Form {
     internal bool FullScreen {
         get { return Settings.inFullScreen; }
         set {
+            if (value && FullScreen) return;
+            if (!value && !FullScreen) return;
             if (value) { tc.SelectTab("tpPerformance"); }
             Settings.inFullScreen = value;
             SuspendLayout();
@@ -251,9 +267,9 @@ public partial class frmMain : Form {
                 }
                 TopMost = Settings.AlwaysOnTop;
                 if (WindowState == FormWindowState.Normal) {
-                    Size = (Size)_prevSize!;
-                    MinimumSize = (Size)_prevMinSize!;
-                    Location = (Point)_prevLocation!;
+                    if (_prevSize != null) Size = (Size)_prevSize;
+                    if (_prevMinSize != null) MinimumSize = (Size)_prevMinSize;
+                    if (_prevLocation != null) Location = (Point)_prevLocation;
                 }
             }
             ResumeLayout();
@@ -270,6 +286,9 @@ public partial class frmMain : Form {
         ssServices.Visible = Settings.ServicesInStatus;
         // Cascade to any loaded tab
         foreach (ITaskManagerTab? t in Tabs.Tab.Values) { t?.ApplySettings(); }
+        // Tray is always visible, all we do is change the icon and start a timer to update it if needed.
+        _TrayUpdateTimer.Enabled = Settings.ShowCPUOnTray;
+        niTray.Icon = Settings.ShowCPUOnTray ? default : Icon;
     }
 
     internal bool MonitorBusy;
@@ -343,6 +362,10 @@ public partial class frmMain : Form {
             ssBtnState.Text = "Paused";
             ssBtnState.Image = Resources.Resources.State_Stop;
         }
+    }
+    private void TrayUpdaterExecutor(object? sender, ElapsedEventArgs e) {
+        if (!Settings.ShowCPUOnTray) { _TrayUpdateTimer.Stop(); niTray.Icon = Icon; return; }
+        // TODO: We have to get CPU usage independently from the main updater, and draw a graph.
     }
 
     private bool TimmingVisible {

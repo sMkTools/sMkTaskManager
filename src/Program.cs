@@ -1,3 +1,5 @@
+using sMkTaskManager.Forms;
+
 namespace sMkTaskManager;
 
 [System.Runtime.Versioning.SupportedOSPlatform("windows")]

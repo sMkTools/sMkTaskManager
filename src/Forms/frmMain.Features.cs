@@ -58,5 +58,31 @@ partial class frmMain {
         }
 
     }
+    internal void Feature_NewTask() {
+        API.RunFileDlg(Handle, IntPtr.Zero, null, null, null, 0);
+    }
+    internal void Feature_NewTaskAsUser() { }
+    internal void Feature_MonitorPowerOff() {
+        // const int SC_MONITORPOWER = 0xF170;
+        // const int WM_SYSCOMMAND = 0x112;
+        API.SendMessage(Handle, 0x112, 0xF170, 2);
+
+    }
+    internal void Feature_MonitorScreenSaver() {
+        // const uint SC_SCREENSAVE = 0xF140;
+        // const int WM_SYSCOMMAND = 0x112;
+        API.SendMessage(Handle, 0x112, 0xF140, IntPtr.Zero);
+    }
+    internal void Feature_Computer(string action = "") {
+        switch (action.ToUpper()) {
+            case "LOCK": API.LockWorkStation(); break;
+            case "LOG OFF": API.ExitWindowsEx(API.ExitWindows.LogOff, 0); break;
+            case "SLEEP": Application.SetSuspendState(PowerState.Suspend, false, false); break;
+            case "HIBERNATE": Application.SetSuspendState(PowerState.Hibernate, false, false); break;
+            case "RESTART": API.ExitWindowsEx(API.ExitWindows.Reboot, 0); break;
+            case "SHUTDOWN": API.ExitWindowsEx(API.ExitWindows.ShutDown, 0); break;
+            case "FORCE SHUTDOWN": API.ExitWindowsEx(API.ExitWindows.ShutDown | API.ExitWindows.Force, 0); break;
+        }
+    }
 
 }

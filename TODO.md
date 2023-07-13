@@ -18,6 +18,7 @@ These features have to be implemented because they are not part of old VB.net pr
 * WSL Instances lists and monitoring.
 
 ## Known bugs
+
 * DONE: Idle process is not showing when not showing Processes for all users, it should always display.
 * DONE: Process PageFault is freaking out, most likely some signature // It was a STRUCT issue with the value.
 * ListView Sorted values are not re-sorted, check with cpu usage, shall we call sort again after all refreshers?.
@@ -25,13 +26,11 @@ These features have to be implemented because they are not part of old VB.net pr
 * Highlighted items are not being cleared properly when property doesnt change.
 
 ## Pending migration list
-* File / New Tasks (both)
-* File / Computer Features
-* File / Monitor Features
+
+* File / New Tasks (Run As)
 * Test out User Connnect/logoff/disconnect
 * Summary View for Processes (not sure i want it anymore)
 * Set Default Task Manager
-* System Tray 
-* Process Details 
+* System Tray CPU Usage
 * Process Locked Files 
 * Shrink Timer (is it still needed?)

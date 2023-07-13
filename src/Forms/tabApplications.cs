@@ -277,6 +277,7 @@ internal class tabApplications : UserControl, ITaskManagerTab {
     private void InitializeExtras() {
         il.Images.Clear();
         il.Images.Add(Resources.Resources.Process_Black);
+        cmsSwitchTo.SwitchToBold();
         // Add event handlers
         cms.Opening += OnContextOpening;
         cms.ItemClicked += OnContextItemClicked;

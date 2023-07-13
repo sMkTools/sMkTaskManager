@@ -295,6 +295,7 @@ internal class tabServices : UserControl, ITaskManagerTab {
         il.Images.Add(Resources.Resources.Service_Disabled);
         lv.ContentType = typeof(TaskManagerService);
         lv.DataSource = Services.DataExporter;
+        cmsProperties.SwitchToBold();
         // Add event handlers
         cms.Opening += OnContextOpening;
         cms.ItemClicked += OnContextItemClicked;

@@ -1,10 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.Versioning;
-using System.Windows.Forms.VisualStyles;
 using sMkTaskManager.Classes;
 using sMkTaskManager.Controls;
-
 namespace sMkTaskManager.Forms;
 
 [DesignerCategory("Component"), SupportedOSPlatform("windows")]
@@ -22,9 +20,16 @@ public partial class frmProcess_Details : Form {
         InitializeComponent();
         InitializeVisibleValues();
         Extensions.CascadingDoubleBuffer(this);
+        p_lblWorkingSet.SwitchToBold();
+        p_lblPageFaults.SwitchToBold();
+        p_lblPrivateBytes.SwitchToBold();
+        p_lblUser.SwitchToBold();
+        p_lblCpuUsage.SwitchToBold();
+        p_lblGDI.SwitchToBold();
+        p_lblVirtualMemory.SwitchToBold();
     }
 
-    public void InitializeVisibleValues() {
+    private void InitializeVisibleValues() {
         // Set all the values that we use so we get notification of them.
         VisibleValues.Add("Priority");
         VisibleValues.Add("CreationTime");
@@ -69,11 +74,10 @@ public partial class frmProcess_Details : Form {
         VisibleValues.Add("NetRcvdRate");
     }
     private void OnLoad(object sender, EventArgs e) {
-        PID = 40156;
-
+        //PID = 40156;
+        //Settings.LoadPerformance();
         UpdateTimer.Elapsed += OnUpdateTimerElapsed;
         Settings.LoadProcDetails();
-        Settings.LoadPerformance();
         try {
             if (Settings.RememberPositions) {
                 Width = Math.Max(MinimumSize.Width, Settings.ProcessDetails.Size.Width);
@@ -184,22 +188,6 @@ public partial class frmProcess_Details : Form {
         } else {
             lblSpeedValue.Text = "Halt";
             UpdateTimer.Stop();
-        }
-    }
-
-    public int PID {
-        get => (p1 == null) ? 0 : p1.Id;
-        set {
-            if (value != PID && value > Shared.bpi) {
-                try {
-                    p1 = Process.GetProcessById(value);
-                    p2 = new TaskManagerProcess(value) { IgnoreBackColor = true };
-                    p2.Load(new(), VisibleValues, true);
-                    p2.PropertyChanged += OnProcessPropertyChanged;
-                } catch { }
-                LoadProcessDetails();
-            }
-            Tag = value;
         }
     }
 
@@ -492,7 +480,6 @@ public partial class frmProcess_Details : Form {
         }
 
     }
-
     private void CheckThreadData(in ColumnHeader c, ref ListViewItem itm, in ProcessThread t) {
         if (c.Tag == null) return;
         string Ident = c.Tag.ToString()!;
@@ -532,6 +519,22 @@ public partial class frmProcess_Details : Form {
             API.BINARY_TYPE.SCS_OS216_BINARY => (shortFormat) ? "16-bit OS/2 Application" : "16-bit OS/2 Based Application.",
             _ => "Unknown",
         };
+    }
+
+    public int PID {
+        get => (p1 == null) ? 0 : p1.Id;
+        set {
+            if (value != PID && value > Shared.bpi) {
+                try {
+                    p1 = Process.GetProcessById(value);
+                    p2 = new TaskManagerProcess(value) { IgnoreBackColor = true };
+                    p2.Load(new(), VisibleValues, true);
+                    p2.PropertyChanged += OnProcessPropertyChanged;
+                } catch { }
+                LoadProcessDetails();
+            }
+            Tag = value;
+        }
     }
 
 }

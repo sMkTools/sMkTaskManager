@@ -734,14 +734,9 @@ internal class tabNetworking : UserControl, ITaskManagerTab {
                 } catch (Exception ex) { Shared.DebugTrap(ex, 048); }
                 Nics.Add(thisNIC);
             }
-            if (pChart1.Tag != null && pChart1.Tag.Equals(thisNIC.Ident)) {
-                pChart1.AddValue(thisNIC.RcvdRateValue / 1024d, thisNIC.SentRateValue / 1024d);
-                Debug.WriteLine($"{thisNIC.RcvdRateValue / 1024d}, {thisNIC.SentRateValue / 1024d}");
-            }
-            if (pChart2.Tag != null && pChart2.Tag.Equals(thisNIC.Ident))
-                pChart2.AddValue(thisNIC.RcvdRateValue / 1024d, thisNIC.SentRateValue / 1024d);
-            if (pChart3.Tag != null && pChart3.Tag.Equals(thisNIC.Ident))
-                pChart3.AddValue(thisNIC.RcvdRateValue / 1024d, thisNIC.SentRateValue / 1024d);
+            if (pChart1.Tag != null && pChart1.Tag.Equals(thisNIC.Ident)) pChart1.AddValue(thisNIC.RcvdRateValue / 1024d, thisNIC.SentRateValue / 1024d);
+            if (pChart2.Tag != null && pChart2.Tag.Equals(thisNIC.Ident)) pChart2.AddValue(thisNIC.RcvdRateValue / 1024d, thisNIC.SentRateValue / 1024d);
+            if (pChart3.Tag != null && pChart3.Tag.Equals(thisNIC.Ident)) pChart3.AddValue(thisNIC.RcvdRateValue / 1024d, thisNIC.SentRateValue / 1024d);
         }
         // Clean out old Items
         LastRun.ExceptWith(HashNics);

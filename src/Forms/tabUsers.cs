@@ -211,6 +211,7 @@ internal class tabUsers : UserControl, ITaskManagerTab {
         lv.ContentType = typeof(TaskManagerUser);
         lv.DataSource = Users.DataExporter;
         lv.SpaceFirstValue = true;
+        cmsProperties.SwitchToBold();
         // Add event handlers
         KeyPress += OnKeyPress;
         VisibleChanged += OnVisibleChanged;

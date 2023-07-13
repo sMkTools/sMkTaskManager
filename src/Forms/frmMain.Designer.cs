@@ -20,10 +20,11 @@ partial class frmMain {
         ssCpuLoad = new ToolStripStatusLabel();
         ssBtnState = new ToolStripSplitButton();
         ssBusyTime = new ToolStripStatusLabel();
-        timer1 = new System.Windows.Forms.Timer(components);
         tc = new TabControl();
         tpGeneric = new TabPage();
         timmingStrip = new StatusStrip();
+        niTray = new NotifyIcon(components);
+        cmsTray = new ContextMenuStrip(components);
         mnu.SuspendLayout();
         ss.SuspendLayout();
         tc.SuspendLayout();
@@ -161,15 +162,26 @@ partial class frmMain {
         timmingStrip.GripMargin = new Padding(0);
         timmingStrip.Location = new Point(0, 515);
         timmingStrip.Name = "timmingStrip";
+        timmingStrip.Padding = new Padding(10, 0, 10, 0);
         timmingStrip.ShowItemToolTips = true;
         timmingStrip.Size = new Size(584, 22);
         timmingStrip.SizingGrip = false;
         timmingStrip.TabIndex = 2;
         timmingStrip.Text = "statusStrip1";
         timmingStrip.Visible = false;
-        timmingStrip.GripStyle = ToolStripGripStyle.Hidden;
-        timmingStrip.Stretch = true;
-        timmingStrip.Padding = new Padding(10,0,10,0);
+        // 
+        // niTray
+        // 
+        niTray.ContextMenuStrip = cmsTray;
+        niTray.Text = "sMk Task Manager";
+        niTray.Visible = true;
+        niTray.MouseClick += evTrayMouseClick;
+        niTray.MouseDoubleClick += evTrayMouseDoubleClick;
+        // 
+        // cmsTray
+        // 
+        cmsTray.Name = "cmsTray";
+        cmsTray.Size = new Size(61, 4);
         // 
         // frmMain
         // 
@@ -210,8 +222,9 @@ partial class frmMain {
     private ToolStripStatusLabel ssCpuLoad;
     private ToolStripSplitButton ssBtnState;
     private ToolStripStatusLabel ssBusyTime;
-    private System.Windows.Forms.Timer timer1;
     private TabControl tc;
     private TabPage tpGeneric;
     private StatusStrip timmingStrip;
+    private NotifyIcon niTray;
+    private ContextMenuStrip cmsTray;
 }

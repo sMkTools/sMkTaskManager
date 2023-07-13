@@ -1100,7 +1100,6 @@ partial class frmProcess_Details {
         // p_lblWorkingSet
         // 
         p_lblWorkingSet.Dock = DockStyle.Fill;
-        p_lblWorkingSet.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
         p_lblWorkingSet.Location = new Point(90, 0);
         p_lblWorkingSet.Name = "p_lblWorkingSet";
         p_lblWorkingSet.Padding = new Padding(0, 0, 3, 0);
@@ -1134,7 +1133,6 @@ partial class frmProcess_Details {
         // p_lblPageFaults
         // 
         p_lblPageFaults.Dock = DockStyle.Fill;
-        p_lblPageFaults.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
         p_lblPageFaults.Location = new Point(90, 0);
         p_lblPageFaults.Name = "p_lblPageFaults";
         p_lblPageFaults.Padding = new Padding(0, 0, 3, 0);
@@ -1168,7 +1166,6 @@ partial class frmProcess_Details {
         // p_lblPrivateBytes
         // 
         p_lblPrivateBytes.Dock = DockStyle.Fill;
-        p_lblPrivateBytes.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
         p_lblPrivateBytes.Location = new Point(90, 0);
         p_lblPrivateBytes.Name = "p_lblPrivateBytes";
         p_lblPrivateBytes.Padding = new Padding(0, 0, 3, 0);
@@ -1202,7 +1199,6 @@ partial class frmProcess_Details {
         // p_lblUser
         // 
         p_lblUser.Dock = DockStyle.Fill;
-        p_lblUser.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
         p_lblUser.Location = new Point(100, 0);
         p_lblUser.Name = "p_lblUser";
         p_lblUser.Padding = new Padding(0, 0, 3, 0);
@@ -1237,7 +1233,6 @@ partial class frmProcess_Details {
         // p_lblCpuUsage
         // 
         p_lblCpuUsage.Dock = DockStyle.Fill;
-        p_lblCpuUsage.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
         p_lblCpuUsage.Location = new Point(90, 0);
         p_lblCpuUsage.Name = "p_lblCpuUsage";
         p_lblCpuUsage.Padding = new Padding(0, 0, 3, 0);
@@ -1271,7 +1266,6 @@ partial class frmProcess_Details {
         // p_lblGDI
         // 
         p_lblGDI.Dock = DockStyle.Fill;
-        p_lblGDI.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
         p_lblGDI.Location = new Point(100, 0);
         p_lblGDI.Name = "p_lblGDI";
         p_lblGDI.Padding = new Padding(0, 0, 3, 0);
@@ -1305,7 +1299,6 @@ partial class frmProcess_Details {
         // p_lblVirtualMemory
         // 
         p_lblVirtualMemory.Dock = DockStyle.Fill;
-        p_lblVirtualMemory.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
         p_lblVirtualMemory.Location = new Point(100, 0);
         p_lblVirtualMemory.Name = "p_lblVirtualMemory";
         p_lblVirtualMemory.Padding = new Padding(0, 0, 3, 0);

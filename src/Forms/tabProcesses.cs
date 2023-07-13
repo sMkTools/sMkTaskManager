@@ -226,6 +226,7 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         ((ToolStripMenuItem)cms.Items["Priority"]).DropDownItems.AddMenuItem("Low").Name = "Priority6";
         ((ToolStripMenuItem)cms.Items["Priority"]).DropDownOpening += OnContextPriorityOpening;
         ((ToolStripMenuItem)cms.Items["Priority"]).DropDownItemClicked += OnContextItemClicked;
+        ((ToolStripMenuItem)cms.Items["Properties"]).SwitchToBold();
         cms.Opening += OnContextOpening;
         cms.ItemClicked += OnContextItemClicked;
     }

@@ -79,6 +79,11 @@ internal static class Extensions {
         return false;
     }
 
+    public static void SwitchToBold(this Label c) { if (c.Font.Style != FontStyle.Bold) c.Font = new Font(c.Font, FontStyle.Bold); }
+    public static void SwitchToBold(this TextBox c) { if (c.Font.Style != FontStyle.Bold) c.Font = new Font(c.Font, FontStyle.Bold); }
+    public static void SwitchToBold(this ToolStripMenuItem c) { if (c.Font.Style != FontStyle.Bold) c.Font = new Font(c.Font, FontStyle.Bold); }
+    public static void SwitchToBold(this Control c) { if (c.Font.Style != FontStyle.Bold) c.Font = new Font(c.Font, FontStyle.Bold); }
+
     [DllImport("dwmapi.dll")]
     public static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
 

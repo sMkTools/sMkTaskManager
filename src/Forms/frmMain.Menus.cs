@@ -14,6 +14,8 @@ partial class frmMain {
     private ToolStripMenuItem mnuView_Refresh, mnuView_SpeedHigh, mnuView_SpeedNormal, mnuView_SpeedLow, mnuView_Pause;
     private ToolStripMenuItem mnuHelp_About, mnuHelp_Timmings;
 
+    private ToolStripMenuItem mnuTray_Open, mnuTray_NewTask, mnuTray_NewTaskAsUser, mnuTray_Monitor, mnuTray_Computer, mnuTray_Exit;
+
     private void InitializeMainMenu() {
         mnu.SuspendLayout();
         InitializeFileMenu();
@@ -36,6 +38,11 @@ partial class frmMain {
         mnuView_SpeedNormal.Click += mnuView_ItemClicked;
         mnuView_SpeedLow.Click += mnuView_ItemClicked;
         mnuView_Pause.Click += mnuView_ItemClicked;
+        // Tray Menu
+        InitializeTrayMenu();
+        cmsTray.ItemClicked += mnu_DropDownItemClicked;
+        mnuTray_Monitor.DropDownItemClicked += mnu_DropDownItemClicked;
+        mnuTray_Computer.DropDownItemClicked += mnuComputer_DropDownItemClicked;
     }
     private void InitializeFileMenu() {
         // mnuMonitor
@@ -102,6 +109,25 @@ partial class frmMain {
         mnuHelp.DropDownItems.Add(mnuHelp_About);
         mnuHelp.DropDownItems.Add(mnuHelp_Timmings);
     }
+    private void InitializeTrayMenu() {
+        mnuTray_Open = new("&Open") { Name = "mnuTray_Open" };
+        mnuTray_NewTask = new("&New Task (Run...)") { Name = "mnuTray_NewTask" };
+        mnuTray_NewTaskAsUser = new("New Task (Run As...)") { Name = "mnuTray_NewTaskAsUser" };
+        mnuTray_Monitor = new("&Monitor") { Name = "mnuTray_Monitor" };
+        mnuTray_Computer = new("&Computer") { Name = "mnuTray_Computer" };
+        mnuTray_Exit = new("E&xit") { Name = "mnuTray_Exit" };
+        cmsTray.Items.AddRange(new[] { mnuTray_Open });
+        cmsTray.Items.AddSeparator();
+        cmsTray.Items.AddRange(new[] { mnuTray_NewTask, mnuTray_NewTaskAsUser });
+        cmsTray.Items.AddSeparator();
+        cmsTray.Items.AddRange(new[] { mnuTray_Monitor, mnuTray_Computer });
+        cmsTray.Items.AddSeparator();
+        cmsTray.Items.Add(mnuTray_Exit);
+        mnuTray_Open.SwitchToBold();
+        mnuTray_Monitor.DropDown = mnuMonitor.DropDown;
+        mnuTray_Computer.DropDown = mnuComputer.DropDown;
+        niTray.Icon = Icon;
+    }
 
     private void mnu_DropDownOpening(object? sender, EventArgs e) {
         var mnu = (ToolStripMenuItem)sender!;
@@ -128,7 +154,12 @@ partial class frmMain {
     private void mnu_DropDownItemClicked(object? sender, ToolStripItemClickedEventArgs e) {
         if (e.ClickedItem == null) return;
         switch (e.ClickedItem.Name) {
-            case nameof(mnuFile_Exit): BeginInvoke(Feature_RealExit); return;
+            case nameof(mnuTray_Open): BeginInvoke(Feature_ActivateMainWindow); return;
+            case nameof(mnuFile_NewTask) or nameof(mnuTray_NewTask): BeginInvoke(Feature_NewTask); return;
+            case nameof(mnuFile_NewTaskAsUser) or nameof(mnuTray_NewTaskAsUser): BeginInvoke(Feature_NewTaskAsUser); return;
+            case nameof(mnuFile_Exit) or nameof(mnuTray_Exit): BeginInvoke(Feature_RealExit); return;
+            case nameof(mnuMonitor_ScreenSaver): BeginInvoke(Feature_MonitorScreenSaver); return;
+            case nameof(mnuMonitor_PowerOff): BeginInvoke(Feature_MonitorPowerOff); return;
             case nameof(mnuOptions_Preferences): Feature_Preferences(); break;
             case nameof(mnuOptions_OnTop): Feature_ToggleAlwaysOnTop(); break;
             case nameof(mnuOptions_Highlight): Feature_ToggleHighlightChanges(); break;
@@ -141,6 +172,8 @@ partial class frmMain {
         }
     }
     private void mnuComputer_DropDownItemClicked(object? sender, ToolStripItemClickedEventArgs e) {
+        if (e.ClickedItem == null) return;
+        BeginInvoke(Feature_Computer, e.ClickedItem.Text);
     }
     private void mnuView_ItemClicked(object? sender, EventArgs e) {
         if (sender == null) return;
