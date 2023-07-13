@@ -101,6 +101,10 @@ internal static partial class Shared {
         return (MyByte & BitMask) > 0;
     }
 
+    public static bool Is64Bits() {
+        return System.Runtime.InteropServices.Marshal.SizeOf(typeof(IntPtr)) == 8;
+    }
+
 }
 internal class CpuUsage {
     private Classes.API.FILETIME _idleTime, _kernTime, _userTime;

@@ -69,8 +69,8 @@ public partial class frmProcess_Details : Form {
         VisibleValues.Add("NetRcvdRate");
     }
     private void OnLoad(object sender, EventArgs e) {
+        PID = 40156;
 
-        PID = 4412;
         UpdateTimer.Elapsed += OnUpdateTimerElapsed;
         Settings.LoadProcDetails();
         Settings.LoadPerformance();
@@ -309,6 +309,9 @@ public partial class frmProcess_Details : Form {
             API.BINARY_TYPE binType = new();
             if (API.GetBinaryType(g_txtPath.Text, ref binType)) {
                 g_txtType.Text = GetBinaryStr(binType);
+            } else if (Shared.Is64Bits()) {
+                // on 64bits it seems to fail when pointing to an actual 64bit executable.
+                g_txtType.Text = GetBinaryStr(API.BINARY_TYPE.SCS_64BIT_BINARY) + " *";
             } else {
                 g_txtType.Text = "Unknown";
             }
@@ -358,7 +361,6 @@ public partial class frmProcess_Details : Form {
         foreach (ColumnHeader c in lvModules.Columns) c.Width = -2;
         lvModules.EndUpdate();
     }
-
     private void Refresh_General() {
         if (p2 == null) return;
         // Perf Counters
@@ -452,13 +454,13 @@ public partial class frmProcess_Details : Form {
         if (tc.SelectedTab != tpLocked && !firstTime) return;
         if (firstTime) lvLockedFiles.BeginUpdate();
         _HashLocked.Clear();
-
-        //foreach (string l in w32Handles.GetFilesLockedBy(p1)) {
+        /* This implementation is horrible, find a better way */
+        //foreach (string l in Handles.GetFilesLockedBy(p1)) {
         //    if (!File.Exists(l)) continue;
         //    ListViewItem? itm = null;
         //    _HashLocked.Add(l);
         //    foreach (ListViewItem i in lvLockedFiles.Items) {
-        //        if ((string)i.Tag == l.Id) {
+        //        if (i.Tag.ToString() == l) {
         //            itm = i;
         //            if (itm.BackColor == Settings.Highlights.NewColor) itm.BackColor = Color.Empty;
         //            break;
@@ -471,7 +473,6 @@ public partial class frmProcess_Details : Form {
         //        lvLockedFiles.Items.Add(itm);
         //    }
         //}
-
         // Clear items not on the hashTable anymore...
         foreach (ListViewItem itm in lvLockedFiles.Items) {
             if (!_HashLocked.Contains(Convert.ToString(itm.Tag)!)) {
@@ -484,8 +485,8 @@ public partial class frmProcess_Details : Form {
         }
         lvLockedFiles.Sort();
         if (firstTime) {
-            lvLockedFiles.Columns[0].Width = -1;
-            if (lvLockedFiles.Columns[0].Width < 10) lvLockedFiles.Columns[0].Width = 80;
+            //lvLockedFiles.Columns[0].Width = -1;
+            //if (lvLockedFiles.Columns[0].Width < 10) lvLockedFiles.Columns[0].Width = 80;
             lvLockedFiles.Columns[^1].Width = -2;
             lvLockedFiles.EndUpdate();
         }
@@ -532,7 +533,6 @@ public partial class frmProcess_Details : Form {
             _ => "Unknown",
         };
     }
-
 
 }
 
