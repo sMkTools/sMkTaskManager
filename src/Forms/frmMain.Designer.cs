@@ -198,6 +198,7 @@ partial class frmMain {
         Name = "frmMain";
         Text = "sMk Task Manager - Next Gen";
         FormClosing += OnClosingEventHandler;
+        FormClosed += OnClosedEventHandler;
         Load += OnLoad;
         SizeChanged += OnSizeChangedEventHandler;
         KeyDown += OnKeyDownEventHandler;

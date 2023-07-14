@@ -27,7 +27,6 @@ These features have to be implemented because they are not part of old VB.net pr
 * Test out User Connnect/logoff/disconnect
 * Summary View for Processes (not sure i want it anymore)
 * Set Default Task Manager
-* System Tray CPU Usage
 * Shrink Timer (is it still needed?)
 * Check whatever the single instance check is working properly. (and respecting sessionId)
 

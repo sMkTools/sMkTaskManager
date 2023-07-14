@@ -207,6 +207,9 @@ public partial class frmMain : Form {
             Extensions.StopMeasure(_StopWatch2, "Close Time");
         }
     }
+    private void OnClosedEventHandler(object sender, FormClosedEventArgs e) {
+        niTray.Visible = false;
+    }
 
     private void evStatusBarStateOpening(object? sender, EventArgs e) {
         while (mnuView.DropDownItems.Count > 0) ssBtnState.DropDownItems.Add(mnuView.DropDownItems[0]);
@@ -231,7 +234,8 @@ public partial class frmMain : Form {
         if (sender == null) return;
         ssProcesses.Text = "Processes: " + ((tabPerformance)sender).System.ProcessCount.Value;
         ssServices.Text = "Services: " + ((tabPerformance)sender).System.ServicesCount.Value;
-        ssCpuLoad.Text = "CPU Load: " + ((tabPerformance)sender).System.CpuUsage.Value + "%";
+        Shared.CpuLoad = (int)((tabPerformance)sender).System.CpuUsage.Value;
+        ssCpuLoad.Text = "CPU Load: " + Shared.CpuLoad + "%";
     }
 
     internal bool FullScreen {
@@ -367,7 +371,27 @@ public partial class frmMain : Form {
     }
     private void TrayUpdaterExecutor(object? sender, ElapsedEventArgs e) {
         if (!Settings.ShowCPUOnTray) { _TrayUpdateTimer.Stop(); niTray.Icon = Icon; return; }
-        // TODO: We have to get CPU usage independently from the main updater, and draw a graph.
+        // Draw a graph with the value of Shared.CpuLoad
+        var bitmap = new Bitmap(16, 16);
+        Graphics g = Graphics.FromImage(bitmap);
+        Rectangle baseRectangle = new(0, 0, 16, 16);
+        // Draw Black background
+        using (SolidBrush thisBrush = new(Color.Black)) {
+            g.FillRectangle(thisBrush, baseRectangle);
+        }
+        // Draw Used lines with green
+        using (Pen thisPen = new(Color.Lime, 1)) {
+            int lines = (int)Math.Round(16d * Shared.CpuLoad / 100d, 0);
+            for (int i = 1; i <= lines; i++) {
+                g.DrawLine(thisPen, 1, (16 - i), 14, (16 - i));
+            }
+        }
+        // Draw a middle black line as spacer.
+        using (Pen thisPen = new(Color.Black, 2)) {
+            g.DrawLine(thisPen, 8, 0, 8, 16);
+        }
+        // Set the resulting bitmap as the icon.
+        niTray.Icon = Icon.FromHandle(bitmap.GetHicon());
     }
 
     private bool TimmingVisible {

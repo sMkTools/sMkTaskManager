@@ -124,6 +124,7 @@ internal static class Settings {
             _StringBuilder.Append(Convert.ToInt16(ShowAllProcess) + ",");
             _StringBuilder.Append(Convert.ToInt16(StartMinimized) + ",");
             _StringBuilder.Append(Convert.ToInt16(AlternateRowColors) + ",");
+            _StringBuilder.Append(Convert.ToInt16(ShowCPUOnTray) + ",");
             return WriteReg("General", FixStringToWrite(_StringBuilder));
         } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
@@ -275,6 +276,7 @@ internal static class Settings {
             ShowAllProcess = ChunkValues[15] != "0";
             StartMinimized = ChunkValues[16] != "0";
             AlternateRowColors = ChunkValues[17] != "0";
+            ShowCPUOnTray = ChunkValues[18] != "0";
             return true;
         } catch (Exception e) { Shared.DebugTrap(e); return false; }
 

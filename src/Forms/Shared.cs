@@ -13,6 +13,7 @@ internal static partial class Shared {
     internal static bool RealExit = true;
     internal static int CurrentSessionID = Process.GetCurrentProcess().SessionId;
     internal static int PrivateMsgID = 0;
+    internal static int CpuLoad = 0;
     internal static ImageList ilProcesses = new() { ColorDepth = ColorDepth.Depth32Bit, ImageSize = new Size(16, 16), TransparentColor = Color.Transparent };
 
     internal static void SetStatusText(string value = "", ToolStripLabel? obj = null) {
