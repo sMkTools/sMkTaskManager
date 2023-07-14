@@ -9,7 +9,7 @@ internal static class Settings {
     private static readonly System.Text.UTF8Encoding _Encoding = new();
     private static readonly System.Text.StringBuilder _StringBuilder = new();
     public static string Filename = Application.ExecutablePath.Replace(".exe", ".cfg");
-    public static string RegKey = "Software\\sMk Tools\\sMk TaskManager2";
+    public static string RegKey = "Software\\sMk Tools\\sMk TaskManager3";
 
     public static bool RememberPositions = true;
     public static bool RememberActiveTab = true;
