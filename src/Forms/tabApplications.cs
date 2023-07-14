@@ -33,7 +33,6 @@ internal class tabApplications : UserControl, ITaskManagerTab {
     private ToolStripMenuItem cmsGoToProcess;
     private ToolStripSeparator cmsSeparator1;
     private ToolStripSeparator cmsSeparator2;
-    private ImageList il;
 
     public event EventHandler? ForceRefreshClicked;
     public event EventHandler? RefreshStarts;
@@ -51,7 +50,6 @@ internal class tabApplications : UserControl, ITaskManagerTab {
     }
     private void InitializeComponent() {
         components = new Container();
-        il = new ImageList(components);
         lv = new sMkListView();
         cms = new ContextMenuStrip(components);
         cmsSwitchTo = new ToolStripMenuItem();
@@ -78,12 +76,6 @@ internal class tabApplications : UserControl, ITaskManagerTab {
         cms.SuspendLayout();
         SuspendLayout();
         // 
-        // il
-        // 
-        il.ColorDepth = ColorDepth.Depth32Bit;
-        il.ImageSize = new Size(16, 16);
-        il.TransparentColor = Color.Transparent;
-        // 
         // lv
         // 
         lv.AlternateRowColors = false;
@@ -97,7 +89,7 @@ internal class tabApplications : UserControl, ITaskManagerTab {
         lv.Name = "lv";
         lv.ShowGroups = false;
         lv.Size = new Size(588, 559);
-        lv.SmallImageList = il;
+        lv.SmallImageList = Shared.ilProcesses;
         lv.Sortable = true;
         lv.SortColumn = 0;
         lv.Sorting = SortOrder.Ascending;
@@ -275,8 +267,6 @@ internal class tabApplications : UserControl, ITaskManagerTab {
         ResumeLayout(false);
     }
     private void InitializeExtras() {
-        il.Images.Clear();
-        il.Images.Add(Resources.Resources.Process_Black);
         cmsSwitchTo.SwitchToBold();
         // Add event handlers
         cms.Opening += OnContextOpening;
@@ -513,26 +503,22 @@ internal class tabApplications : UserControl, ITaskManagerTab {
                 itm.Name = itm.ID.ToString();
                 itm.Text = " " + w.pHandle;
                 // Try to set the icon of the process
-                try {
-                    if (w.pHandle > Shared.bpi && il.Images.ContainsKey(itm.Name)) {
-                        itm.ImageKey = itm.Name;
-                    } else if (w.pHandle > Shared.bpi) {
+                if (w.pHandle > Shared.bpi && Shared.ilProcesses.Images.ContainsKey(itm.Name + "-")) {
+                    itm.ImageKey = itm.Name;
+                } else if (w.pHandle > Shared.bpi) {
+                    try {
                         IntPtr IconPtr = IntPtr.Zero;
-                        IconPtr = API.GetClassLong(w.wHandle, -34); // Const GCL_HICONSM As Integer = -34
+                        // Const GCL_HICONSM As Integer = -34
+                        IconPtr = API.GetClassLong(w.wHandle, -34);
                         if (IconPtr != IntPtr.Zero) {
-                            il.Images.Add(itm.Name, Icon.FromHandle(IconPtr));
-                            itm.ImageKey = itm.Name;
+                            Shared.ilProcesses.Images.Add(itm.Name + "-", Icon.FromHandle(IconPtr));
                             API.DestroyIcon(IconPtr);
-                        } else {
-                            IntPtr[] IconPtrAlt = new IntPtr[1];
-                            if (API.ExtractIconEx(Process.GetProcessById(w.pHandle).Modules[0].FileName, 0, null, IconPtrAlt, 1) > 0) {
-                                il.Images.Add(itm.Name, Icon.FromHandle(IconPtrAlt[0]));
-                                itm.ImageKey = itm.Name;
-                                API.DestroyIcon(IconPtrAlt[0]);
-                            }
                         }
-                    }
-                } catch (Exception ex) { Shared.DebugTrap(ex, 012); }
+                    } catch { }
+                    itm.ImageKey = Shared.ProcessIconImageKey(w.pHandle, "");
+                } else {
+                    itm.ImageIndex = 0;
+                }
                 if (Settings.Highlights.NewItems && !firstTime) itm.BackColor = Settings.Highlights.NewColor;
                 lv.Items.Add(itm);
             } else {

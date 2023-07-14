@@ -31,6 +31,8 @@ public partial class frmMain : Form {
         Tabs.Tab.Add("Users", new tabUsers());
         // Flicker Free Controls by DoubleBuffer
         Extensions.CascadingDoubleBuffer(this);
+        Shared.ilProcesses.Images.Add(Resources.Resources.Process_Empty);
+        Shared.ilProcesses.Images.Add(Resources.Resources.Process_Info);
         // Extensions.UseImmersiveDarkMode(Handle, true);
         // Extensions.UseImmersiveRoundCorner(Handle, 3);
     }

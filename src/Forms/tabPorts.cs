@@ -20,7 +20,6 @@ internal class tabPorts : UserControl, ITaskManagerTab {
     private ToolStripMenuItem cmsGoToProcess;
     private ToolStripMenuItem cmsOnline;
     private Label lblTotal;
-    private ImageList il;
 
     public event EventHandler? ForceRefreshClicked;
     public event EventHandler? RefreshStarts;
@@ -45,7 +44,6 @@ internal class tabPorts : UserControl, ITaskManagerTab {
         cmsKillProcess = new ToolStripMenuItem();
         cmsGoToProcess = new ToolStripMenuItem();
         cmsOnline = new ToolStripMenuItem();
-        il = new ImageList(components);
         lblTotal = new Label();
         btnIncludeIPv6 = new CheckBox();
         cms.SuspendLayout();
@@ -75,7 +73,6 @@ internal class tabPorts : UserControl, ITaskManagerTab {
         lv.ShowGroups = false;
         lv.ShowItemToolTips = true;
         lv.Size = new Size(588, 559);
-        lv.SmallImageList = il;
         lv.Sortable = true;
         lv.SortColumn = 0;
         lv.Sorting = SortOrder.Ascending;
@@ -106,12 +103,6 @@ internal class tabPorts : UserControl, ITaskManagerTab {
         cmsOnline.Name = "cmsOnline";
         cmsOnline.Size = new Size(156, 22);
         cmsOnline.Text = "Search &Online...";
-        // 
-        // il
-        // 
-        il.ColorDepth = ColorDepth.Depth32Bit;
-        il.ImageSize = new Size(16, 16);
-        il.TransparentColor = Color.Transparent;
         // 
         // lblTotal
         // 
@@ -147,9 +138,6 @@ internal class tabPorts : UserControl, ITaskManagerTab {
         ResumeLayout(false);
     }
     private void InitializeExtras() {
-        il.Images.Clear();
-        il.Images.Add(Resources.Resources.Process_Empty);
-        il.Images.Add(Resources.Resources.Process_Info);
         lv.ContentType = typeof(TaskManagerConnection);
         lv.DataSource = Ports.DataExporter;
         lv.SpaceFirstValue = Settings.IconsInProcess;
@@ -206,30 +194,6 @@ internal class tabPorts : UserControl, ITaskManagerTab {
     private void OnListViewColumnReordered(object? sender, ColumnReorderedEventArgs e) {
         if (e.Header!.Text == "PID") { e.Cancel = true; }
         if (e.NewDisplayIndex == 0) { e.Cancel = true; }
-    }
-    private bool GetProcessIcon(int PID, string Name, string? ImagePath = "") {
-        try {
-            if (!il.Images.ContainsKey(PID + "-" + Name)) {
-                if (string.IsNullOrEmpty(ImagePath)) {
-                    ImagePath = Process.GetProcessById(PID).MainModule?.FileName;
-                }
-                if (string.IsNullOrEmpty(ImagePath)) {
-                    il.Images.Add(PID + "-" + Name, Resources.Resources.Process_Black);
-                    return true;
-                }
-                if (!File.Exists(ImagePath)) return false;
-                IntPtr[] IconPtr = new IntPtr[1];
-                if (API.ExtractIconEx(ImagePath, 0, null, IconPtr, 1) > 0) {
-                    il.Images.Add(PID + "-" + Name, Icon.FromHandle(IconPtr[0]));
-                    API.DestroyIcon(IconPtr[0]);
-                    return true;
-                } else { return false; }
-            }
-        } catch (Exception ex) {
-            Debug.WriteLine("Failed GetProcessIcon for PID {0}: {1}", PID, ex.Message);
-            il.Images.Add(PID + "-" + Name, Resources.Resources.Process_Black);
-        }
-        return true;
     }
 
     public void Feature_ForceRefresh() {
@@ -292,7 +256,6 @@ internal class tabPorts : UserControl, ITaskManagerTab {
     }
 
     private void RefresherDoWork(bool firstTime = false) {
-        Debug.WriteLine($"Refresher for Ports - Visible: {Visible} - firstTime: {firstTime}");
         RefreshStarts?.Invoke(this, EventArgs.Empty);
         if (lv.Items.Count == 0) firstTime = true;
         // Store last round items and initialize new ones.
@@ -322,9 +285,9 @@ internal class tabPorts : UserControl, ITaskManagerTab {
             if (thisPort.PID == 0) {
                 thisPort.ImageIndex = 0;
             } else {
-                if (thisPort.PID > Shared.bpi && Settings.IconsInProcess && GetProcessIcon(thisPort.PID, thisPort.ProcessName)) {
+                if (thisPort.PID > Shared.bpi && Settings.IconsInProcess) {
                     thisPort.ImageIndex = -1;
-                    thisPort.ImageKey = thisPort.PID + "-" + thisPort.ProcessName;
+                    thisPort.ImageKey = Shared.ProcessIconImageKey(thisPort.PID, thisPort.ProcessName, default);
                 } else {
                     thisPort.ImageIndex = 1;
                 }
@@ -366,7 +329,8 @@ internal class tabPorts : UserControl, ITaskManagerTab {
         return true;
     }
     public void ApplySettings() {
-        lv.SmallImageList = Settings.IconsInProcess ? il : null;
+        lv.AlternateRowColors = Settings.AlternateRowColors;
+        lv.SmallImageList = Settings.IconsInProcess ? Shared.ilProcesses : null;
         lv.SpaceFirstValue = Settings.IconsInProcess;
     }
 

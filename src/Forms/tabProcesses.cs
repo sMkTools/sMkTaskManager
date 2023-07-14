@@ -23,7 +23,6 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
     private ColumnHeader lvc_PID;
     private ColumnHeader lvc_Name;
     private ContextMenuStrip cms;
-    private ImageList il;
 
     public event EventHandler? RefreshStarts;
     public event EventHandler? RefreshComplete;
@@ -39,9 +38,6 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         InitializeComponent();
         InitializeContextMenu();
         Extensions.CascadingDoubleBuffer(this);
-        il!.Images.Clear();
-        il!.Images.Add(Resources.Resources.Process_Empty);
-        il!.Images.Add(Resources.Resources.Process_Info);
         lv!.ContentType = typeof(TaskManagerProcess);
         lv!.DataSource = Processes.DataExporter;
         lv!.SpaceFirstValue = Settings.IconsInProcess;
@@ -52,7 +48,6 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         lvc_PID = new ColumnHeader();
         lvc_Name = new ColumnHeader();
         cms = new ContextMenuStrip(components);
-        il = new ImageList(components);
         btnDetails = new Button();
         btnProperties = new Button();
         btnKill = new Button();
@@ -75,7 +70,6 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         lv.Name = "lv";
         lv.ShowGroups = false;
         lv.Size = new Size(588, 559);
-        lv.SmallImageList = il;
         lv.Sortable = true;
         lv.SortColumn = 0;
         lv.Sorting = SortOrder.Ascending;
@@ -103,12 +97,6 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         // 
         cms.Name = "cms";
         cms.Size = new Size(61, 4);
-        // 
-        // il
-        // 
-        il.ColorDepth = ColorDepth.Depth32Bit;
-        il.ImageSize = new Size(16, 16);
-        il.TransparentColor = Color.Transparent;
         // 
         // btnDetails
         // 
@@ -582,7 +570,6 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
     }
 
     private void RefresherDoWork(bool firstTime = false) {
-        Debug.WriteLine($"Refresher for Processes - Visible: {Visible} - firstTime: {firstTime}");
         RefreshStarts?.Invoke(this, EventArgs.Empty);
         if (lv.Items.Count == 0) firstTime = true;
 
@@ -614,17 +601,14 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
                             thisProcess.Load(spi, ColsProcesses);
                         } catch (Exception ex) { Shared.DebugTrap(ex, 022); }
                         if (Settings.Highlights.NewItems && !firstTime) thisProcess.BackColor = Settings.Highlights.NewColor;
-                        thisProcess.ImageIndex = (spi.UniqueProcessId == 0) ? 0 : 1;
-                        if (spi.UniqueProcessId > Shared.bpi && lv.SmallImageList != null) {
-                            if (!il.Images.ContainsKey(thisProcess.PID + "-" + thisProcess.Name)) {
-                                try {
-                                    if (thisProcess.GetIcon() != null && thisProcess.Icon != null) {
-                                        il.Images.Add(thisProcess.PID + "-" + thisProcess.Name, thisProcess.Icon);
-                                        thisProcess.ImageKey = thisProcess.ID + "-" + thisProcess.Name;
-                                        thisProcess.ImageIndex = -1;
-                                    }
-                                } catch (Exception ex) { Shared.DebugTrap(ex, 0212); }
-                            }
+
+                        if (spi.UniqueProcessId == 0) {
+                            thisProcess.ImageIndex = 0;
+                        } else {
+                            if (spi.UniqueProcessId > Shared.bpi && Settings.IconsInProcess) {
+                                thisProcess.ImageIndex = -1;
+                                thisProcess.ImageKey = Shared.ProcessIconImageKey(thisProcess.PID, thisProcess.Name, thisProcess.ImagePath);
+                            } else { thisProcess.ImageIndex = 1; }
                         }
                         Processes.Add(thisProcess);
                     }
@@ -673,6 +657,7 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
     }
     public void ApplySettings() {
         lv.AlternateRowColors = Settings.AlternateRowColors;
+        lv.SmallImageList = Settings.IconsInProcess ? Shared.ilProcesses : null;
         lv.SpaceFirstValue = Settings.IconsInProcess;
         btnAllUsers.Checked = Settings.ShowAllProcess;
     }

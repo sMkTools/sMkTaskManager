@@ -600,7 +600,6 @@ internal class tabServices : UserControl, ITaskManagerTab {
     }
 
     private void RefresherDoWork(bool firstTime = false) {
-        Debug.WriteLine($"Refresher for Services - Visible: {Visible} - firstTime: {firstTime}");
         RefreshStarts?.Invoke(this, EventArgs.Empty);
         if (lv.Items.Count == 0) firstTime = true;
         // Store last round items and initialize new ones
@@ -659,5 +658,7 @@ internal class tabServices : UserControl, ITaskManagerTab {
     public bool SaveSettings() {
         return Settings.SaveColsInformation("colsServices", lv);
     }
-    public void ApplySettings() { }
+    public void ApplySettings() {
+        lv.AlternateRowColors = Settings.AlternateRowColors;
+    }
 }
