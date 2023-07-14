@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using static sMkTaskManager.Controls.sMkListViewHelpers;
@@ -15,6 +16,7 @@ public class sMkListView : ListView {
     private PropertyDescriptor? _keyDescriptor;
     private int _contextMenuSet = -1;
     private bool _alternateRowColors = false;
+    private bool _needReSort = false;
     private long _lastKeyPress = DateTime.Now.Ticks;
     private string _lastKeyString = "";
 
@@ -128,7 +130,7 @@ public class sMkListView : ListView {
             // Set icon on the new column.
             HDITEM = new() { mask = HDI_FORMAT };
             SendMessageItem(hHeader, HDM_GETITEM, newColumn, ref HDITEM);
-            if (Sorting == SortOrder.Ascending) {
+            if (_sorter.Order == SortOrder.Ascending) {
                 HDITEM.fmt &= ~HDF_SORTDOWN;
                 HDITEM.fmt |= HDF_SORTUP;
             } else {
@@ -222,11 +224,11 @@ public class sMkListView : ListView {
             _sorter.SortColumn = e.Column;
             _sorter.Order = SortOrder.Ascending;
         }
-        Sorting = _sorter.Order;
+        // This causes the listview to jump back to original position, so dont set
+        // Sorting = _sorter.Order;
         SetSortIcons(ref _sorter.PrevColumn, e.Column);
         Sort();
         ListViewItemSorter = _sorter;
-
     }
 
     private void OnDataSource_ListChanged(object? sender, ListChangedEventArgs e) {
@@ -270,8 +272,10 @@ public class sMkListView : ListView {
             } else {
                 itm.SubItems.Add(value).Name = c.Tag.ToString();
             }
+            _needReSort = _needReSort || c.Index == SortColumn;
         }
         Items.Add(itm);
+        if (_needReSort && Sortable) { _needReSort = false; Sort(); }
     }
     private void OnDataSource_RowChanged(ListChangedEventArgs e) {
         var row = _dataSource[e.NewIndex];
@@ -301,6 +305,7 @@ public class sMkListView : ListView {
                             // Used to catch an error in the ForceRefresh
                             // Items[_keyDescriptor.GetValue(row)!.ToString()].SubItems[c.Index].Text = e.PropertyDescriptor!.GetValue(row)!.ToString();
                             Items[_keyDescriptor.GetValue(row)!.ToString()].SubItems[c.Index].Text = ((c.DisplayIndex == 0 && SpaceFirstValue) ? " " : "") + e.PropertyDescriptor!.GetValue(row)?.ToString();
+                            _needReSort = _needReSort || c.Index == SortColumn;
                             break;
                         }
                     }
@@ -309,6 +314,7 @@ public class sMkListView : ListView {
         } catch (Exception ex) {
             Debug.WriteLine("Method: {0}, Error: {1}", MethodBase.GetCurrentMethod()?.Name, ex.ToString());
         }
+        if (_needReSort && Sortable) { _needReSort = false; Sort(); }
     }
     private void OnDataSource_RowDeleted(ListChangedEventArgs e) { }
 
@@ -332,8 +338,10 @@ public class sMkListView : ListView {
                 } else {
                     Columns.Add(newCol);
                 }
+                curPosition += 1;
+            } else if (c.Checked && Columns.ContainsKey(c.Name)) {
+                curPosition += 1;
             }
-            curPosition += 1;
         }
         // As a safety measure we should also remove any other column that is on the list.
         foreach (ColumnHeader c in Columns) {
