@@ -101,7 +101,7 @@ internal static class Settings {
     }
 
     public static bool SaveAll() {
-        return SaveGeneral() && SaveHighlights() && SavePerformance();
+        return SaveGeneral() & SaveHighlights() & SavePerformance();
     }
     public static bool SaveGeneral() {
         _StringBuilder.Clear();
@@ -252,7 +252,7 @@ internal static class Settings {
     }
 
     public static bool LoadAll() {
-        return LoadGeneral() && LoadHighlights();
+        return LoadGeneral() & LoadHighlights();
     }
     public static bool LoadGeneral() {
         try {
