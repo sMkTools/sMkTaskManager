@@ -123,7 +123,7 @@ public partial class frmMain : Form {
         Extensions.StartMeasure(sw);
         // We should use this to initialize something that is not really critical?
         ETW.Start();
-        Shared.PrivateMsgID = API.RegisterWindowMessage(Application.ExecutablePath.Replace("\\", "_"));
+        if (Shared.PrivateMsgID == 0) Shared.PrivateMsgID = API.RegisterWindowMessage(Application.ExecutablePath.Replace("\\", "_"));
         Shared.InitComplete = true;
         MonitorStart(true);
         Extensions.StopMeasure(sw);

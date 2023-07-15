@@ -142,6 +142,7 @@ partial class frmMain {
             mnuOptions_OnTop.Checked = Settings.AlwaysOnTop;
             mnuOptions_Highlight.Checked = Settings.Highlights.ChangingItems;
             mnuOptions_HideMinimize.Checked = Settings.ToTrayWhenMinimized;
+            mnuOptions_Default.Checked = Feature_CheckDefaultTaskManager();
             mnuOptions_MinimizeClose.Checked = Settings.MinimizeWhenClosing;
         } else if (mnu == mnuView) {
             while (ssBtnState.DropDownItems.Count > 0) mnuView.DropDownItems.Add(ssBtnState.DropDownItems[0]);
@@ -165,6 +166,7 @@ partial class frmMain {
             case nameof(mnuOptions_Highlight): Feature_ToggleHighlightChanges(); break;
             case nameof(mnuOptions_HideMinimize): Feature_ToggleHideOnMinimize(); break;
             case nameof(mnuOptions_MinimizeClose): Feature_ToggleMinimizeOnClose(); break;
+            case nameof(mnuOptions_Default): Feature_DefaultTaskManager(!mnuOptions_Default.Checked); break;
             case nameof(mnuOptions_SelectColumns): Feature_SelectColumns(); break;
             case nameof(mnuHelp_About): Feature_AboutDialog(); break;
             case nameof(mnuHelp_Timmings): TimmingVisible = !TimmingVisible; break;

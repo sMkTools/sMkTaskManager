@@ -84,5 +84,38 @@ partial class frmMain {
             case "FORCE SHUTDOWN": API.ExitWindowsEx(API.ExitWindows.ShutDown | API.ExitWindows.Force, 0); break;
         }
     }
+    internal static void Feature_DefaultTaskManager(bool set = true) {
+        Microsoft.Win32.RegistryKey ParentKey = Microsoft.Win32.Registry.LocalMachine;
+        string SubKey = @"Software\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\taskmgr.exe";
+        try {
+            if (set) {
+                Microsoft.Win32.RegistryKey? Key = ParentKey.OpenSubKey(SubKey, true);
+                Key ??= ParentKey.CreateSubKey(SubKey);
+                Key.SetValue("Debugger", Application.ExecutablePath, Microsoft.Win32.RegistryValueKind.String);
+                Key.Close();
+            } else {
+                ParentKey.DeleteSubKeyTree(SubKey);
+            }
+        } catch (Exception ex) {
+            Shared.DebugTrap(ex, 004);
+        } finally {
+            ParentKey.Close();
+        }
+
+    }
+    internal static bool Feature_CheckDefaultTaskManager() {
+        Microsoft.Win32.RegistryKey ParentKey = Microsoft.Win32.Registry.LocalMachine;
+        string SubKey = @"Software\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\taskmgr.exe";
+        try {
+            Microsoft.Win32.RegistryKey? Key = ParentKey.OpenSubKey(SubKey, true);
+            if (Key == null) { return false; }
+            var result = Key.GetValue("Debugger", "");
+            Key.Close();
+            return Application.ExecutablePath.Equals(result);
+        } catch { return false; } finally {
+            ParentKey.Close();
+        }
+
+    }
 
 }
