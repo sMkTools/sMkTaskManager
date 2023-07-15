@@ -159,12 +159,12 @@ public partial class frmProcess_Details : Form {
             case "OtherTransfer": i_lblOtherBytes.Text = p2.OtherTransfer; break;
             case "DiskRead": d_lblDiskRead.Text = p2.DiskRead; d_lblDiskReadDelta.Text = p2.DiskReadDelta; break;
             case "DiskWrite": d_lblDiskWrite.Text = p2.DiskWrite; d_lblDiskWriteDelta.Text = p2.DiskWriteDelta; break;
-            case "DiskReadRate": d_lblDiskReadRate.Text = p2.DiskReadRate + "."; break;
-            case "DiskWriteRate": d_lblDiskWriteRate.Text = p2.DiskWriteRate + "."; break;
+            case "DiskReadRate": d_lblDiskReadRate.Text = p2.DiskReadRate; break;
+            case "DiskWriteRate": d_lblDiskWriteRate.Text = p2.DiskWriteRate; break;
             case "NetSent": d_lblNetSend.Text = p2.NetSent; d_lblNetSendDelta.Text = p2.NetSentDelta; break;
             case "NetRcvd": d_lblNetRcvd.Text = p2.NetRcvd; d_lblNetRcvdDelta.Text = p2.NetRcvdDelta; break;
-            case "NetSentRate": d_lblNetSendRate.Text = p2.NetSentRate + "."; break;
-            case "NetRcvdRate": d_lblNetRcvdRate.Text = p2.NetRcvdRate + "."; break;
+            case "NetSentRate": d_lblNetSendRate.Text = p2.NetSentRate; break;
+            case "NetRcvdRate": d_lblNetRcvdRate.Text = p2.NetRcvdRate; break;
         }
     }
     private void OnUpdateTimerElapsed(object? sender, System.Timers.ElapsedEventArgs e) {

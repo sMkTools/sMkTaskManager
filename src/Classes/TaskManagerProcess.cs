@@ -254,48 +254,48 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
         if (vv.Contains("VirtualMemoryPeak")) VirtualMemoryPeakValue = spi.PeakVirtualSize;
         // I/O Counters Values
         if (vv.Contains("ReadTransfer") || vv.Contains("ReadTransferDelta")) {
-            ReadTransferDeltaValue = (ReadTransferValue == 0) ? 0 : ReadTransferValue - spi.ReadTransferCount;
+            ReadTransferDeltaValue = (ReadTransferValue == 0) ? 0 :  spi.ReadTransferCount - ReadTransferValue;
             ReadTransferValue = spi.ReadTransferCount;
         }
         if (vv.Contains("ReadOperations") || vv.Contains("ReadOperationsDelta")) {
-            ReadOperationsDeltaValue = (ReadOperationsValue == 0) ? 0 : ReadOperationsValue - spi.ReadOperationCount;
+            ReadOperationsDeltaValue = (ReadOperationsValue == 0) ? 0 :  spi.ReadOperationCount - ReadOperationsValue;
             ReadOperationsValue = spi.ReadOperationCount;
         }
         if (vv.Contains("WriteTransfer") || vv.Contains("WriteTransferDelta")) {
-            WriteTransferDeltaValue = (WriteTransferValue == 0) ? 0 : WriteTransferValue - spi.WriteTransferCount;
+            WriteTransferDeltaValue = (WriteTransferValue == 0) ? 0 : spi.WriteTransferCount - WriteTransferValue;
             WriteTransferValue = spi.WriteTransferCount;
         }
         if (vv.Contains("WriteOperations") || vv.Contains("WriteOperationsDelta")) {
-            WriteOperationsDeltaValue = (WriteOperationsValue == 0) ? 0 : WriteOperationsValue - spi.WriteOperationCount;
+            WriteOperationsDeltaValue = (WriteOperationsValue == 0) ? 0 : spi.WriteOperationCount - WriteOperationsValue;
             WriteOperationsValue = spi.WriteOperationCount;
         }
         if (vv.Contains("OtherTransfer") || vv.Contains("OtherTransferDelta")) {
-            OtherTransferDeltaValue = (OtherTransferValue == 0) ? 0 : OtherTransferValue - spi.OtherTransferCount;
+            OtherTransferDeltaValue = (OtherTransferValue == 0) ? 0 : spi.OtherTransferCount - OtherTransferValue;
             OtherTransferValue = spi.OtherTransferCount;
         }
         if (vv.Contains("OtherOperations") || vv.Contains("OtherOperationsDelta")) {
-            OtherOperationsDeltaValue = (OtherOperationsValue == 0) ? 0 : OtherOperationsValue - spi.OtherOperationCount;
+            OtherOperationsDeltaValue = (OtherOperationsValue == 0) ? 0 : spi.OtherOperationCount - OtherOperationsValue;
             OtherOperationsValue = spi.OtherOperationCount;
         }
         // ETW Data Values, if running
         if (ETW.Running) {
             if (vv.Contains("DiskRead") || vv.Contains("DiskReadDelta") || vv.Contains("DiskReadRate")) {
-                DiskReadDeltaValue = (DiskReadValue == 0) ? 0 : DiskReadValue - ETW.Stats(_PID).DiskReaded;
+                DiskReadDeltaValue = (DiskReadValue == 0) ? 0 : ETW.Stats(_PID).DiskReaded - DiskReadValue;
                 DiskReadValue = ETW.Stats(_PID).DiskReaded;
                 DiskReadRateValue = CalculateRateValue(DiskReadDeltaValue);
             }
             if (vv.Contains("DiskWrite") || vv.Contains("DiskWriteDelta") || vv.Contains("DiskWriteRate")) {
-                DiskWriteDeltaValue = (DiskWriteValue == 0) ? 0 : DiskWriteValue - ETW.Stats(_PID).DiskWroted;
+                DiskWriteDeltaValue = (DiskWriteValue == 0) ? 0 : ETW.Stats(_PID).DiskWroted - DiskWriteValue;
                 DiskWriteValue = ETW.Stats(_PID).DiskWroted;
                 DiskWriteRateValue = CalculateRateValue(DiskWriteDeltaValue);
             }
             if (vv.Contains("NetSent") || vv.Contains("NetSentDelta") || vv.Contains("NetSentRate")) {
-                NetSentDeltaValue = (NetSentValue == 0) ? 0 : NetSentValue - ETW.Stats(_PID).NetSent;
+                NetSentDeltaValue = (NetSentValue == 0) ? 0 : ETW.Stats(_PID).NetSent - NetSentValue;
                 NetSentValue = ETW.Stats(_PID).NetSent;
                 NetSentRateValue = CalculateRateValue(NetSentDeltaValue);
             }
             if (vv.Contains("NetReceived") || vv.Contains("NetReceivedDelta") || vv.Contains("NetReceivedRate")) {
-                NetRcvdDeltaValue = (NetRcvdValue == 0) ? 0 : NetRcvdValue - ETW.Stats(_PID).NetReceived;
+                NetRcvdDeltaValue = (NetRcvdValue == 0) ? 0 : ETW.Stats(_PID).NetReceived - NetRcvdValue;
                 NetRcvdValue = ETW.Stats(_PID).NetReceived;
                 NetRcvdRateValue = CalculateRateValue(NetRcvdDeltaValue);
             }
