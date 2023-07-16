@@ -33,7 +33,7 @@ internal static partial class Shared {
         if (MainForm == null) return;
         bool xFound = false;
         MainForm.Cursor = Cursors.WaitCursor;
-        foreach (Form child in MainForm!.OwnedForms) {
+        foreach (Form child in Application.OpenForms) {
             if (child == null || child.Name == null) continue;
             if (child.Name.Equals("frmProc-" + PID)) {
                 xFound = true;
@@ -43,12 +43,13 @@ internal static partial class Shared {
             }
         }
         if (!xFound) {
-            Forms.frmProcess_Details frm = new() {
-                Owner = MainForm,
+            frmProcess_Details frm = new() {
                 Name = "frmProc-" + PID,
                 Tag = PID,
                 PID = PID
             };
+            frm.TopMost = false;
+            frm.ShowInTaskbar = true;
             frm.Show();
         }
         MainForm.Cursor = Cursors.Default;
