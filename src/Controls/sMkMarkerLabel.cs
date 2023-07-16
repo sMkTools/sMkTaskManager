@@ -27,8 +27,8 @@ public class sMkMarkerLabel : Label {
     }
 
     private void OnPaint(object? sender, PaintEventArgs e) {
-        if (_drawIcon && Visible && ShowMark && Width > 2 && Height > 2) {
-            e.Graphics.DrawLine(new Pen(MarkColor, 2), Width - 1, 1, Width - 1, Height - 1);
+        if (_drawIcon && Visible && ShowMark && Width > 10 && Height > 10) {
+            e.Graphics.DrawLine(new Pen(MarkColor, 2), Width - 1, 6, Width - 1, Height - 5);
         }
     }
     private void OnTimerElapsed(object? sender, EventArgs e) {
