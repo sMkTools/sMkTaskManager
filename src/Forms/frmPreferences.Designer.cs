@@ -504,7 +504,9 @@ partial class frmPreferences {
         p_tbGridSize.Size = new Size(102, 21);
         p_tbGridSize.TabIndex = 22;
         p_tbGridSize.TickStyle = TickStyle.None;
-        p_tbGridSize.Value = 2;
+        p_tbGridSize.Value = 10;
+        p_tbGridSize.Minimum = 2;
+        p_tbGridSize.Maximum = 30;
         p_tbGridSize.Scroll += tbValues_Scroll;
         // 
         // p_tbValueSpacing
@@ -518,6 +520,8 @@ partial class frmPreferences {
         p_tbValueSpacing.TabIndex = 20;
         p_tbValueSpacing.TickStyle = TickStyle.None;
         p_tbValueSpacing.Value = 2;
+        p_tbValueSpacing.Minimum = 1;
+        p_tbValueSpacing.Maximum = 20;
         p_tbValueSpacing.Scroll += tbValues_Scroll;
         // 
         // p_AverageLine
@@ -908,7 +912,9 @@ partial class frmPreferences {
         n_tbGridSize.Size = new Size(102, 21);
         n_tbGridSize.TabIndex = 21;
         n_tbGridSize.TickStyle = TickStyle.None;
-        n_tbGridSize.Value = 2;
+        n_tbGridSize.Value = 10;
+        n_tbGridSize.Minimum = 2;
+        n_tbGridSize.Maximum = 30;
         n_tbGridSize.Scroll += tbValues_Scroll;
         // 
         // n_tbValueSpacing
@@ -922,6 +928,8 @@ partial class frmPreferences {
         n_tbValueSpacing.TabIndex = 19;
         n_tbValueSpacing.TickStyle = TickStyle.None;
         n_tbValueSpacing.Value = 2;
+        n_tbValueSpacing.Minimum = 1;
+        n_tbValueSpacing.Maximum = 20;
         n_tbValueSpacing.Scroll += tbValues_Scroll;
         // 
         // n_AverageLine

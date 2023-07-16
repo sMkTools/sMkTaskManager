@@ -17,14 +17,16 @@ public class sMkPerfChart : UserControl {
     private int _VisibleValues = 0;          // Amount of visible values (calculated from control width and value spacing)
     private double _MaxLegendValue;
     private string _LegendSuffix = "";
-    private StringFormat _LegendStringFormat = new();
-    private Font _LegendStringFont = new(DefaultFont.FontFamily, 7);
-    private Dictionary<short, List<double>> _Values = new();
-    private Dictionary<short, double> _LastValue = new();
-    private Dictionary<short, double> _AvgValue = new();
-    private Dictionary<short, double> _MaxValue = new();
-    private Dictionary<short, string> _Indexes = new();
-    private Dictionary<short, Pen> _PenGraphs = new();
+    private int _GridSpacing = 10;
+    private int _ValueSpacing = 2;
+    private readonly StringFormat _LegendStringFormat = new();
+    private readonly Font _LegendStringFont = new(DefaultFont.FontFamily, 7);
+    private readonly Dictionary<short, List<double>> _Values = new();
+    private readonly Dictionary<short, double> _LastValue = new();
+    private readonly Dictionary<short, double> _AvgValue = new();
+    private readonly Dictionary<short, double> _MaxValue = new();
+    private readonly Dictionary<short, string> _Indexes = new();
+    private readonly Dictionary<short, Pen> _PenGraphs = new();
 
     public sMkPerfChart() {
         InitializeComponents();
@@ -128,9 +130,9 @@ public class sMkPerfChart : UserControl {
     public Color BackColorShade { get; set; } = Color.Black;
     public bool ShadeBackground { get; set; } = true;
     public ScaleModes ScaleMode { get; set; } = ScaleModes.Absolute;
-    public int ValueSpacing { get; set; } = 2;
     public bool AntiAliasing { get; set; } = true;
-    public int GridSpacing { get; set; } = 10;
+    public int ValueSpacing { get { return _ValueSpacing; } set { _ValueSpacing = Math.Max(1, value); } }
+    public int GridSpacing { get { return _GridSpacing; } set { _GridSpacing = Math.Max(2, value); } }
     public Pen PenGraph1 { get { return _PenGraphs[1]; } set { _PenGraphs[1] = value; } }
     public Pen PenGraph2 { get { return _PenGraphs[2]; } set { _PenGraphs[2] = value; } }
     public Pen PenGraph3 { get { return _PenGraphs[3]; } set { _PenGraphs[3] = value; } }
