@@ -112,12 +112,13 @@ internal static partial class Shared {
 
         IntPtr hproc = Classes.API.GetCurrentProcess();
         if (Classes.API.OpenProcessToken(hproc, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, out IntPtr htok)) {
-            Classes.API.TokPriv1Luid tp;
+            Classes.API.TOKEN_PRIVILEGES tp;
             tp.Count = 1;
             tp.Luid = 0;
             tp.Attr = SE_PRIVILEGE_ENABLED;
-            Classes.API.LookupPrivilegeValue(null, privilege, ref tp.Luid);
-            return Classes.API.AdjustTokenPrivileges(htok, false, ref tp, 0, IntPtr.Zero, IntPtr.Zero);
+            if (Classes.API.LookupPrivilegeValue(null, privilege, ref tp.Luid)) {
+                return Classes.API.AdjustTokenPrivileges(htok, false, ref tp, 0, IntPtr.Zero, IntPtr.Zero);
+            } else { return false; }
         } else { return false; }
     }
 
