@@ -172,9 +172,8 @@ public partial class frmProcess_Details : Form {
             p1.Refresh();
             BeginInvoke(() => p2.Update(new(), VisibleValues, true));
             BeginInvoke(() => Refresh_General());
-            BeginInvoke(() => Refresh_Threads(false));
-            BeginInvoke(() => Refresh_LockedFile(false));
-            // TODO: Fix LockedFiles, its hanging...
+            //BeginInvoke(() => Refresh_Threads(false));
+            //BeginInvoke(() => Refresh_LockedFile(false));
         }
     }
 
@@ -307,6 +306,7 @@ public partial class frmProcess_Details : Form {
         // Set Initial Values, we need this, in case they dont update...
         p2.ForceRaiseChange(VisibleValues);
         // Branches, Icon and Modules
+        try { if (p1.HasExited) return; } catch { return; }
         LoadProcessIcon(p1);
         LoadProcessModules(p1);
         Refresh_General();
@@ -329,6 +329,7 @@ public partial class frmProcess_Details : Form {
     }
     private void LoadProcessModules(in Process p) {
         if (p1 == null || p == null) return;
+        try { if (p.Modules.Count < 1 || p.HasExited) return; } catch { return; }
         lvModules.BeginUpdate();
         lvModules.Items.Clear();
         foreach (ProcessModule m in p.Modules) {
@@ -344,7 +345,7 @@ public partial class frmProcess_Details : Form {
                 itm.SubItems.Add(m.FileName);
                 itm.SubItems.Add(m.FileVersionInfo.CompanyName);
                 itm.SubItems.Add(m.FileVersionInfo.Language);
-            } catch { }
+            } catch (Exception ex) { Shared.DebugTrap(ex); }
         }
         foreach (ColumnHeader c in lvModules.Columns) c.Width = -2;
         lvModules.EndUpdate();
@@ -389,6 +390,7 @@ public partial class frmProcess_Details : Form {
     }
     private void Refresh_Threads(bool firstTime = false) {
         if (p1 == null) return;
+        try { if (p1.Threads.Count < 1 || p1.HasExited) return; } catch { return; }
         if (lvThreads.Items.Count == 0) firstTime = true;
         if (tc.SelectedTab != tpThreads && !firstTime) return;
         if (firstTime) lvThreads.BeginUpdate();

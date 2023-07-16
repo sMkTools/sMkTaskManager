@@ -346,6 +346,7 @@ public partial class frmMain : Form {
         foreach (ITaskManagerTab? t in Tabs.Tab.Values) {
             _MonitorTasks.Add(Task.Run(() => t?.Refresher(firstTime)));
         }
+        _MonitorTasks.Add(Task.Run(() => Shared.ShrinkMainProcess()));
         await Task.WhenAll(_MonitorTasks);
         MonitorBusy = false;
         _StopWatch1.Stop();

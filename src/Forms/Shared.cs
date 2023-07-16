@@ -11,6 +11,7 @@ internal static partial class Shared {
     internal static bool InitComplete = false;
     internal static bool LoadComplete = false;
     internal static bool RealExit = true;
+    internal static Process CurrentProcess = Process.GetCurrentProcess();
     internal static int CurrentSessionID = Process.GetCurrentProcess().SessionId;
     internal static int PrivateMsgID = 0;
     internal static int CpuLoad = 0;
@@ -92,6 +93,13 @@ internal static partial class Shared {
             if (!ilProcesses.Images.ContainsKey(imageIdentifier)) ilProcesses.Images.Add(imageIdentifier, Resources.Resources.Process_Black);
         }
         return imageIdentifier;
+    }
+    internal static void ShrinkMainProcess() {
+        try {
+            CurrentProcess.MaxWorkingSet = CurrentProcess.MaxWorkingSet;
+        } catch (Exception ex) {
+            Debug.WriteLine("Warning: ShrinkMainProcess Said {0}", ex.Message);
+        }
     }
 
 }

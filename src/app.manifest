@@ -22,11 +22,13 @@
     </application>
   </compatibility>
 
+  <!--
   <application xmlns="urn:schemas-microsoft-com:asm.v3">
     <windowsSettings>
       <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/system</dpiAware>
       <gdiScaling xmlns="http://schemas.microsoft.com/SMI/2017/WindowsSettings">true</gdiScaling>
     </windowsSettings>
   </application>
+  -->
 
 </assembly>

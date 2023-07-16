@@ -37,6 +37,7 @@
     <ApplicationIcon>sMkTaskManager.ico</ApplicationIcon>
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
     <StartupObject>sMkTaskManager.Program</StartupObject>
+    <ApplicationHighDpiMode>DpiUnawareGdiScaled</ApplicationHighDpiMode>
     <NoWarn>CS8618</NoWarn>
     <BuildMark>$([System.DateTime]::UtcNow.Ticks)</BuildMark>
   </PropertyGroup>

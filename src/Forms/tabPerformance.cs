@@ -105,7 +105,6 @@ internal partial class tabPerformance : UserControl, ITaskManagerTab {
         InitializeComponent();
         InitializeSettings();
         Extensions.CascadingDoubleBuffer(this);
-        Debug.WriteLine("Perfs Created! - Name: " + Name);
     }
     private void InitializeComponent() {
         components = new Container();
@@ -1263,7 +1262,6 @@ internal partial class tabPerformance : UserControl, ITaskManagerTab {
     }
 
     private void OnLoad(object? sender, EventArgs e) {
-        Debug.WriteLine("Perfs Loaded! - Name: " + Name);
         Resize += OnResizeEventHandler;
         GotFocus += OnResizeEventHandler;
         CascadeDoubleClickHandlers(this);

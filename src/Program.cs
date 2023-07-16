@@ -33,8 +33,11 @@ internal static class Program {
         foreach (Process p in Process.GetProcesses()) {
             try {
                 if (p.Id < Shared.bpi) continue;
+                if (p.ProcessName.Contains("csrss")) continue;
+                if (p.HasExited) continue;
                 if (p.SessionId != curProcess.SessionId) continue;
                 if (p.Id == curProcess.Id) continue;
+                if (p.Modules.Count < 1) continue;
                 if (p.MainModule == null) continue;
                 if (p.MainModule.FileName == curProcess.MainModule!.FileName) {
                     Debug.WriteLine("Second Instance of: " + curProcess.MainModule.FileName);
@@ -46,7 +49,9 @@ internal static class Program {
                     if (p.MainWindowHandle > 0) Classes.API.SetForegroundWindow(p.MainWindowHandle);
                     return true;
                 }
-            } catch { }
+            } catch (Exception ex) {
+                Shared.DebugTrap(ex, 011);
+            }
         }
         return false;
     }

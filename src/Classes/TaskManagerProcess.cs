@@ -43,7 +43,9 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
     private string _Affinity = "", _Priority = "", _Username = "", _RunTime = "", _CpuUsage = "";
     private uint _SessionID, _Handles, _Threads; private ulong _PageFaults;
     private int _GDIObjects, _UserObjects, _GDIObjectsPeak, _UserObjectsPeak;
+    private IntPtr _ParentPID;
     public string Name { get => _Name; set { SetField(ref _Name, value); } }
+    public IntPtr ParentPID { get => _ParentPID; set { SetField(ref _ParentPID, value); } }
     public string Description { get => _Description; set { SetField(ref _Description, value); } }
     public string ImagePath { get => _ImagePath; set { SetField(ref _ImagePath, value); } }
     public string CommandLine { get => _CommandLine; set { SetField(ref _CommandLine, value); } }
@@ -183,6 +185,7 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
         if (_PID > Shared.bpi) {
             Name = spi.ImageName.Buffer ?? "";
             SessionID = spi.SessionId;
+            ParentPID = spi.InheritedFromUniqueProcessId;
 
             _pHandle = API.OpenProcess(API.ProcessAccessFlags.QueryInformation, false, PID);
             if (_pHandle == IntPtr.Zero) {
@@ -216,6 +219,7 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
             if (_PID == 0) { Name = "Idle"; Description = "Idle Processor"; }
             if (_PID == 4) { Name = "System"; Description = "NT Kernel & System"; }
             SessionID = 0;
+            ParentPID = 0;
             Priority = "Normal";
             Affinity = "All";
             Username = Shared.GetSystemAccount();
@@ -483,19 +487,13 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
         }
         return true;
     }
-    private static bool imSuspended(in API.SYSTEM_THREAD_INFORMATION[] Threads) {
-        foreach (API.SYSTEM_THREAD_INFORMATION t in Threads) {
-            if (t.State != 5) return false;
-            if (t.State == 5 && t.WaitReason != 5) return false;
-        }
-        return true;
-    }
     private ulong CalculateRateValue(in ulong DeltaValue) {
         if (DeltaValue == 0) return 0;
         if ((LastUpdated - PreviousUpdate) <= 0) return DeltaValue;
         return DeltaValue / (ulong)(LastUpdated - PreviousUpdate) / TimeSpan.TicksPerSecond;
     }
-    /* Internal Static Methods */
+
+    /* Public Static Methods */
     public static void GetSpecificSPI(int PID, out API.SYSTEM_PROCESS_INFORMATION spi) {
         spi = new();
         IntPtr hmain = IntPtr.Zero;

@@ -2554,6 +2554,7 @@ partial class frmProcess_Details {
         lvModules.LabelWrap = false;
         lvModules.Location = new Point(0, 0);
         lvModules.MultiSelect = false;
+        lvModules.FullRowSelect = true;
         lvModules.Name = "lvModules";
         lvModules.Size = new Size(463, 436);
         lvModules.TabIndex = 0;
@@ -2632,6 +2633,7 @@ partial class frmProcess_Details {
         lvThreads.LabelWrap = false;
         lvThreads.Location = new Point(0, 0);
         lvThreads.MultiSelect = false;
+        lvThreads.FullRowSelect = true;
         lvThreads.Name = "lvThreads";
         lvThreads.Size = new Size(463, 436);
         lvThreads.TabIndex = 1;
@@ -2692,6 +2694,7 @@ partial class frmProcess_Details {
         lvLockedFiles.LabelWrap = false;
         lvLockedFiles.Location = new Point(0, 0);
         lvLockedFiles.MultiSelect = false;
+        lvLockedFiles.FullRowSelect = true;
         lvLockedFiles.Name = "lvLockedFiles";
         lvLockedFiles.Size = new Size(463, 436);
         lvLockedFiles.TabIndex = 2;

@@ -64,6 +64,7 @@ internal class TaskManagerColumn {
         if (type == TaskManagerColumnTypes.Process) {
             r.AddRange(new TaskManagerColumn[] {
             new("Process ID (PID)", "PID", "PID", "General Information", 50, 0, 1, 1),
+            new("Parent PID", "Parent", "ParentPID", "General Information", 50, 0, 0, 0),
             new("Process Name", "Name", "Name", "General Information", 130, 0, 0, 1),
             new("Description", "Description", "Description", "General Information", 150, 0, 0, 1),
             new("Base Priority", "Priority", "Priority", "General Information", 60, 0, 0, 1),

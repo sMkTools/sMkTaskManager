@@ -204,7 +204,6 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         cms.Items.AddMenuItem("Set &Affinity...").Name = "Affinity";
         cms.Items.AddSeparator();
         cms.Items.AddMenuItem("Search &Online").Name = "Online";
-        cms.Items.AddMenuItem("Reveal &Windows").Name = "Windows";
         cms.Items.AddMenuItem("Show &Locked Files").Name = "Files";
         ((ToolStripMenuItem)cms.Items["Priority"]).DropDownItems.AddMenuItem("RealTime").Name = "Priority1";
         ((ToolStripMenuItem)cms.Items["Priority"]).DropDownItems.AddMenuItem("High").Name = "Priority2";
@@ -303,7 +302,6 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
             case "Priority5": BeginInvoke(Feature_ProcessSetPriority, ProcessPriorityClass.BelowNormal); break;
             case "Priority6": BeginInvoke(Feature_ProcessSetPriority, ProcessPriorityClass.Idle); break;
             case "Online": BeginInvoke(Feature_OpenOnline); break;
-            case "Windows": BeginInvoke(Feature_RevealWindows); break;
             case "Files": BeginInvoke(Feature_OpenLockedFiles); break;
             default: break;
         }
@@ -410,9 +408,6 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         pf.PID = int.Parse(lv.SelectedItems[0].Name);
         pf.StartPosition = FormStartPosition.CenterParent;
         pf.ShowDialog(this);
-    }
-    public void Feature_RevealWindows() {
-        Shared.NotImplemented();
     }
     public void Feature_OpenOnline() {
         if (lv.SelectedItems.Count < 1) return;
