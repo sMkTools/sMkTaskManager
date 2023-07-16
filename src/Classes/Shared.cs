@@ -104,6 +104,22 @@ internal static partial class Shared {
     public static bool Is64Bits() {
         return System.Runtime.InteropServices.Marshal.SizeOf(typeof(IntPtr)) == 8;
     }
+    public static bool AddPrivilege(string privilege) {
+        // const int SE_PRIVILEGE_DISABLED = 0x00000000;
+        const int SE_PRIVILEGE_ENABLED = 0x00000002;
+        const int TOKEN_QUERY = 0x00000008;
+        const int TOKEN_ADJUST_PRIVILEGES = 0x00000020;
+
+        IntPtr hproc = Classes.API.GetCurrentProcess();
+        if (Classes.API.OpenProcessToken(hproc, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, out IntPtr htok)) {
+            Classes.API.TokPriv1Luid tp;
+            tp.Count = 1;
+            tp.Luid = 0;
+            tp.Attr = SE_PRIVILEGE_ENABLED;
+            Classes.API.LookupPrivilegeValue(null, privilege, ref tp.Luid);
+            return Classes.API.AdjustTokenPrivileges(htok, false, ref tp, 0, IntPtr.Zero, IntPtr.Zero);
+        } else { return false; }
+    }
 
 }
 internal class CpuUsage {

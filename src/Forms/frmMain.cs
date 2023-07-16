@@ -51,7 +51,6 @@ public partial class frmMain : Form {
 
     private void OnLoad(object sender, EventArgs e) {
         Extensions.StartMeasure(_StopWatch1);
-        
         // Load Settings and then Fork
         Settings.LoadAll();
         OnLoadApplySettings();
@@ -118,6 +117,7 @@ public partial class frmMain : Form {
         // We should use this to initialize something that is not really critical?
         ETW.Start();
         if (Shared.PrivateMsgID == 0) Shared.PrivateMsgID = API.RegisterWindowMessage(Application.ExecutablePath.Replace("\\", "_"));
+        // if (Shared.AddPrivilege("SeDebugPrivilege")) Debug.WriteLine("SeDebugPrivilege Set");
         Shared.InitComplete = true;
         MonitorStart(true);
         Extensions.StopMeasure(sw);

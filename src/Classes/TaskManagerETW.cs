@@ -197,7 +197,7 @@ internal static class ETW {
     [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     private static extern ulong OpenTrace(ref EVENT_TRACE_LOGFILE Logfile);
     [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    private static extern ulong ControlTrace(ulong TraceHandle, string InstanceName, EVENT_TRACE_PROPERTIES Properties, ulong ControlCode);
+    private static extern ulong ControlTrace(ulong TraceHandle, string InstanceName, ref EVENT_TRACE_PROPERTIES Properties, uint ControlCode);
     [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     private static extern ulong ProcessTrace(ulong[] HandleArray, ulong HandleCount, IntPtr StartTime, IntPtr EndTime);
     [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
@@ -259,7 +259,7 @@ internal static class ETW {
     private static bool EtwStopSession() {
         if (!EtwActive) return true;
         EtwTraceProperties.LogFileNameOffset = 0;
-        var result = ControlTrace(EtwHandle, KERNEL_LOGGER_NAME, EtwTraceProperties, EVENT_TRACE_CONTROL_STOP);
+        var result = ControlTrace(EtwHandle, KERNEL_LOGGER_NAME, ref EtwTraceProperties, EVENT_TRACE_CONTROL_STOP);
         Debug.WriteLine("* ETW ControlTrace STOP Result: {1}.", result);
         EtwActive = (result == 0);
         return !EtwActive;
@@ -378,7 +378,7 @@ internal static class ETW {
     }
 
     public static void Flush() {
-        if (EtwActive) ControlTrace(EtwHandle, KERNEL_LOGGER_NAME, EtwTraceProperties, EVENT_TRACE_CONTROL_FLUSH);
+        if (EtwActive) ControlTrace(EtwHandle, KERNEL_LOGGER_NAME, ref EtwTraceProperties, EVENT_TRACE_CONTROL_FLUSH);
     }
     public static bool Start() {
         if (!EtwActive) {

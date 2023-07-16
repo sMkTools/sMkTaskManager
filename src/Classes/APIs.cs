@@ -1316,7 +1316,12 @@ internal unsafe static partial class API {
         public ushort atomWindowType;
         public ushort wCreatorVersion;
     }
-    
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)] public struct TokPriv1Luid {
+        public int Count;
+        public long Luid;
+        public int Attr;
+    }
     #endregion
 
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
@@ -1400,6 +1405,12 @@ internal unsafe static partial class API {
     internal static extern unsafe bool Module32First(IntPtr hSnapshot, ref ModuleEntry32 lpme);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     internal static extern unsafe bool Module32Next(IntPtr hSnapshot, ref ModuleEntry32 lpme);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", ExactSpelling = true, SetLastError = true)]
+    public static extern unsafe bool AdjustTokenPrivileges(IntPtr htok, bool disall, ref TokPriv1Luid newst, int len, IntPtr prev, IntPtr relen);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", ExactSpelling = true)]
+    public static extern unsafe IntPtr GetCurrentProcess();
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    public static extern unsafe bool LookupPrivilegeValue(string? host, string name, ref long pluid);
 
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern unsafe IntPtr GetClassLong(IntPtr hwnd, int index);
