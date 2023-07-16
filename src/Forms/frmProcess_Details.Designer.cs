@@ -2777,8 +2777,6 @@ partial class frmProcess_Details {
         // frmProcess_Details
         // 
         AcceptButton = btnOK;
-        AutoScaleDimensions = new SizeF(7F, 15F);
-        AutoScaleMode = AutoScaleMode.Font;
         CancelButton = btnCancel;
         ClientSize = new Size(484, 509);
         Controls.Add(lblSpeed);

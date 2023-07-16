@@ -114,8 +114,6 @@ partial class frmUser_Message {
         // frmUser_Message
         // 
         AcceptButton = btnOk;
-        AutoScaleDimensions = new SizeF(7F, 15F);
-        AutoScaleMode = AutoScaleMode.Font;
         CancelButton = btnCancel;
         ClientSize = new Size(314, 251);
         Controls.Add(txtIcon);

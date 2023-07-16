@@ -86,8 +86,6 @@ partial class frmColumns {
         // frmColumns
         // 
         AcceptButton = btnOk;
-        AutoScaleDimensions = new SizeF(7F, 15F);
-        AutoScaleMode = AutoScaleMode.Font;
         CancelButton = btnCancel;
         ClientSize = new Size(304, 391);
         Controls.Add(lv);

@@ -372,8 +372,6 @@ partial class frmUser_Details {
         // frmUser_Details
         // 
         AcceptButton = btnOk;
-        AutoScaleDimensions = new SizeF(7F, 15F);
-        AutoScaleMode = AutoScaleMode.Font;
         CancelButton = btnOk;
         ClientSize = new Size(444, 221);
         Controls.Add(txtClientName);

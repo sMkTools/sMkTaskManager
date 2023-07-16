@@ -143,8 +143,6 @@ partial class frmAbout {
         // 
         // frmAbout
         // 
-        AutoScaleDimensions = new SizeF(7F, 15F);
-        AutoScaleMode = AutoScaleMode.Font;
         ClientSize = new Size(410, 129);
         Controls.Add(gb);
         FormBorderStyle = FormBorderStyle.FixedToolWindow;

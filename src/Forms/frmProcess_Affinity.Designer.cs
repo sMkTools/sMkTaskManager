@@ -87,8 +87,6 @@ partial class frmProcess_Affinity {
         // frmProcess_Affinity
         // 
         AcceptButton = btnOk;
-        AutoScaleDimensions = new SizeF(7F, 15F);
-        AutoScaleMode = AutoScaleMode.Font;
         CancelButton = btnCancel;
         ClientSize = new Size(516, 187);
         Controls.Add(flowPanel);

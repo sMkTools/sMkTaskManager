@@ -81,8 +81,6 @@ partial class frmService_Control {
         // 
         // frmService_Control
         // 
-        AutoScaleDimensions = new SizeF(7F, 15F);
-        AutoScaleMode = AutoScaleMode.Font;
         ClientSize = new Size(384, 121);
         Controls.Add(gb);
         FormBorderStyle = FormBorderStyle.FixedToolWindow;

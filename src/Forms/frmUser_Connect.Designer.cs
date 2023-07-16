@@ -103,8 +103,6 @@ partial class frmUser_Connect {
         // frmUser_Connect
         // 
         AcceptButton = btnOk;
-        AutoScaleDimensions = new SizeF(7F, 15F);
-        AutoScaleMode = AutoScaleMode.Font;
         CancelButton = btnCancel;
         ClientSize = new Size(314, 185);
         Controls.Add(btnOk);

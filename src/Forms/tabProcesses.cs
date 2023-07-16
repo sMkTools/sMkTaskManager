@@ -260,7 +260,6 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         cms.Items["Dump"].Enabled = lv.SelectedItems.Count == 1;
         cms.Items["Files"].Enabled = lv.SelectedItems.Count == 1;
         cms.Items["Online"].Enabled = lv.SelectedItems.Count == 1;
-        cms.Items["Windows"].Enabled = lv.SelectedItems.Count == 1;
     }
     private void OnContextPriorityOpening(object? sender, EventArgs e) {
         ProcessPriorityClass curPriority = 0;

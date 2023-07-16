@@ -408,8 +408,6 @@ partial class frmService_Details {
         // frmService_Details
         // 
         AcceptButton = btnOk;
-        AutoScaleDimensions = new SizeF(7F, 15F);
-        AutoScaleMode = AutoScaleMode.Font;
         CancelButton = btnCancel;
         ClientSize = new Size(451, 501);
         Controls.Add(tvDependsTo);

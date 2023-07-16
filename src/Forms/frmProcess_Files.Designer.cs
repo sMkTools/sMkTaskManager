@@ -81,8 +81,6 @@ partial class frmProcess_Files {
         // 
         // frmProcess_Files
         // 
-        AutoScaleDimensions = new SizeF(7F, 15F);
-        AutoScaleMode = AutoScaleMode.Font;
         CancelButton = btnClose;
         ClientSize = new Size(534, 231);
         Icon = Resources.Resources.frmProcess_Files;
