@@ -460,7 +460,7 @@ internal static class Settings {
                         Width = c.Width,
                         TextAlign = c.Align
                     };
-                    lv.Columns.Insert(c.Index, newCol);
+                    if (c.Index <= lv.Columns.Count) { lv.Columns.Insert(c.Index, newCol); } else { lv.Columns.Add(newCol); }
                 } else {
                     // Otherwise just set the position and width, This is used for Connections and Ports
                     lv.Columns[colExist].Name = c.Tag.ToString();
