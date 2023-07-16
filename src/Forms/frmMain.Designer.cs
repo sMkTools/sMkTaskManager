@@ -196,7 +196,7 @@ partial class frmMain {
         Margin = new Padding(6);
         MinimumSize = new Size(480, 400);
         Name = "frmMain";
-        Text = "sMk Task Manager - Next Gen";
+        Text = "sMk Task Manager";
         FormClosing += OnClosingEventHandler;
         FormClosed += OnClosedEventHandler;
         Load += OnLoad;
