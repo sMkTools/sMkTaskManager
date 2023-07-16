@@ -10,12 +10,13 @@ namespace sMkTaskManager;
 public partial class frmMain : Form {
 
     private readonly List<Task> _MonitorTasks = new();
-    private readonly System.Windows.Forms.Timer StatusTimer = new();
+    private readonly System.Timers.Timer _StatusTimer = new() { Enabled = false, Interval = 10000 };
+    private readonly System.Timers.Timer _MonitorTriggerTimer = new() { Enabled = false };
+    private readonly System.Timers.Timer _TrayUpdateTimer = new() { Enabled = false, Interval = 1000 };
     private readonly Stopwatch _StopWatch1 = new(), _StopWatch2 = new();
-    private System.Timers.Timer _MonitorTriggerTimer, _TrayUpdateTimer;
+    private readonly BackgroundWorker _InitWorker = new();
     private Size? _prevSize, _prevMinSize, _fullScreenSize;
     private Point? _prevLocation, _fullScreenLocation;
-    private BackgroundWorker _InitWorker;
 
     public frmMain() {
         InitializeComponent();
@@ -50,14 +51,7 @@ public partial class frmMain : Form {
 
     private void OnLoad(object sender, EventArgs e) {
         Extensions.StartMeasure(_StopWatch1);
-        // Initialize any remaining object
-        _MonitorTriggerTimer = new() { Enabled = false };
-        _MonitorTriggerTimer.Elapsed += MonitorTriggerExecutor;
-        _TrayUpdateTimer = new() { Enabled = false, Interval = 1000 };
-        _TrayUpdateTimer.Elapsed += TrayUpdaterExecutor;
-
-        _InitWorker = new BackgroundWorker();
-        _InitWorker.DoWork += OnLoadParallelInit;
+        
         // Load Settings and then Fork
         Settings.LoadAll();
         OnLoadApplySettings();
@@ -133,14 +127,18 @@ public partial class frmMain : Form {
             ((Control)Tabs.Tab["Perfs"]).MouseDoubleClick += evtabPerf_MouseDoubleClick;
             Tabs.Tab["Perfs"].RefreshComplete += evtabPerf_RefreshComplete;
         }
+        _InitWorker.DoWork += OnLoadParallelInit;
+        _MonitorTriggerTimer.Elapsed += MonitorTriggerExecutor;
+        _TrayUpdateTimer.Elapsed += TrayUpdaterExecutor;
+        _StatusTimer.Elapsed += OnStatusTimerEventHandler;
         ssBtnState.DropDownOpening += evStatusBarStateOpening;
         ssBtnState.DropDownClosed += evStatusBarStateClosed;
         ssBtnState.ButtonDoubleClick += evStatusBarStateDoubleClick;
     }
 
-    private void OnStatusTimerEventHandler(object sender, EventArgs e) {
+    private void OnStatusTimerEventHandler(object? sender, EventArgs e) {
         SetStatusText();
-        StatusTimer.Stop();
+        _StatusTimer.Stop();
     }
     private void OnSizeChangedEventHandler(object sender, EventArgs e) {
         if (!Shared.LoadComplete) return;
@@ -444,9 +442,7 @@ public partial class frmMain : Form {
         if (value == "") { value = MonitorRunning ? "Running ..." : "Paused ..."; }
         if (value != obj.Text) {
             obj.Text = value;
-            StatusTimer.Stop();
-            StatusTimer.Interval = 10000;
-            StatusTimer.Start();
+            if (obj == ssText) { _StatusTimer.Stop(); _StatusTimer.Start(); }
         }
     }
     public string GetStatusText(ToolStripLabel? obj) {
