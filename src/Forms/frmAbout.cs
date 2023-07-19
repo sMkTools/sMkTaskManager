@@ -21,12 +21,22 @@ public partial class frmAbout : Form {
         ilAnimation.Images.Clear();
         ilAnimation.Images.Add(Resources.Resources.AnimIcon_Cyan);
         ilAnimation.Images.Add(Resources.Resources.AnimIcon_Red);
-        Version AssemblyVersion = Assembly.GetExecutingAssembly().GetName().Version!;
-        var buildTime = long.Parse(Assembly.GetExecutingAssembly().GetCustomAttribute<BuildMarkAttribute>()?.BuildMark!);
-        lblVersion.Text = "v" + AssemblyVersion?.Major + "." + AssemblyVersion?.Minor + "." + AssemblyVersion?.Build;
-        lblBuild.Text = lblBuild.Text.Replace("xxxx1", AssemblyVersion?.Revision.ToString());
-        lblBuild.Text = lblBuild.Text.Replace("xxxx2", new DateTime(buildTime).ToLocalTime().ToString());
-
+        /* Set Version Numbers */
+        lblVersion.Text = ProductName;
+        Version version = Assembly.GetExecutingAssembly().GetName().Version!;
+        lblVersion.Text = "v" + version?.Major + "." + version?.Minor + "." + version?.Build;
+        lblBuild.Text = lblBuild.Text.Replace("xxxx1", version?.Revision.ToString());
+        /* Set Build Time, if possible */
+        try {
+            long buildTime = long.Parse(ApplicationInfo.BuildMark);
+            lblBuild.Text = lblBuild.Text.Replace("xxxx2", new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(buildTime).ToLocalTime().ToString());
+        } catch { lblBuild.Text = lblBuild.Text.Replace("xxxx2", "n/a."); };
+        /* Set the Info Line */
+        string infoLine = "", config = ApplicationInfo.Configuration;
+        if (config != "Release") { infoLine += Environment.NewLine + ApplicationInfo.Configuration; }
+        infoLine += Environment.NewLine + (Environment.Is64BitProcess ? "64bit" : "32bit");
+        lblInfo.Text = infoLine.Trim();
+        /* Start the Animation */
         try {
             m_AnimationImage = ilAnimation.Images[1];
             pbIcon.Image = ilAnimation.Images[0];
@@ -37,7 +47,6 @@ public partial class frmAbout : Form {
             m_Rectangle.Width -= (m_RectOffset * 2);
             tmrIcon.Start();
         } catch { }
-
 
     }
     private void frmAbout_KeyDown(object sender, KeyEventArgs e) {
@@ -62,5 +71,30 @@ public partial class frmAbout : Form {
             m_AnimationImage = ilAnimation.Images[m_AnimationIndex];
         }
         pbIcon.Invalidate();
+    }
+
+    private class ApplicationInfo {
+        public static string Company { get { return GetExecutingAssemblyAttribute<AssemblyCompanyAttribute>(a => a.Company); } }
+        public static string Product { get { return GetExecutingAssemblyAttribute<AssemblyProductAttribute>(a => a.Product); } }
+        public static string Copyright { get { return GetExecutingAssemblyAttribute<AssemblyCopyrightAttribute>(a => a.Copyright); } }
+        public static string Trademark { get { return GetExecutingAssemblyAttribute<AssemblyTrademarkAttribute>(a => a.Trademark); } }
+        public static string Title { get { return GetExecutingAssemblyAttribute<AssemblyTitleAttribute>(a => a.Title); } }
+        public static string Description { get { return GetExecutingAssemblyAttribute<AssemblyDescriptionAttribute>(a => a.Description); } }
+        public static string Configuration { get { return GetExecutingAssemblyAttribute<AssemblyConfigurationAttribute>(a => a.Configuration); } }
+        public static string FileVersion { get { return GetExecutingAssemblyAttribute<AssemblyFileVersionAttribute>(a => a.Version); } }
+        public static string BuildMark { get { return GetExecutingAssemblyAttribute<BuildMarkAttribute>(a => a.BuildMark); } }
+        public static string GitCommit { get { return GetExecutingAssemblyAttribute<GitCommitAttribute>(a => a.GitCommit); } }
+
+        public static Version Version { get { return Assembly.GetExecutingAssembly().GetName().Version!; } }
+        public static string VersionFull { get { return Version.ToString(); } }
+        public static string VersionMajor { get { return Version.Major.ToString(); } }
+        public static string VersionMinor { get { return Version.Minor.ToString(); } }
+        public static string VersionBuild { get { return Version.Build.ToString(); } }
+        public static string VersionRevision { get { return Version.Revision.ToString(); } }
+
+        private static string GetExecutingAssemblyAttribute<T>(Func<T, string> value) where T : Attribute {
+            T attribute = (T)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(T))!;
+            return value.Invoke(attribute);
+        }
     }
 }
