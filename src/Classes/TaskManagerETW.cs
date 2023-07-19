@@ -193,15 +193,15 @@ internal static class ETW {
     }
 
     [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    private static extern ulong StartTrace(ref ulong TraceHandle, string InstanceName, EVENT_TRACE_PROPERTIES Properties);
+    private static extern uint StartTrace(ref UIntPtr TraceHandle, string InstanceName, EVENT_TRACE_PROPERTIES Properties);
     [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    private static extern ulong OpenTrace(ref EVENT_TRACE_LOGFILE Logfile);
+    private static extern UIntPtr OpenTrace(ref EVENT_TRACE_LOGFILE Logfile);
     [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    private static extern ulong ControlTrace(ulong TraceHandle, string InstanceName, ref EVENT_TRACE_PROPERTIES Properties, uint ControlCode);
+    private static extern uint ControlTrace(UIntPtr TraceHandle, string InstanceName, EVENT_TRACE_PROPERTIES Properties, uint ControlCode);
     [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    private static extern ulong ProcessTrace(ulong[] HandleArray, ulong HandleCount, IntPtr StartTime, IntPtr EndTime);
+    private static extern uint ProcessTrace(UIntPtr[] HandleArray, uint HandleCount, IntPtr StartTime, IntPtr EndTime);
     [DllImport("advapi32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-    private static extern ulong CloseTrace(ulong sessionHandle);
+    private static extern uint CloseTrace(UIntPtr TraceHandle);
 
     private delegate void EventTraceEventCallback(EVENT_TRACE rawData);
     private delegate bool EventTraceBufferCallback(EVENT_TRACE_LOGFILE Logfile);
@@ -230,7 +230,7 @@ internal static class ETW {
     private static readonly Guid TcpIpGuid = Guid.Parse("{9a280ac0-c8e0-11d1-84e2-00c04fb998a2}");
     private static readonly Guid UdpIpGuid = Guid.Parse("{bf3a50c5-a9c9-4988-a005-2df0b7c80f80}");
 
-    private static ulong EtwHandle;
+    private static UIntPtr EtwHandle;
     private static bool EtwActive;
     private static Thread? EtwThread;
     private static EVENT_TRACE_PROPERTIES EtwTraceProperties = new();
@@ -259,7 +259,7 @@ internal static class ETW {
     private static bool EtwStopSession() {
         if (!EtwActive) return true;
         EtwTraceProperties.LogFileNameOffset = 0;
-        var result = ControlTrace(EtwHandle, KERNEL_LOGGER_NAME, ref EtwTraceProperties, EVENT_TRACE_CONTROL_STOP);
+        var result = ControlTrace(EtwHandle, KERNEL_LOGGER_NAME, EtwTraceProperties, EVENT_TRACE_CONTROL_STOP);
         Debug.WriteLine("* ETW ControlTrace STOP Result: {1}.", result);
         EtwActive = (result == 0);
         return !EtwActive;
@@ -287,7 +287,7 @@ internal static class ETW {
         var ptrHandle = OpenTrace(ref logFile);
         Debug.WriteLine("* ETW OpenTrace: " + ptrHandle);
         while (EtwActive) {
-            var ptResult = ProcessTrace(new[] { ptrHandle }, (uint)1, IntPtr.Zero, IntPtr.Zero);
+            var ptResult = ProcessTrace(new[] { ptrHandle }, 1, IntPtr.Zero, IntPtr.Zero);
             if (ptResult == 0) {
                 if (!EtwActive) break;
             } else if (ptResult == 4201) { // ERROR_WMI_INSTANCE_NOT_FOUND
@@ -378,7 +378,7 @@ internal static class ETW {
     }
 
     public static void Flush() {
-        if (EtwActive) ControlTrace(EtwHandle, KERNEL_LOGGER_NAME, ref EtwTraceProperties, EVENT_TRACE_CONTROL_FLUSH);
+        if (EtwActive) ControlTrace(EtwHandle, KERNEL_LOGGER_NAME, EtwTraceProperties, EVENT_TRACE_CONTROL_FLUSH);
     }
     public static bool Start() {
         if (!EtwActive) {
