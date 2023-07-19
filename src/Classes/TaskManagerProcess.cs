@@ -425,10 +425,11 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
     private void MyPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (!NotifyChanges) return;
         if (e.PropertyName == null) return;
-        if (e.PropertyName.Equals("RunTime")) return;
         if (e.PropertyName.Equals("LastChanged")) return;
         if (e.PropertyName.Equals("LastUpdated")) return;
         if (e.PropertyName.Equals("PreviousUpdate")) return;
+        if (e.PropertyName.Equals("BackColor")) return;
+        if (e.PropertyName.Equals("RunTime")) return;
         LastChanged = LastUpdated;
     }
     private void OnPropertyChanged(PropertyChangedEventArgs e) { if (NotifyChanges) PropertyChanged?.Invoke(this, e); }

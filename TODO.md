@@ -9,8 +9,6 @@
 
 ## Known bugs
 
-* Highlighted items are not being cleared properly when property doesnt change.
-
 ## Pending migration list
 
 * Summary View for Processes (not sure i want it anymore)
