@@ -229,16 +229,6 @@ internal static class Settings {
             return WriteReg("winProcess", FixStringToWrite(_StringBuilder));
         } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
-    public static bool SaveSummaryColumns(ref object sv) {
-        return false;
-        //_StringBuilder.Clear();
-        //try {
-        //    foreach (string l in SV.RowsChunk) {
-        //        _StringBuilder.AppendLine(l);
-        //    }
-        //    return WriteReg("colsSummary", _Encoding.GetBytes(_StringBuilder.ToString()));
-        //} catch (Exception e) { Shared.DebugTrap(e); return false; }
-    }
     public static bool SaveColsInformation(string strName, in sMkListView lv) {
         _StringBuilder.Clear();
         try {
@@ -386,47 +376,6 @@ internal static class Settings {
             ProcessDetails.LastTab = int.Parse(ChunkValues[5]);
             return true;
         } catch (Exception e) { Shared.DebugTrap(e); return false; }
-    }
-    public static bool LoadSummaryColumns(ref object sv) {
-        return false;
-        //try {
-        //    byte[] bt = ReadReg("colsSummary", new[] { 0 });
-        //    string allValues = null;
-        //    if (bt.Length > 10) {
-        //        allValues = _Encoding.GetString(bt);
-        //    } else {
-        //        allValues = GetInitialValues("colsSummary");
-        //    }
-        //    string[] spValues = null;
-        //    SV.SuspendLayout();
-        //    SV.ClearRows();
-        //    SV.Columns = 1;
-        //    foreach (string colValues in allValues.Split(Environment.NewLine)) {
-        //        if (colValues.Trim().Length < 5) {
-        //            continue;
-        //        }
-        //        spValues = colValues.Split('|');
-        //        if (spValues.Count() < 3) {
-        //            continue;
-        //        }
-        //        if (!NumericHelper.IsNumeric(spValues[0])) {
-        //            continue;
-        //        }
-        //        if (int.Parse(spValues[0]) < 1) {
-        //            spValues[0] = 1.ToString();
-        //        }
-        //        if (int.Parse(spValues[0]) > 3) {
-        //            spValues[0] = 3.ToString();
-        //        }
-        //        SV.Columns = Math.Max(SV.Columns, int.Parse(spValues[0]));
-        //        SV.AddRow(int.Parse(spValues[0]), spValues[1], spValues[2]);
-        //    }
-        //    SV.ResumeLayout();
-        //    spValues = null;
-        //    allValues = null;
-        //    bt = null;
-        //} catch (Exception e) { Shared.DebugTrap(e); return false; }
-        //return true;
     }
     public static bool LoadColsInformation(TaskManagerColumnTypes Type, sMkListView lv, ref HashSet<string> destinationTable) {
         string strName;

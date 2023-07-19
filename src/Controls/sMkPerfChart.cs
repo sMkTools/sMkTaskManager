@@ -378,14 +378,6 @@ public class sMkPerfChart : UserControl {
         g.DrawString(Math.Round(_MaxLegendValue, ((_MaxLegendValue > 5) ? 0 : 1)).ToString() + _LegendSuffix, _LegendStringFont, sb, LegendSpacing - 1, 8, _LegendStringFormat);
     }
 
-    private double CalcHighestVisibleValue() {
-        _MaxVisibleValue = 0;
-        for (short i = 0; i <= 5; i++) {
-            if (!_Values.ContainsKey(i)) continue;
-            _MaxVisibleValue = Math.Max(_MaxVisibleValue, _Values[i].GetRange(0, _VisibleValues).Max());
-        }
-        return _MaxVisibleValue;
-    }
     private int CalcVerticalPosition(double value) {
         double result = 0;
 

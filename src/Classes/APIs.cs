@@ -1347,8 +1347,6 @@ internal unsafe static partial class API {
     internal static extern unsafe bool ConvertSidToStringSid(IntPtr pSID, ref string pStringSid);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     internal static extern unsafe bool GetTokenInformation(IntPtr TokenHandle, TOKEN_INFORMATION_CLASS tokenInfoClass, IntPtr TokenInformation, int TokenInformationLength, ref uint ReturnLength);
-    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    internal static extern unsafe bool LookupAccountSid(string lpSystemName, IntPtr pSid, StringBuilder Account, ref int cbName, StringBuilder DomainName, ref int cbDomainName, ref int peUse);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", SetLastError = true)]
     internal static extern unsafe bool GetSystemTimes(ref FILETIME lpIdleTime, ref FILETIME lpKernelTime, ref FILETIME lpUserTime);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", SetLastError = true)]
@@ -1494,7 +1492,7 @@ internal unsafe static partial class API {
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe bool WTSSendMessage(IntPtr hServer, int sessionId, [MarshalAs(UnmanagedType.LPWStr)] string title, int titleLength, [MarshalAs(UnmanagedType.LPWStr)] string message, int messageLength, int style, int timeout, ref RemoteMessageBoxResult result, bool wait);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-    public static extern unsafe int WTSEnumerateServers([MarshalAs(UnmanagedType.LPTStr)] string pDomainName, int reserved, int version, ref IntPtr ppServerInfo, ref int pCount);
+    public static extern unsafe int WTSEnumerateServers([MarshalAs(UnmanagedType.LPWStr)] string pDomainName, int reserved, int version, ref IntPtr ppServerInfo, ref int pCount);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
     public static extern unsafe int WTSEnumerateProcesses(IntPtr hServer, int reserved, int version, ref IntPtr ppProcessInfo, ref int count);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("wtsapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]

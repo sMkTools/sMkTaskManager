@@ -1447,7 +1447,7 @@ internal partial class tabPerformance : UserControl, ITaskManagerTab {
     public TaskManagerColumnTypes ColumnType => TaskManagerColumnTypes.None;
     public void ForceRefresh() => ForceRefreshClicked?.Invoke(this, EventArgs.Empty);
 
-    private void RefresherDoWork(bool firstTime = false) {
+    private void RefresherDoWork() {
         RefreshStarts?.Invoke(this, EventArgs.Empty);
         System.Refresh();
         RefreshComplete?.Invoke(this, EventArgs.Empty);
@@ -1455,9 +1455,9 @@ internal partial class tabPerformance : UserControl, ITaskManagerTab {
     public void Refresher(bool firstTime = false) {
         _stopWatch.Restart();
         if (InvokeRequired) {
-            Invoke(() => RefresherDoWork(firstTime));
+            Invoke(() => RefresherDoWork());
         } else {
-            RefresherDoWork(firstTime);
+            RefresherDoWork();
         }
         _stopWatch.Stop();
     }

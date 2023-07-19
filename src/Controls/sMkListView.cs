@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using static sMkTaskManager.Controls.sMkListViewHelpers;
@@ -235,7 +234,7 @@ public class sMkListView : ListView {
         switch (e.ListChangedType) {
             case ListChangedType.ItemAdded: OnDataSource_RowAdded(e); break;
             case ListChangedType.ItemChanged: OnDataSource_RowChanged(e); break;
-                // case ListChangedType.ItemDeleted: OnDataSource_RowDeleted(e); break;
+            // case ListChangedType.ItemDeleted: OnDataSource_RowDeleted(e); break;
         }
     }
     private void OnDataSource_RowAdded(ListChangedEventArgs e) {
@@ -316,7 +315,7 @@ public class sMkListView : ListView {
         }
         if (_needReSort && Sortable) { _needReSort = false; Sort(); }
     }
-    private void OnDataSource_RowDeleted(ListChangedEventArgs e) { }
+    // private void OnDataSource_RowDeleted(ListChangedEventArgs e) { }
 
     public void SetColumns(in ListViewItemCollection colItems) {
         if (colItems == null) return;
@@ -364,21 +363,19 @@ public static class sMkListViewHelpers {
 
     [StructLayout(LayoutKind.Sequential)]
     public struct HDITEM {
-        public Int32 mask;
-        public Int32 cxy;
+        public int mask;
+        public int cxy;
         [MarshalAs(UnmanagedType.LPTStr)] public string pszText;
         public IntPtr hbm;
-        public Int32 cchTextMax;
-        public Int32 fmt;
-        public Int32 lParam;
-        public Int32 iImage;
-        public Int32 iOrder;
+        public int cchTextMax;
+        public int fmt;
+        public int lParam;
+        public int iImage;
+        public int iOrder;
     }
-    [System.Security.SuppressUnmanagedCodeSecurity()]
-    [DllImport("USER32.DLL", EntryPoint = "SendMessage")]
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("USER32.DLL", EntryPoint = "SendMessage")]
     public static unsafe extern IntPtr GetHeaderHnd(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
-    [System.Security.SuppressUnmanagedCodeSecurity()]
-    [DllImport("USER32.DLL", EntryPoint = "SendMessage")]
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("USER32.DLL", EntryPoint = "SendMessage")]
     public static unsafe extern IntPtr SendMessageItem(IntPtr Handle, int msg, IntPtr wParam, ref HDITEM lParam);
 
 }

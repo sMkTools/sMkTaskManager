@@ -46,10 +46,10 @@ internal static partial class Shared {
             frmProcess_Details frm = new() {
                 Name = "frmProc-" + PID,
                 Tag = PID,
-                PID = PID
+                PID = PID,
+                TopMost = false,
+                ShowInTaskbar = true
             };
-            frm.TopMost = false;
-            frm.ShowInTaskbar = true;
             frm.Show();
         }
         MainForm.Cursor = Cursors.Default;

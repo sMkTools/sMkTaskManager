@@ -12,7 +12,8 @@ internal class TaskManagerService : IEquatable<TaskManagerService>, INotifyPrope
     private ServiceController _BaseService;
     private ServiceControllerStatus _StatusCode;
     private ServiceStartMode _StartupCode;
-    private string _Ident, _PID = "", _Name = "", _Description = "", _Logon = "", _ImagePath = "", _CommandLine = "";
+    private readonly string _Ident;
+    private string _PID = "", _Name = "", _Description = "", _Logon = "", _ImagePath = "", _CommandLine = "";
     private Color _BackColor = Color.Empty;
     private int _ImageIndex = 0;
 

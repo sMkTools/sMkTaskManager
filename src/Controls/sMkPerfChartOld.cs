@@ -21,10 +21,10 @@ public class sMkPerfChartOld : UserControl {
     private string _SecondIndex = "";
     private double _MaxLegendValue;
     private string _LegendSuffix = "";
-    private StringFormat _LegendStringFormat = new();
-    private Font _LegendStringFont = new(DefaultFont.FontFamily, 7);
-    private List<double> _Values = new(MAX_VALUE_COUNT);
-    private List<double> _ValuesSecond = new(MAX_VALUE_COUNT);
+    private readonly StringFormat _LegendStringFormat = new();
+    private readonly Font _LegendStringFont = new(DefaultFont.FontFamily, 7);
+    private readonly List<double> _Values = new(MAX_VALUE_COUNT);
+    private readonly List<double> _ValuesSecond = new(MAX_VALUE_COUNT);
 
     public sMkPerfChartOld() {
         InitializeComponents();

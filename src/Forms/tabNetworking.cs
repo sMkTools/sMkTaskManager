@@ -716,7 +716,7 @@ internal class tabNetworking : UserControl, ITaskManagerTab {
         if (lv.Items.Count == 0) firstTime = true;
 
         // Store last round items and initialize new ones
-        HashSet<string> LastRun = new HashSet<string>();
+        HashSet<string> LastRun = new();
         LastRun.UnionWith(HashNics);
         HashNics.Clear();
         // Iterate through all the items

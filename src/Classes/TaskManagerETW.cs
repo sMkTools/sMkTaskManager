@@ -234,9 +234,8 @@ internal static class ETW {
     private static bool EtwActive;
     private static Thread? EtwThread;
     private static EVENT_TRACE_PROPERTIES EtwTraceProperties = new();
-    private static Dictionary<uint, EtwStats> _AllStats = new() { { 0, new() } };
-    private static Dictionary<string, EtwNetStats> _NetStats = new();
-    private static Dictionary<uint, string> _NetHashes = new();
+    private static readonly Dictionary<uint, EtwStats> _AllStats = new() { { 0, new() } };
+    private static readonly Dictionary<string, EtwNetStats> _NetStats = new();
 
     private static bool EtwStartSession() {
         if (EtwActive) return true;
@@ -378,7 +377,7 @@ internal static class ETW {
     }
 
     public static void Flush() {
-        if (EtwActive) ControlTrace(EtwHandle, KERNEL_LOGGER_NAME, EtwTraceProperties, EVENT_TRACE_CONTROL_FLUSH);
+        if (EtwActive) _ = ControlTrace(EtwHandle, KERNEL_LOGGER_NAME, EtwTraceProperties, EVENT_TRACE_CONTROL_FLUSH);
     }
     public static bool Start() {
         if (!EtwActive) {

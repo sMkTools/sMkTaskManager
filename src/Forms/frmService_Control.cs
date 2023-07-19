@@ -6,8 +6,8 @@ namespace sMkTaskManager.Forms;
 [DesignerCategory("Component"), SupportedOSPlatform("windows")]
 public partial class frmService_Control : Form {
     private string _Action;
-    private string _Service;
-    private int _ReturnDelay = 1000;
+    private readonly string _Service;
+    private readonly int _ReturnDelay = 1000;
     private IntPtr hSManager = IntPtr.Zero;
     private IntPtr hService = IntPtr.Zero;
     private API.SERVICE_STATUS dwServiceStatus = new();

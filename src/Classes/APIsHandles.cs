@@ -147,13 +147,13 @@ internal unsafe static partial class Handles {
     public static string GetRegularFileNameFromDevice(string strRawName) {
         string strFileName = strRawName;
         foreach (string strDrivePath in Environment.GetLogicalDrives()) {
-            StringBuilder sbTargetPath = new StringBuilder(MAX_PATH);
-            if (QueryDosDevice(strDrivePath.Substring(0, 2), sbTargetPath, MAX_PATH) == 0) {
+            StringBuilder sbTargetPath = new(MAX_PATH);
+            if (QueryDosDevice(strDrivePath[..2], sbTargetPath, MAX_PATH) == 0) {
                 return strRawName;
             }
             string strTargetPath = sbTargetPath.ToString();
             if (strFileName.StartsWith(strTargetPath)) {
-                strFileName = strFileName.Replace(strTargetPath, strDrivePath.Substring(0, 2));
+                strFileName = strFileName.Replace(strTargetPath, strDrivePath[..2]);
                 break;
             }
         }

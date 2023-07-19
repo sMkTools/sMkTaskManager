@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
@@ -7,7 +6,8 @@ namespace sMkTaskManager.Classes;
 
 [SupportedOSPlatform("windows")]
 internal class TaskManagerNic : IEquatable<TaskManagerNic>, INotifyPropertyChanged {
-    private string _Ident = "", _Name = "", _Description = "", _MacAddress = "", _State = "", _Speed = "";
+    private readonly string _Ident = "";
+    private string _Name = "", _Description = "", _MacAddress = "", _State = "", _Speed = "";
     private NetworkInterfaceType _TypeValue;
     private long _SpeedValue, _RcvdValue, _SentValue, _RcvdDelta, _SentDelta, _RcvdRate, _SentRate;
     private Color _BackColor = Color.Empty;
