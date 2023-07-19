@@ -1325,9 +1325,9 @@ internal unsafe static partial class API {
     #endregion
 
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-    internal static extern unsafe int RegisterWindowMessage(string pString);
+    internal static extern unsafe uint RegisterWindowMessage(string pString);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-    internal static extern unsafe int BroadcastSystemMessage(int dwFlags, ref int pdwRecipients, int uiMessage, int wParam, int lParam);
+    internal static extern unsafe int BroadcastSystemMessage(int dwFlags, ref int pdwRecipients, uint uiMessage, int wParam, int lParam);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
     internal static extern unsafe bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]

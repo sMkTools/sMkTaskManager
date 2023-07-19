@@ -13,7 +13,7 @@ internal static partial class Shared {
     internal static bool RealExit = true;
     internal static Process CurrentProcess = Process.GetCurrentProcess();
     internal static int CurrentSessionID = Process.GetCurrentProcess().SessionId;
-    internal static int PrivateMsgID = 0;
+    internal static uint PrivateMsgID = 0;
     internal static int CpuLoad = 0;
     internal static ImageList ilProcesses = new() { ColorDepth = ColorDepth.Depth32Bit, ImageSize = new Size(16, 16), TransparentColor = Color.Transparent };
 
@@ -101,6 +101,37 @@ internal static partial class Shared {
         } catch (Exception ex) {
             Debug.WriteLine("Warning: ShrinkMainProcess Said {0}", ex.Message);
         }
+    }
+    internal static bool CheckExistingInstance(Process curProcess) {
+        foreach (string arg in Environment.GetCommandLineArgs()) {
+            if (arg.ToUpper() == "/NEW" || arg.ToUpper() == "NEW") { return false; }
+            if (arg.ToUpper() == "/NEWINSTANCE" || arg.ToUpper() == "NEWINSTANCE") { return false; }
+        }
+        var myName = Path.GetFileName(curProcess.MainModule!.FileName).Replace(".exe", "");
+        foreach (Process p in Process.GetProcessesByName(myName)) {
+            try {
+                if (p.Id == curProcess.Id || p.HasExited || p.SessionId != curProcess.SessionId || p.MainModule == null) continue;
+                if (p.MainModule.FileName == curProcess.MainModule!.FileName) {
+                    Debug.WriteLine("Im a second instance of: " + p.MainModule.FileName);
+                    int BSF_IGNORECURRENTTASK = 0x2;
+                    int BSF_POSTMESSAGE = 0x10;
+                    int BSM_APPLICATIONS = 0x8;
+                    PrivateMsgID = API.RegisterWindowMessage(Application.ExecutablePath.Replace(@"\", "_"));
+                    _ = API.BroadcastSystemMessage(BSF_IGNORECURRENTTASK | BSF_POSTMESSAGE, ref BSM_APPLICATIONS, PrivateMsgID, 1, 0);
+                    if (p.MainWindowHandle > 0) API.SetForegroundWindow(p.MainWindowHandle);
+                    return true;
+                }
+            } catch { }
+        }
+        return false;
+    }
+    internal static void BroadcastRestoreInstance() {
+        int BSF_IGNORECURRENTTASK = 0x2;
+        int BSF_POSTMESSAGE = 0x10;
+        int BSM_APPLICATIONS = 0x8;
+        PrivateMsgID = API.RegisterWindowMessage(Application.ExecutablePath.Replace(@"\", "_"));
+        Debug.WriteLine($"Broadcasting Message to {PrivateMsgID}.");
+        _ = API.BroadcastSystemMessage(BSF_IGNORECURRENTTASK | BSF_POSTMESSAGE, ref BSM_APPLICATIONS, PrivateMsgID, 1, 0);
     }
 
 }
