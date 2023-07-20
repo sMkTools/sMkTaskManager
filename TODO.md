@@ -1,13 +1,8 @@
-﻿## Future Features
+﻿## Pendings
 
-* DarkMode
-* New Task (Run As)
-* List & Release Locked files
-* Processes CommandLine
-* GPU Monitoring
-* WSL Instances lists and monitoring
-
-## Known bugs
+* Save settings to INI file
+* Take screenshots
+* Test out R2R and adjust requirements if not runs on Win7
 
 ## Pending migration list
 
