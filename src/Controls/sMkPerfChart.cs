@@ -100,6 +100,8 @@ public class sMkPerfChart : UserControl {
         cd.AnyColor = true;
         cd.FullOpen = true;
         // Base Component
+        MouseEnter += OnMouseEnterOrLeave;
+        MouseLeave += OnMouseEnterOrLeave;
         BackColor = Color.Black;
         ContextMenuStrip = mnuStyle;
         Name = "PerfChart";
@@ -241,6 +243,9 @@ public class sMkPerfChart : UserControl {
         }
     }
 
+    private void OnMouseEnterOrLeave(object? sender, EventArgs e) {
+        if (DetailsOnHover) Invalidate();
+    }
     protected override void OnPaint(PaintEventArgs e) {
         // Base Paint
         base.OnPaint(e);
