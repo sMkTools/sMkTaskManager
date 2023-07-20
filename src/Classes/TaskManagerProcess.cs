@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
@@ -334,7 +333,9 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
             // CPU Usage
             // No need to get them again.  if (_PID == 0) API.GetSystemTimes(ref _CpuTimeValue, ref _KernelTimeValue, ref _KernelTimeValue);
             if (_prevCpuTimeValue.Ticks == 0) _prevCpuTimeValue = _CpuTimeValue;
-            double _rawCpuUsage = (double)(_CpuTimeValue.Ticks - _prevCpuTimeValue.Ticks) * 100 / (DateTime.Now.Ticks - PreviousUpdate) / Environment.ProcessorCount;
+            double _rawCpuUsage = (double)(_CpuTimeValue.Ticks - _prevCpuTimeValue.Ticks) * 100 / (LastUpdated - PreviousUpdate) / Environment.ProcessorCount;
+            if (_rawCpuUsage > 99.9) _rawCpuUsage = 99.9;
+            if (_rawCpuUsage < 0) _rawCpuUsage = 0;
             CpuUsage = _rawCpuUsage.ToString("00.0");
             _prevCpuTimeValue = _CpuTimeValue;
         }
