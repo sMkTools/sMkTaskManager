@@ -134,7 +134,7 @@ internal class TaskManagerColumn {
             new("Description", "Description", "Description", "General Information", 150, 0, 0, 0),
             new("Startup Mode", "Startup", "Startup", "General Information", 70, 0, 0, 1),
             new("Internal Name", "Internal", "Ident", "General Information", 100, 0, 0, 1),
-            new("Logon Account", "Logon As", "Logon", "General Information", 70, 0, 0, 1),
+            new("Logon Account", "Logon As", "Logon", "General Information", 80, 0, 0, 1),
             new("Command Line", "Command Line", "CommandLine", "General Information", 200, 0, 0, 1),
             });
         } else if (type == TaskManagerColumnTypes.Connections) {
@@ -142,14 +142,14 @@ internal class TaskManagerColumn {
             new("Process ID", "PID", "PID", "General Information", 60, 0, 1, 1),
             new("Process Name", "Process", "ProcessName", "General Information", 80, 0, 0, 1),
             new("Protocol", "Proto", "Protocol", "General Information", 55, 0, 0, 1),
-            new("Local Address", "Local Address", "LocalAddr", "General Information", 100, 0, 0, 1),
+            new("Local Address", "Local Address", "LocalAddr", "General Information", 90, 0, 0, 1),
             new("Local Port", "Local Port", "LocalPort", "General Information", 60, 0, 0, 1),
             new("Remote Address", "Remote Address", "RemoteAddr", "General Information", 100, 0, 0, 1),
             new("Remote Port", "Remote Port", "RemotePort", "General Information", 60, 0, 0, 1),
-            new("Connection State", "State", "StateString", "General Information", 70, 0, 0, 1),
+            new("Connection State", "State", "StateString", "General Information", 75, 0, 0, 1),
             new("Connection LifeTime", "Life Time", "LifeTime", "General Information", 80, 1, 0, 0),
-            new("Total Sent", "Sent", "Sent", "Transfer Information", 70, 1, 0, 1),
-            new("Total Received", "Received", "Received", "Transfer Information", 70, 1, 0, 1),
+            new("Total Sent", "Sent", "Sent", "Transfer Information", 65, 1, 0, 1),
+            new("Total Received", "Received", "Received", "Transfer Information", 65, 1, 0, 1),
             new("Sent Delta", "Sent Delta", "SentDelta", "Transfer Information", 80, 1, 0, 0),
             new("Received Delta", "Received Delta", "ReceivedDelta", "Transfer Information", 86, 1, 0, 0),
             new("Sent Rate", "Sent Rate", "SentRate", "Transfer Information", 80, 1, 0, 0),
@@ -162,7 +162,7 @@ internal class TaskManagerColumn {
             new("Protocol", "Proto", "Protocol", "General", 60, 0, 0, 1),
             new("Local Address", "Address", "LocalAddr", "General", 100, 0, 0, 1),
             new("Local Port", "Port", "LocalPort", "General", 60, 0, 0, 1),
-            new("Port State", "State", "StateString", "General", 60, 0, 0, 1),
+            new("Port State", "State", "StateString", "General", 70, 0, 0, 1),
             });
         } else if (type == TaskManagerColumnTypes.Users) {
             r.AddRange(new TaskManagerColumn[] {
