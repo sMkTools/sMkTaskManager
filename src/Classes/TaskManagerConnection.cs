@@ -56,7 +56,7 @@ internal class TaskManagerConnection : IEquatable<TaskManagerConnection>, INotif
     public string RemoteAddr { get => isIPv6 ? "[" + _Remote.Address.ToString() + "]" : _Remote.Address.ToString(); }
     public string RemotePort { get => _Remote.Port.ToString(); }
     public ConnectionState State { get => _State; set { SetField(ref _State, value, nameof(State), new[] { nameof(StateString) }); } }
-    public string StateString { get => (_State == 0) ? "Sateless" : Shared.ToTitleCase(_State.ToString().Replace("_", " ")); }
+    public string StateString { get => (_State == 0) ? "Stateless" : Shared.ToTitleCase(_State.ToString().Replace("_", " ")); }
     public ProtocolClass Protocol { get => _Protocol; set { SetField(ref _Protocol, value, nameof(Protocol), new[] { nameof(ProtocolString) }); } }
     public string ProtocolString { get => _Protocol.ToString(); }
 
