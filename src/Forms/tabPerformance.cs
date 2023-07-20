@@ -1307,7 +1307,7 @@ internal partial class tabPerformance : UserControl, ITaskManagerTab {
         setMeterVisible(PerformanceMeters.Net, (tlpMain.Height > 570) || (FullScreen && tlpMain.Height > 470));
     }
     private void OnMouseDoubleClickEventHandler(object? sender, MouseEventArgs e) {
-        FullScreen = !FullScreen;
+        if (e.Button == MouseButtons.Left) FullScreen = !FullScreen;
         Invoke(OnMouseDoubleClick, e);
     }
     private void OnMouseUpEventHandler(object? sender, MouseEventArgs e) {
