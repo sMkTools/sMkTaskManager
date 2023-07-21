@@ -28,6 +28,20 @@ Most likely you will see pieces of code that are UGLY for experienced programmer
 + Customizable graphs, column details and layouts.
 + Small, portable, fast-ish, and 100% Free to use and modify.
 
+## Screenshot
+
+<p align="center">
+  <a href="res/scr-processlist.png?raw=true" target="_blank"><img src="res/scr-processlist.png" height="200" alt="Processes List" /></a>
+  <a href="res/scr-performance1.png?raw=true" target="_blank"><img src="res/scr-performance1.png" height="200" alt="Performance 1" /></a>
+  <a href="res/scr-performance2.png?raw=true" target="_blank"><img src="res/scr-performance3.png" height="200" alt="Performance 2" /></a>
+  <a href="res/scr-performance3.png?raw=true" target="_blank"><img src="res/scr-performance5.png" height="200" alt="Performance 3" /></a>
+  <br/>
+  <a href="res/scr-processdetails1.png?raw=true" target="_blank"><img src="res/scr-processdetails1.png" height="200" alt="Process Details" /></a>
+  <a href="res/scr-processdetails2.png?raw=true" target="_blank"><img src="res/scr-processdetails2.png" height="200" alt="Process Details" /></a>
+  <a href="res/scr-serviceslist.png?raw=true" target="_blank"><img src="res/scr-serviceslist.png" height="200" alt="Services List" /></a>
+  <a href="res/scr-preferences.png?raw=true" target="_blank"><img src="res/scr-preferences.png" height="200" alt="Preferences" /></a>
+</p>
+
 ## System requirements
 
 It seems odd to talk about requirements nowadays but let’s keep it simple and basic.  
