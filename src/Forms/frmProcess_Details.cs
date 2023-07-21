@@ -354,6 +354,7 @@ public partial class frmProcess_Details : Form {
         if (p2 == null) return;
         // Perf Counters
         p_ChartCPU.AddValue(Convert.ToDouble(p2.CpuUsage));
+        p_lblCpuUsage.Text = p2.CpuUsage+"%";
         p_ChartWS.MaxValue = Math.Round(Convert.ToDouble(p2.WorkingSetPeakValue) / 1024, 0);
         p_ChartWS.AddValue(Convert.ToDouble(p2.WorkingSetValue / 1024));
         p_lblWorkingSet.Text = p2.WorkingSet;
