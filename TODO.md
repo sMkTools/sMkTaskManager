@@ -1,6 +1,5 @@
 ﻿## Pendings
 
-* Save settings to INI file
 * Take screenshots
 * Test out R2R and adjust requirements if not runs on Win7
 

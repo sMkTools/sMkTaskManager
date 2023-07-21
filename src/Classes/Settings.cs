@@ -1,15 +1,17 @@
 ﻿using Microsoft.Win32;
 using sMkTaskManager.Controls;
-using System.Diagnostics;
+using System.Configuration;
 using System.Runtime.Versioning;
+
 namespace sMkTaskManager.Classes;
 
 [SupportedOSPlatform("windows")]
 internal static class Settings {
     private static readonly System.Text.UTF8Encoding _Encoding = new();
     private static readonly System.Text.StringBuilder _StringBuilder = new();
-    public static string Filename = Application.ExecutablePath.Replace(".exe", ".cfg");
-    public static string RegKey = "Software\\sMk Tools\\sMk TaskManager3";
+    private static readonly string ExePath = Application.ExecutablePath;
+    private static readonly string ActualFile = Application.ExecutablePath + ".config";
+    private static readonly string RegKey = "Software\\sMk Tools\\sMk TaskManager3";
 
     public static bool RememberPositions = true;
     public static bool RememberActiveTab = true;
@@ -35,6 +37,7 @@ internal static class Settings {
     public static bool ShowAllProcess = false;
     public static bool ShowSummaryView = false;
     public static bool AlternateRowColors = false;
+    public static bool StoreInFile = false;
     public static List<string> CheckedInterfaces = new();
     public static List<int> CustomColors = new();
 
@@ -125,7 +128,7 @@ internal static class Settings {
             _StringBuilder.Append(Convert.ToInt16(StartMinimized) + ",");
             _StringBuilder.Append(Convert.ToInt16(AlternateRowColors) + ",");
             _StringBuilder.Append(Convert.ToInt16(ShowCPUOnTray) + ",");
-            return WriteReg("General", FixStringToWrite(_StringBuilder));
+            return Write("General", FixStringToWrite(_StringBuilder));
         } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public static bool SaveMainWindow() {
@@ -134,7 +137,7 @@ internal static class Settings {
             _StringBuilder.Append(MainWindow.Size.Width + "," + MainWindow.Size.Height + ",");
             _StringBuilder.Append(MainWindow.Location.X + "," + MainWindow.Location.Y + ",");
             _StringBuilder.Append(Convert.ToInt32(MainWindow.Maximized) + ",");
-            return WriteReg("winMain", FixStringToWrite(_StringBuilder));
+            return Write("winMain", FixStringToWrite(_StringBuilder));
         } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public static bool SaveHighlights() {
@@ -148,7 +151,7 @@ internal static class Settings {
             _StringBuilder.Append(Highlights.RemovedColor.ToArgb() + ",");
             _StringBuilder.Append(Convert.ToInt16(Highlights.FrozenItems) + ",");
             _StringBuilder.Append(Highlights.FrozenColor.ToArgb() + ",");
-            return WriteReg("Highlights", FixStringToWrite(_StringBuilder));
+            return Write("Highlights", FixStringToWrite(_StringBuilder));
         } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public static bool SavePerformance() {
@@ -172,7 +175,7 @@ internal static class Settings {
             _StringBuilder.Append(Performance.AverageLineColor.ToArgb() + ",");
             _StringBuilder.Append(Convert.ToInt16(Performance.ShowKernelTime) + ",");
             _StringBuilder.Append(Convert.ToInt16(Performance.SeparateCPUs) + ",");
-            return WriteReg("Performance", FixStringToWrite(_StringBuilder));
+            return Write("Performance", FixStringToWrite(_StringBuilder));
         } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public static bool SaveNetworking() {
@@ -196,7 +199,7 @@ internal static class Settings {
             _StringBuilder.Append(Networking.UploadColor.ToArgb() + ",");
             _StringBuilder.Append(Networking.DownloadColor.ToArgb() + ",");
             _StringBuilder.Append(Convert.ToInt16(Networking.KeepUpdating) + ",");
-            return WriteReg("Networking", FixStringToWrite(_StringBuilder));
+            return Write("Networking", FixStringToWrite(_StringBuilder));
         } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public static bool SaveInterfaces() {
@@ -205,7 +208,7 @@ internal static class Settings {
             foreach (string s in CheckedInterfaces) {
                 _StringBuilder.Append(s + ",");
             }
-            return WriteReg("Selected Nics", FixStringToWrite(_StringBuilder));
+            return Write("Selected Nics", FixStringToWrite(_StringBuilder));
         } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public static bool SaveCustomColors() {
@@ -216,7 +219,7 @@ internal static class Settings {
                 if (c == 0) continue;
                 _StringBuilder.Append(c + ",");
             }
-            return WriteReg("Custom Colors", _StringBuilder.ToString().TrimEnd(','));
+            return Write("Custom Colors", _StringBuilder.ToString().TrimEnd(','));
         } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public static bool SaveProcDetails() {
@@ -226,7 +229,7 @@ internal static class Settings {
             _StringBuilder.Append(ProcessDetails.Location.X + "," + ProcessDetails.Location.Y + ",");
             _StringBuilder.Append(ProcessDetails.UpdateSpeed + ",");
             _StringBuilder.Append(ProcessDetails.LastTab + ",");
-            return WriteReg("winProcess", FixStringToWrite(_StringBuilder));
+            return Write("winProcess", FixStringToWrite(_StringBuilder));
         } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
     public static bool SaveColsInformation(string strName, in sMkListView lv) {
@@ -237,7 +240,7 @@ internal static class Settings {
                 if (lv.Sortable && lv.SortColumn == c.Index) cc.SortOrder = lv.Sorting;
                 _StringBuilder.AppendLine(cc.GetChunk());
             }
-            return WriteReg(strName, _Encoding.GetBytes(_StringBuilder.ToString()), RegistryValueKind.Binary);
+            return Write(strName, _StringBuilder.ToString(), RegistryValueKind.Binary);
         } catch (Exception e) { Shared.DebugTrap(e); return false; }
     }
 
@@ -246,7 +249,7 @@ internal static class Settings {
     }
     public static bool LoadGeneral() {
         try {
-            string[] ChunkValues = ReadReg("General", "").Split(',');
+            string[] ChunkValues = Read("General", "").Split(',');
             if (ChunkValues.Length < 3) return false;
             RememberPositions = ChunkValues[0] != "0";
             RememberActiveTab = ChunkValues[1] != "0";
@@ -273,7 +276,7 @@ internal static class Settings {
     }
     public static bool LoadMainWindow() {
         try {
-            string[] ChunkValues = ReadReg("winMain", "").Split(',');
+            string[] ChunkValues = Read("winMain", "").Split(',');
             if (ChunkValues.Length < 3) return false;
             MainWindow.Size = new Size(int.Parse(ChunkValues[0]), int.Parse(ChunkValues[1]));
             MainWindow.Location = new Point(int.Parse(ChunkValues[2]), int.Parse(ChunkValues[3]));
@@ -283,7 +286,7 @@ internal static class Settings {
     }
     public static bool LoadHighlights() {
         try {
-            string[] ChunkValues = ReadReg("Highlights", "").Split(',');
+            string[] ChunkValues = Read("Highlights", "").Split(',');
             if (ChunkValues.Length < 3) return false;
             Highlights.NewItems = ChunkValues[0] != "0";
             Highlights.NewColor = Color.FromArgb(int.Parse(ChunkValues[1]));
@@ -298,7 +301,7 @@ internal static class Settings {
     }
     public static bool LoadPerformance() {
         try {
-            string[] ChunkValues = ReadReg("Performance", "").Split(',');
+            string[] ChunkValues = Read("Performance", "").Split(',');
             if (ChunkValues.Length < 3) return false;
             Performance.Solid = ChunkValues[0] != "0";
             Performance.AntiAlias = ChunkValues[1] != "0";
@@ -323,7 +326,7 @@ internal static class Settings {
     }
     public static bool LoadNetworking() {
         try {
-            string[] ChunkValues = ReadReg("Networking", "").Split(',');
+            string[] ChunkValues = Read("Networking", "").Split(',');
             if (ChunkValues.Length < 3) return false;
             Networking.Solid = ChunkValues[0] != "0";
             Networking.AntiAlias = ChunkValues[1] != "0";
@@ -348,7 +351,7 @@ internal static class Settings {
     }
     public static bool LoadInterfaces() {
         try {
-            string[] ChunkValues = ReadReg("Selected Nics", "").Split(',');
+            string[] ChunkValues = Read("Selected Nics", "").Split(',');
             CheckedInterfaces.Clear();
             foreach (string s in ChunkValues) {
                 CheckedInterfaces.Add(s);
@@ -358,7 +361,7 @@ internal static class Settings {
     }
     public static bool LoadCustomColors() {
         try {
-            string[] ChunkValues = ReadReg("Custom Colors", "9498256,8421616,12180223,14053594").Split(",".ToCharArray());
+            string[] ChunkValues = Read("Custom Colors", "9498256,8421616,12180223,14053594").Split(",".ToCharArray());
             CustomColors.Clear();
             for (int i = 0; i < ChunkValues.Length; i++) {
                 CustomColors.Add(int.Parse(ChunkValues[i]));
@@ -368,7 +371,7 @@ internal static class Settings {
     }
     public static bool LoadProcDetails() {
         try {
-            string[] ChunkValues = ReadReg("winProcess", "").Split(',');
+            string[] ChunkValues = Read("winProcess", "").Split(',');
             if (ChunkValues.Length < 3) return false;
             ProcessDetails.Size = new Size(int.Parse(ChunkValues[0]), int.Parse(ChunkValues[1]));
             ProcessDetails.Location = new Point(int.Parse(ChunkValues[2]), int.Parse(ChunkValues[3]));
@@ -390,8 +393,8 @@ internal static class Settings {
             default: return false;
         }
         try {
-            byte[] bt = ReadReg(strName, ""u8.ToArray());
-            string allValues = (bt.Length > 10) ? allValues = _Encoding.GetString(bt) : TaskManagerColumn.GetDefaultColumnsChunks(Type);
+            string allValues = Read(strName, "", RegistryValueKind.Binary).Trim();
+            if (allValues.Length < 10) allValues = TaskManagerColumn.GetDefaultColumnsChunks(Type);
 
             foreach (string colValues in allValues.Split(Environment.NewLine)) {
                 if (colValues.Trim().Length < 5) continue;
@@ -428,8 +431,36 @@ internal static class Settings {
         return true;
     }
 
-    private static T ReadReg<T>(string valueName, T defaultValue) {
-        T retValue = defaultValue;
+    private static string Read(string valueName, string defaultValue, RegistryValueKind ValueKind = RegistryValueKind.String) {
+        StoreInFile = File.Exists(ActualFile);
+        if (StoreInFile) {
+            return ReadXML(valueName, defaultValue, ValueKind);
+        } else {
+            return ReadRegistry(valueName, defaultValue, ValueKind);
+        }
+    }
+    private static string ReadXML(string valueName, string defaultValue, RegistryValueKind ValueKind = RegistryValueKind.String) {
+        string retValue;
+        try {
+            var configFile = ConfigurationManager.OpenExeConfiguration(ExePath);
+            var settings = configFile.AppSettings.Settings;
+            if (settings[valueName] == null || string.IsNullOrEmpty(settings[valueName].Value)) {
+                retValue = defaultValue;
+            } else {
+                if (ValueKind == RegistryValueKind.Binary) {
+                    retValue = _Encoding.GetString(Convert.FromBase64String(settings[valueName].Value));
+                } else {
+                    retValue = settings[valueName].Value;
+                }
+            }
+        } catch (Exception e) {
+            Shared.DebugTrap(e);
+            retValue = defaultValue;
+        }
+        return retValue;
+    }
+    private static string ReadRegistry(string valueName, string defaultValue, RegistryValueKind ValueKind = RegistryValueKind.String) {
+        string retValue = defaultValue;
         RegistryKey ParentKey = Registry.CurrentUser;
         try {
             var Key = ParentKey.OpenSubKey(RegKey, false);
@@ -438,7 +469,11 @@ internal static class Settings {
             } else if (string.IsNullOrEmpty(Key.GetValue(valueName)!.ToString()!.Trim())) {
                 retValue = defaultValue;
             } else {
-                retValue = (T)Key.GetValue(valueName)!;
+                if (ValueKind == RegistryValueKind.Binary) {
+                    retValue = _Encoding.GetString((byte[])Key.GetValue(valueName)!);
+                } else {
+                    retValue = Key.GetValue(valueName)!.ToString()!.Trim();
+                }
             }
             Key?.Close();
         } catch (Exception e) {
@@ -449,21 +484,52 @@ internal static class Settings {
         }
         return retValue;
     }
-    private static bool WriteReg<T>(string ValueName, T Value, RegistryValueKind ValueKind = RegistryValueKind.String) {
+
+    private static bool Write(string ValueName, string Value, RegistryValueKind ValueKind = RegistryValueKind.String) {
+        if (StoreInFile) {
+            return WriteXML(ValueName, Value, ValueKind);
+        } else {
+            return WriteRegistry(ValueName, Value, ValueKind);
+        }
+    }
+    private static bool WriteXML(string ValueName, string Value, RegistryValueKind ValueKind = RegistryValueKind.String) {
+        try {
+            if (ValueKind == RegistryValueKind.Binary) { Value = Convert.ToBase64String(_Encoding.GetBytes(Value)); }
+            var configFile = ConfigurationManager.OpenExeConfiguration(ExePath);
+            var settings = configFile.AppSettings.Settings;
+            if (settings[ValueName] == null) {
+                settings.Add(ValueName, Value);
+            } else {
+                settings[ValueName].Value = Value;
+            }
+            configFile.Save(ConfigurationSaveMode.Modified);
+            ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
+            return true;
+        } catch (Exception ex) {
+            Shared.DebugTrap(ex);
+            return false;
+        }
+    }
+    private static bool WriteRegistry(string ValueName, string Value, RegistryValueKind ValueKind = RegistryValueKind.String) {
         RegistryKey ParentKey = Registry.CurrentUser;
         try {
             RegistryKey? Key = ParentKey.OpenSubKey(RegKey, true);
             Key ??= ParentKey.CreateSubKey(RegKey);
-            Key.SetValue(ValueName, Value!, ValueKind);
+            if (ValueKind == RegistryValueKind.Binary) {
+                Key.SetValue(ValueName, _Encoding.GetBytes(Value), ValueKind);
+            } else {
+                Key.SetValue(ValueName, Value, ValueKind);
+            }
             Key.Close();
             ParentKey.Close();
             return true;
         } catch (Exception ex) {
-            Debug.WriteLine("ActualWriteReg: " + ex.ToString());
+            Shared.DebugTrap(ex);
             ParentKey.Close();
             return false;
         }
     }
+
     private static string FixStringToWrite(System.Text.StringBuilder Original) {
         return Original.ToString().Replace("-1,", "1,").TrimEnd(',');
     }

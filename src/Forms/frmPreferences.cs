@@ -15,6 +15,7 @@ public partial class frmPreferences : Form {
         LoadSettings();
         Settings.LoadCustomColors();
         cd.CustomColors = Settings.CustomColors.ToArray();
+        g_chkStoreXML.Checked = Settings.StoreInFile;
     }
     private void onFormClosing(object sender, FormClosingEventArgs e) {
         Settings.CustomColors = cd.CustomColors.ToList();
@@ -175,6 +176,7 @@ public partial class frmPreferences : Form {
         Settings.Networking.UploadColor = n_btnUpColor.BackColor;
         Settings.Networking.DownloadColor = n_btnDnColor.BackColor;
 
+        Settings.StoreInFile = g_chkStoreXML.Checked;
         Settings.SaveAll();
     }
 

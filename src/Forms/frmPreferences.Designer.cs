@@ -11,7 +11,7 @@ partial class frmPreferences {
     private void InitializeComponent() {
         tc = new TabControl();
         tpGeneral = new TabPage();
-        g_chkStoreINI = new CheckBox();
+        g_chkStoreXML = new CheckBox();
         g_gbTrayIcon = new GroupBox();
         t_chkShowCPU = new CheckBox();
         t_chkRequireDobleClick = new CheckBox();
@@ -118,7 +118,7 @@ partial class frmPreferences {
         // 
         // tpGeneral
         // 
-        tpGeneral.Controls.Add(g_chkStoreINI);
+        tpGeneral.Controls.Add(g_chkStoreXML);
         tpGeneral.Controls.Add(g_gbTrayIcon);
         tpGeneral.Controls.Add(g_btnHighlightFrozen);
         tpGeneral.Controls.Add(g_btnHighlightRemoved);
@@ -144,19 +144,19 @@ partial class frmPreferences {
         tpGeneral.Text = "General";
         tpGeneral.UseVisualStyleBackColor = true;
         // 
-        // g_chkStoreINI
+        // g_chkStoreXML
         // 
-        g_chkStoreINI.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-        g_chkStoreINI.AutoSize = true;
-        g_chkStoreINI.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point);
-        g_chkStoreINI.Location = new Point(6, 168);
-        g_chkStoreINI.Margin = new Padding(3, 0, 3, 0);
-        g_chkStoreINI.Name = "g_chkStoreINI";
-        g_chkStoreINI.Size = new Size(187, 17);
-        g_chkStoreINI.TabIndex = 8;
-        g_chkStoreINI.Text = "Store settings in INI file instead";
-        g_chkStoreINI.TextAlign = ContentAlignment.TopLeft;
-        g_chkStoreINI.UseVisualStyleBackColor = true;
+        g_chkStoreXML.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+        g_chkStoreXML.AutoSize = true;
+        g_chkStoreXML.Font = new Font("Segoe UI", 8F, FontStyle.Regular, GraphicsUnit.Point);
+        g_chkStoreXML.Location = new Point(6, 168);
+        g_chkStoreXML.Margin = new Padding(3, 0, 3, 0);
+        g_chkStoreXML.Name = "g_chkStoreXML";
+        g_chkStoreXML.Size = new Size(187, 17);
+        g_chkStoreXML.TabIndex = 8;
+        g_chkStoreXML.Text = "Store settings in file instead of registry";
+        g_chkStoreXML.TextAlign = ContentAlignment.TopLeft;
+        g_chkStoreXML.UseVisualStyleBackColor = true;
         // 
         // g_gbTrayIcon
         // 
@@ -1222,7 +1222,7 @@ partial class frmPreferences {
     private CheckBox t_chkRequireDobleClick;
     private CheckBox t_chkCloseToTray;
     private CheckBox t_chkHideToTray;
-    private CheckBox g_chkStoreINI;
+    private CheckBox g_chkStoreXML;
     private CheckBox p_chkOnlyOnHover;
     private CheckBox p_chkShowLegends;
     private CheckBox p_chkShowIndexes;
