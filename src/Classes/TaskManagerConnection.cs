@@ -112,10 +112,10 @@ internal class TaskManagerConnection : IEquatable<TaskManagerConnection>, INotif
 
         LifeTime = Shared.TimeDiff(CreationTime, 1);
 
-        SentDeltaValue = ETW.NetStats(Ident[2..]).Sent - SentValue;
-        ReceivedDeltaValue = ETW.NetStats(Ident[2..]).Received - ReceivedValue;
-        SentValue = ETW.NetStats(Ident[2..]).Sent;
-        ReceivedValue = ETW.NetStats(Ident[2..]).Received;
+        SentDeltaValue = Shared.ETW.NetStats(Ident[2..]).Sent - SentValue;
+        ReceivedDeltaValue = Shared.ETW.NetStats(Ident[2..]).Received - ReceivedValue;
+        SentValue = Shared.ETW.NetStats(Ident[2..]).Sent;
+        ReceivedValue = Shared.ETW.NetStats(Ident[2..]).Received;
         SentRateValue = CalculateRateValue(SentDeltaValue);
         ReceivedRateValue = CalculateRateValue(ReceivedDeltaValue);
 

@@ -257,11 +257,11 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
         if (vv.Contains("VirtualMemoryPeak")) VirtualMemoryPeakValue = spi.PeakVirtualSize;
         // I/O Counters Values
         if (vv.Contains("ReadTransfer") || vv.Contains("ReadTransferDelta")) {
-            ReadTransferDeltaValue = (ReadTransferValue == 0) ? 0 :  spi.ReadTransferCount - ReadTransferValue;
+            ReadTransferDeltaValue = (ReadTransferValue == 0) ? 0 : spi.ReadTransferCount - ReadTransferValue;
             ReadTransferValue = spi.ReadTransferCount;
         }
         if (vv.Contains("ReadOperations") || vv.Contains("ReadOperationsDelta")) {
-            ReadOperationsDeltaValue = (ReadOperationsValue == 0) ? 0 :  spi.ReadOperationCount - ReadOperationsValue;
+            ReadOperationsDeltaValue = (ReadOperationsValue == 0) ? 0 : spi.ReadOperationCount - ReadOperationsValue;
             ReadOperationsValue = spi.ReadOperationCount;
         }
         if (vv.Contains("WriteTransfer") || vv.Contains("WriteTransferDelta")) {
@@ -281,25 +281,25 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
             OtherOperationsValue = spi.OtherOperationCount;
         }
         // ETW Data Values, if running
-        if (ETW.Running) {
+        if (Shared.ETW.Running) {
             if (vv.Contains("DiskRead") || vv.Contains("DiskReadDelta") || vv.Contains("DiskReadRate")) {
-                DiskReadDeltaValue = (DiskReadValue == 0) ? 0 : ETW.Stats(_PID).DiskReaded - DiskReadValue;
-                DiskReadValue = ETW.Stats(_PID).DiskReaded;
+                DiskReadDeltaValue = (DiskReadValue == 0) ? 0 : Shared.ETW.Stats(_PID).DiskReaded - DiskReadValue;
+                DiskReadValue = Shared.ETW.Stats(_PID).DiskReaded;
                 DiskReadRateValue = CalculateRateValue(DiskReadDeltaValue);
             }
             if (vv.Contains("DiskWrite") || vv.Contains("DiskWriteDelta") || vv.Contains("DiskWriteRate")) {
-                DiskWriteDeltaValue = (DiskWriteValue == 0) ? 0 : ETW.Stats(_PID).DiskWroted - DiskWriteValue;
-                DiskWriteValue = ETW.Stats(_PID).DiskWroted;
+                DiskWriteDeltaValue = (DiskWriteValue == 0) ? 0 : Shared.ETW.Stats(_PID).DiskWroted - DiskWriteValue;
+                DiskWriteValue = Shared.ETW.Stats(_PID).DiskWroted;
                 DiskWriteRateValue = CalculateRateValue(DiskWriteDeltaValue);
             }
             if (vv.Contains("NetSent") || vv.Contains("NetSentDelta") || vv.Contains("NetSentRate")) {
-                NetSentDeltaValue = (NetSentValue == 0) ? 0 : ETW.Stats(_PID).NetSent - NetSentValue;
-                NetSentValue = ETW.Stats(_PID).NetSent;
+                NetSentDeltaValue = (NetSentValue == 0) ? 0 : Shared.ETW.Stats(_PID).NetSent - NetSentValue;
+                NetSentValue = Shared.ETW.Stats(_PID).NetSent;
                 NetSentRateValue = CalculateRateValue(NetSentDeltaValue);
             }
             if (vv.Contains("NetReceived") || vv.Contains("NetReceivedDelta") || vv.Contains("NetReceivedRate")) {
-                NetRcvdDeltaValue = (NetRcvdValue == 0) ? 0 : ETW.Stats(_PID).NetReceived - NetRcvdValue;
-                NetRcvdValue = ETW.Stats(_PID).NetReceived;
+                NetRcvdDeltaValue = (NetRcvdValue == 0) ? 0 : Shared.ETW.Stats(_PID).NetReceived - NetRcvdValue;
+                NetRcvdValue = Shared.ETW.Stats(_PID).NetReceived;
                 NetRcvdRateValue = CalculateRateValue(NetRcvdDeltaValue);
             }
         }
@@ -492,7 +492,7 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
     private ulong CalculateRateValue(in ulong DeltaValue) {
         if (DeltaValue == 0) return 0;
         if ((LastUpdated - PreviousUpdate) <= 0) return DeltaValue;
-        return DeltaValue / (ulong)(LastUpdated - PreviousUpdate) / TimeSpan.TicksPerSecond;
+        return (ulong)Math.Round(DeltaValue / ((double)(LastUpdated - PreviousUpdate) / TimeSpan.TicksPerSecond));
     }
 
     /* Public Static Methods */

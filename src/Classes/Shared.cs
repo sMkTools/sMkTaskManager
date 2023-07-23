@@ -2,18 +2,19 @@
 using System.Runtime.Versioning;
 using System.Runtime.CompilerServices;
 using System.Globalization;
-
+using sMkTaskManager.Classes;
 namespace sMkTaskManager;
 
 [SupportedOSPlatform("windows")]
 internal static partial class Shared {
     private static string _SystemAccount = "";
 
-    internal static int bpi = 20; // Base PID Ignore
-    internal static List<string> skipProcess = new(new[] { "audiodg" });
-    internal static List<string> skipServices = new();
-    internal static string TotalProcessorsBin = "".PadLeft(Environment.ProcessorCount, '1');
-    internal static string DebuggerCmd = "";
+    public static int bpi = 20; // Base PID Ignore
+    public static List<string> skipProcess = new(new[] { "audiodg" });
+    public static List<string> skipServices = new();
+    public static string TotalProcessorsBin = "".PadLeft(Environment.ProcessorCount, '1');
+    public static string DebuggerCmd = "";
+    public static TaskManagetETW ETW = new();
 
     public static bool IsNumeric(string value) => double.TryParse(value, out _);
     public static bool IsNumeric(this object value) => double.TryParse(Convert.ToString(value), out _);
@@ -35,15 +36,15 @@ internal static partial class Shared {
         };
     }
 
-    internal static void NotImplemented([CallerMemberName] string feature = "") {
+    public static void NotImplemented([CallerMemberName] string feature = "") {
         MessageBox.Show("This feature is not implemented yet.", feature, MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
-    internal static void DebugTrap(Exception e, int Code = 0, [CallerMemberName] string Method = "") {
+    public static void DebugTrap(Exception e, int Code = 0, [CallerMemberName] string Method = "") {
         Debug.WriteLine($"*** Error at `{Method}` - Code: {Code} - Threw: {e.Message}");
         Debug.WriteLine(e.ToString());
     }
 
-    internal static string GetSystemAccount() {
+    public static string GetSystemAccount() {
         if (_SystemAccount != "") return _SystemAccount;
         try {
             System.Security.Principal.SecurityIdentifier sid = new(System.Security.Principal.WellKnownSidType.LocalSystemSid, null);
@@ -56,7 +57,7 @@ internal static partial class Shared {
         }
         return _SystemAccount!;
     }
-    internal static void GetDebuggerCmd() {
+    public static void GetDebuggerCmd() {
         string SubKey = "Software\\Microsoft\\Windows NT\\CurrentVersion\\AeDebug";
         string _Debugger = "";
         Microsoft.Win32.RegistryKey ParentKey = Microsoft.Win32.Registry.LocalMachine;
@@ -121,10 +122,10 @@ internal static partial class Shared {
             } else { return false; }
         } else { return false; }
     }
-
 }
+
 internal class CpuUsage {
-    private Classes.API.FILETIME _idleTime, _kernTime, _userTime;
+    private API.FILETIME _idleTime, _kernTime, _userTime;
     private long _oldCpuUsage = 0, _oldKernUsage = 0, _oldUserUsage = 0;
     private double _rawIdleTime, _rawKernTime, _rawUserTime;
     private int _CpuUsage, _UserUsage, _KernelUsage;
@@ -132,7 +133,7 @@ internal class CpuUsage {
     private readonly int Processors = Environment.ProcessorCount;
 
     public void Refresh(long sinceWhen) {
-        Classes.API.GetSystemTimes(ref _idleTime, ref _kernTime, ref _userTime);
+        API.GetSystemTimes(ref _idleTime, ref _kernTime, ref _userTime);
         _now = DateTime.Now.Ticks;
 
         if (_oldCpuUsage == 0) {
