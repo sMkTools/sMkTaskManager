@@ -28,10 +28,6 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Copyright>Copyright © sMkDesigns</Copyright>
     <Version>3.0.0</Version>
-    <!--
-    <FileVersion>3.0.0</FileVersion>
-    <AssemblyVersion>3.0.0.*</AssemblyVersion>
-    -->
     <Deterministic>false</Deterministic>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>sMkTaskManager.ico</ApplicationIcon>
@@ -42,9 +38,11 @@
     <BuildMark>$([System.DateTime]::UtcNow.Ticks)</BuildMark>
   </PropertyGroup>
 
+  <!--
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="echo BuildMark Ticks: $(BuildMark)" />
   </Target>
+  -->
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="3.1.3" />
