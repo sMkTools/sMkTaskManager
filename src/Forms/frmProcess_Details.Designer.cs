@@ -2642,7 +2642,7 @@ partial class frmProcess_Details {
         // 
         // colThreads_ID
         // 
-        colThreads_ID.Tag = "ID";
+        colThreads_ID.Tag = "TID";
         colThreads_ID.Text = "TID";
         colThreads_ID.Width = 50;
         // 

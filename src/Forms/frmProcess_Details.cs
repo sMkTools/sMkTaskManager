@@ -415,7 +415,7 @@ public partial class frmProcess_Details : Form {
             }
             foreach (ColumnHeader c in lvThreads.Columns) {
                 if (c.Tag == null) continue;
-                if (c.Tag.ToString() == "PID") continue;
+                if (c.Tag.ToString() == "TID") continue;
                 CheckThreadData(c, ref itm, t);
             }
         }
@@ -433,7 +433,8 @@ public partial class frmProcess_Details : Form {
         if (_ThreadFlagReSort) { _ThreadFlagReSort = false; lvThreads.Sort(); }
         if (firstTime) {
             foreach (ColumnHeader c in lvThreads.Columns) { c.Width = -2; }
-            lvThreads.Columns[0].Width += 2;
+            lvThreads.Columns[0].Width = -1;
+            if (lvThreads.Columns[0].Width >= 0 && lvThreads.Columns[0].Width < 10) { lvThreads.Columns[0].Width = 60; }
             lvThreads.Columns[^1].Width = -2;
             lvThreads.EndUpdate();
         }
@@ -476,8 +477,9 @@ public partial class frmProcess_Details : Form {
         }
         lvLockedFiles.Sort();
         if (firstTime) {
-            //lvLockedFiles.Columns[0].Width = -1;
-            //if (lvLockedFiles.Columns[0].Width < 10) lvLockedFiles.Columns[0].Width = 80;
+            foreach (ColumnHeader c in lvLockedFiles.Columns) { c.Width = -2; }
+            lvLockedFiles.Columns[0].Width = -1;
+            if (lvLockedFiles.Columns[0].Width >= 0 && lvLockedFiles.Columns[0].Width < 10) { lvLockedFiles.Columns[0].Width = 60; }
             lvLockedFiles.Columns[^1].Width = -2;
             lvLockedFiles.EndUpdate();
         }
