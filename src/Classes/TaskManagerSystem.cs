@@ -80,12 +80,12 @@ internal class TaskManagerSystem : TaskManagerValuesBase {
         CpuUsageKernel.SetValue(_Cpu.KernelUsage);
 
         // Compute ETW Usages
-        if (ETW.Running) {
-            ETW.Flush();
-            DiskRead.SetValue(ETW.Stats(0).DiskReaded);
-            DiskWrite.SetValue(ETW.Stats(0).DiskWroted);
-            NetSent.SetValue(ETW.Stats(0).NetSent);
-            NetReceived.SetValue(ETW.Stats(0).NetReceived);
+        if (Shared.ETW.Running) {
+            Shared.ETW.Flush();
+            DiskRead.SetValue(Shared.ETW.Stats(0).DiskReaded);
+            DiskWrite.SetValue(Shared.ETW.Stats(0).DiskWroted);
+            NetSent.SetValue(Shared.ETW.Stats(0).NetSent);
+            NetReceived.SetValue(Shared.ETW.Stats(0).NetReceived);
         }
 
         LastUpdate = DateTime.Now.Ticks;

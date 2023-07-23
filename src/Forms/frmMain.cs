@@ -115,7 +115,7 @@ public partial class frmMain : Form {
         Stopwatch sw = new();
         Extensions.StartMeasure(sw);
         // We should use this to initialize something that is not really critical?
-        ETW.Start();
+        Shared.ETW.Start();
         if (Shared.PrivateMsgID == 0) Shared.PrivateMsgID = API.RegisterWindowMessage(Application.ExecutablePath.Replace("\\", "_"));
         // if (Shared.AddPrivilege("SeDebugPrivilege")) Debug.WriteLine("SeDebugPrivilege Set");
         Shared.InitComplete = true;
@@ -186,7 +186,7 @@ public partial class frmMain : Form {
             // If monitor is running we must stop it right now...
             if (MonitorRunning) MonitorToggle();
             if (_TrayUpdateTimer.Enabled) { _TrayUpdateTimer.Stop(); }
-            if (ETW.Running) ETW.Stop();
+            if (Shared.ETW.Running) Shared.ETW.Stop();
             // Save Window Position & Tab...
             if (Settings.RememberPositions) {
                 if (WindowState == FormWindowState.Normal) {

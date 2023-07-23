@@ -1368,7 +1368,7 @@ internal partial class tabPerformance : UserControl, ITaskManagerTab {
         meterNet.SetValue(System.NetworkUsage, System.NetworkUsageString);
         chartNet.AddValue((double)System.NetReceived.Delta / 1024, (double)System.NetSent.Delta / 1024);
         // Always flush the ETW, if its active.
-        ETW.Flush();
+        Shared.ETW.Flush();
     }
 
     private bool FullScreen {
