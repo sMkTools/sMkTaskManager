@@ -21,7 +21,7 @@ public partial class frmColumns : Form {
 
     private void frmColumns_Load(object sender, EventArgs e) {
         lv.Columns[0].Width = -2;
-        lv.Columns[0].Width -= 5;
+        lv.Columns[0].Width -= (SystemInformation.VerticalScrollBarWidth+2);
     }
     private void btnOk_Click(object sender, EventArgs e) {
         DialogResult = DialogResult.OK;
