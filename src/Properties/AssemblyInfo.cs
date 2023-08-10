@@ -16,8 +16,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("Release")]
 #endif
 
-[assembly: AssemblyVersion("3.0.28.*")]
-[assembly: AssemblyFileVersion("3.0.28")]
-[assembly: AssemblyInformationalVersion("3.0.28")]
-[assembly: GitCommit("gfff1d0415c401d24cde882a405991c3fbdac3436")]
-[assembly: BuildMark("1691464269")]
+[assembly: AssemblyVersion("3.0.29.*")]
+[assembly: AssemblyFileVersion("3.0.29")]
+[assembly: AssemblyInformationalVersion("3.0.29")]
+[assembly: GitCommit("gb69426d441fe57de895ded71075ff1684e05f15b")]
+[assembly: BuildMark("1691626324")]

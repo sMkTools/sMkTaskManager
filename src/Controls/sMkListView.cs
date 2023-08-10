@@ -250,6 +250,7 @@ public class sMkListView : ListView {
             if (d.Name == "BackColor") { itm.BackColor = (Color)d.GetValue(row)!; }
             if ((d.Name == "ImageKey") && ((string?)d.GetValue(row) != "")) { itm.ImageKey = (string)d.GetValue(row)!; }
             if ((d.Name == "ImageIndex") && ((int?)d.GetValue(row) > -1)) { itm.ImageIndex = (int)d.GetValue(row)!; }
+            if ((d.Name == "StateImageIndex") && ((int?)d.GetValue(row) > -1)) { itm.StateImageIndex = (int)d.GetValue(row)!; }
         }
         // Populate each value of the item if the column exists.
         foreach (ColumnHeader c in Columns) {
@@ -298,6 +299,12 @@ public class sMkListView : ListView {
                         Items[_keyDescriptor.GetValue(row)!.ToString()].ImageIndex = (int)e.PropertyDescriptor.GetValue(row)!;
                     }
                     return;
+                case "StateImageIndex": // Set The Image Index
+                    if (Items.ContainsKey(_keyDescriptor.GetValue(row)!.ToString())) {
+                        Items[_keyDescriptor.GetValue(row)!.ToString()].StateImageIndex = (int)e.PropertyDescriptor.GetValue(row)!;
+                    }
+                    return;
+
                 default: // Set Values...
                     foreach (ColumnHeader c in Columns) {
                         if (e.PropertyDescriptor?.Name.ToLower() == c.Tag?.ToString()?.ToLower()) {
