@@ -115,8 +115,9 @@ public partial class frmMain : Form {
         Stopwatch sw = new();
         Extensions.StartMeasure(sw);
         // We should use this to initialize something that is not really critical?
-        Shared.ETW.Start();
         if (Shared.PrivateMsgID == 0) Shared.PrivateMsgID = API.RegisterWindowMessage(Application.ExecutablePath.Replace("\\", "_"));
+        Shared.ETW.sessionName += "-" + Shared.PrivateMsgID;
+        Shared.ETW.Start();
         // if (Shared.AddPrivilege("SeDebugPrivilege")) Debug.WriteLine("SeDebugPrivilege Set");
         Shared.InitComplete = true;
         MonitorStart(true);

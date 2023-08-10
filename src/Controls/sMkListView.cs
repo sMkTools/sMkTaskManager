@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using static sMkTaskManager.Controls.sMkListViewHelpers;
@@ -234,7 +235,7 @@ public class sMkListView : ListView {
         switch (e.ListChangedType) {
             case ListChangedType.ItemAdded: OnDataSource_RowAdded(e); break;
             case ListChangedType.ItemChanged: OnDataSource_RowChanged(e); break;
-            // case ListChangedType.ItemDeleted: OnDataSource_RowDeleted(e); break;
+                // case ListChangedType.ItemDeleted: OnDataSource_RowDeleted(e); break;
         }
     }
     private void OnDataSource_RowAdded(ListChangedEventArgs e) {
@@ -249,6 +250,7 @@ public class sMkListView : ListView {
             if (d.Name == "BackColor") { itm.BackColor = (Color)d.GetValue(row)!; }
             if ((d.Name == "ImageKey") && ((string?)d.GetValue(row) != "")) { itm.ImageKey = (string)d.GetValue(row)!; }
             if ((d.Name == "ImageIndex") && ((int?)d.GetValue(row) > -1)) { itm.ImageIndex = (int)d.GetValue(row)!; }
+            if ((d.Name == "StateImageIndex") && ((int?)d.GetValue(row) > -1)) { itm.StateImageIndex = (int)d.GetValue(row)!; }
         }
         // Populate each value of the item if the column exists.
         foreach (ColumnHeader c in Columns) {
@@ -297,6 +299,12 @@ public class sMkListView : ListView {
                         Items[_keyDescriptor.GetValue(row)!.ToString()].ImageIndex = (int)e.PropertyDescriptor.GetValue(row)!;
                     }
                     return;
+                case "StateImageIndex": // Set The Image Index
+                    if (Items.ContainsKey(_keyDescriptor.GetValue(row)!.ToString())) {
+                        Items[_keyDescriptor.GetValue(row)!.ToString()].StateImageIndex = (int)e.PropertyDescriptor.GetValue(row)!;
+                    }
+                    return;
+
                 default: // Set Values...
                     foreach (ColumnHeader c in Columns) {
                         if (e.PropertyDescriptor?.Name.ToLower() == c.Tag?.ToString()?.ToLower()) {
@@ -348,7 +356,13 @@ public class sMkListView : ListView {
         }
         EndUpdate();
     }
-
+    public int TotalColumnsWidth(int exceptColumn) {
+        int res = 0;
+        for (int i = 0; i < Columns.Count; i++) {
+            if (i != exceptColumn) res += Columns[i].Width;
+        }
+        return res;
+    }
 }
 
 public static class sMkListViewHelpers {
@@ -373,9 +387,11 @@ public static class sMkListViewHelpers {
         public int iImage;
         public int iOrder;
     }
-    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("USER32.DLL", EntryPoint = "SendMessage")]
+    [System.Security.SuppressUnmanagedCodeSecurity()]
+    [DllImport("USER32.DLL", EntryPoint = "SendMessage")]
     public static unsafe extern IntPtr GetHeaderHnd(IntPtr hWnd, int Msg, IntPtr wParam, IntPtr lParam);
-    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("USER32.DLL", EntryPoint = "SendMessage")]
+    [System.Security.SuppressUnmanagedCodeSecurity()]
+    [DllImport("USER32.DLL", EntryPoint = "SendMessage")]
     public static unsafe extern IntPtr SendMessageItem(IntPtr Handle, int msg, IntPtr wParam, ref HDITEM lParam);
 
 }

@@ -124,6 +124,7 @@ internal static partial class Shared {
     }
 }
 
+[SupportedOSPlatform("windows")]
 internal class CpuUsage {
     private API.FILETIME _idleTime, _kernTime, _userTime;
     private long _oldCpuUsage = 0, _oldKernUsage = 0, _oldUserUsage = 0;
