@@ -39,6 +39,15 @@
   </PropertyGroup>
 
   <!--
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" >
+    <OutputPath>$(BaseOutputPath)\Debug</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" >
+    <OutputPath>$(BaseOutputPath)\Release</OutputPath>
+  </PropertyGroup>
+  -->
+
+  <!--
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="echo BuildMark Ticks: $(BuildMark)" />
   </Target>
