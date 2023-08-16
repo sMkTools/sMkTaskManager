@@ -1,3 +1,11 @@
+<div align="center">
+  <img alt="GitHub Latest Release" src="https://img.shields.io/github/v/release/sMkTools/sMkTaskManager?label=Latest%20Release" />
+  <img alt="GitHub License" src="https://img.shields.io/github/license/sMkTools/sMkTaskManager?label=License" />
+  <img alt="GitHub Downloads" src="https://img.shields.io/github/downloads/sMkTools/sMkTaskManager/total?label=Downloads" />
+  <img alt="WinForms Badge" src="https://img.shields.io/badge/Win-Forms-purple" />
+  <img alt="Admin Badge" src="https://img.shields.io/badge/Admin-Only-red" />
+</div>
+
 # sMk Task Manager
 
 Yet another Windows Task Manager, in wannabe sMk style. With legacy WinForms!
