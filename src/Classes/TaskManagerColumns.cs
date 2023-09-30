@@ -188,6 +188,23 @@ internal class TaskManagerColumn {
             new ("Received Delta", "Rcvd Delta", "RcvdDelta", "General", 80, 1, 0, 0),
             new ("Sent Delta", "Sent Delta", "SentDelta", "General", 80, 1, 0, 0),
             });
+        } else if (type == TaskManagerColumnTypes.GPUs) {
+            r.AddRange(new TaskManagerColumn[] {
+            new ("Adapter Name", "Name", "Name", "General", 200, 0, 1, 1),
+            new ("Nodes", "Nodes", "NodeCount", "General", 50, 1, 0, 1),
+            new ("Segments", "Segments", "SegmentCount", "General", 65, 1, 0, 1),
+            new ("Power Usage", "Power", "PowerUsage", "General", 65, 1, 0, 1),
+            new ("Temperature", "Temperature", "Temperature", "General", 80, 1, 0, 1),
+            new ("Fan Speed", "Fan Speed", "FanSpeed", "General", 80, 1, 0, 1),
+            new ("Dedicated Memory Total", "Dedicated Total", "DedicatedMemoryTotal", "Memory", 100, 1, 0, 0),
+            new ("Dedicated Memory Used", "Dedicated Used", "DedicatedMemoryUsed", "Memory", 100, 1, 0, 0),
+            new ("Dedicated Memory Free", "Dedicated Free", "DedicatedMemoryFree", "Memory", 100, 1, 0, 0),
+            new ("Dedicated Memory Usage %", "Dedicated Usage", "DedicatedMemoryUsage", "Memory", 100, 1, 0, 0),
+            new ("Shared Memory Total", "Shared Total", "SharedMemoryTotal", "Memory", 100, 1, 0, 0),
+            new ("Shared Memory Used", "Shared Used", "SharedMemoryUsed", "Memory", 100, 1, 0, 0),
+            new ("Shared Memory Free", "Shared Free", "SharedMemoryFree", "Memory", 100, 1, 0, 0),
+            new ("Shared Memory Usage %", "Shared Usage", "SharedMemoryUsage", "Memory", 100, 1, 0, 0),
+            });
         }
         return r;
     }
@@ -211,4 +228,5 @@ public enum TaskManagerColumnTypes : int {
     Users = 5,
     Applications = 6,
     Nics = 7,
+    GPUs = 8,
 }

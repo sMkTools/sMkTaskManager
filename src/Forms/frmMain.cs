@@ -26,6 +26,7 @@ public partial class frmMain : Form {
         Tabs.Tab.Add("Procs", new tabProcesses());
         Tabs.Tab.Add("Servs", new tabServices());
         Tabs.Tab.Add("Perfs", new tabPerformance());
+        Tabs.Tab.Add("GPUs", new tabGpu());
         Tabs.Tab.Add("Net", new tabNetworking());
         Tabs.Tab.Add("Conns", new tabConnections());
         Tabs.Tab.Add("Ports", new tabPorts());
