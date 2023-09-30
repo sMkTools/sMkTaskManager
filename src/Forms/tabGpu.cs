@@ -463,7 +463,6 @@ internal class tabGpu : UserControl, ITaskManagerTab {
                 g.DrawRectangle(thisPen, 1, 1, 14, 14);
             }
             il.Images.Add(number.ToString(), bmp);
-            bmp.Dispose();
         }
         return thisColor;
     }
