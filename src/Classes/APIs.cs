@@ -1322,6 +1322,20 @@ internal unsafe static partial class API {
         public long Luid;
         public uint Attr;
     }
+    [StructLayout(LayoutKind.Sequential)] public struct SP_DEVINFO_DATA {
+        public int cbSize;
+        public Guid ClassGuid;
+        public int DevInst;
+        public IntPtr Reserved;
+    }
+    [StructLayout(LayoutKind.Sequential)] public struct DEVPROPKEY {
+        public DEVPROPKEY(string strGuid, int pid) {
+            fmtid = new Guid(strGuid);
+            this.pid = pid;
+        }
+        public Guid fmtid;
+        public int pid;
+    }
     #endregion
 
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
@@ -1546,5 +1560,34 @@ internal unsafe static partial class API {
     public static extern unsafe bool IsWow64Process(IntPtr hProcess, ref bool wow64Process);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     public static extern unsafe bool GetBinaryType(string lpApplicationName, ref BINARY_TYPE lpBinaryType);
+
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    public static extern unsafe IntPtr SetupDiGetClassDevs(IntPtr ClassGuid, [MarshalAs(UnmanagedType.LPWStr)] string? Enumerator, IntPtr hwndParent, TaskManagerDeviceFilter Flags);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("setupapi.dll", SetLastError = true)]
+    public static extern unsafe bool SetupDiEnumDeviceInfo(IntPtr DeviceInfoSet, int MemberIndex, ref SP_DEVINFO_DATA DeviceInfoData);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    public static extern unsafe bool SetupDiGetDeviceProperty(IntPtr DeviceInfoSet, ref SP_DEVINFO_DATA DeviceInfoData, ref DEVPROPKEY PropertyKey, out int PropertyType, IntPtr PropertyBuffer, int PropertyBufferSize, out int RequiredSize, int Flags);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    public static extern unsafe bool SetupDiGetDeviceProperty(IntPtr DeviceInfoSet, ref SP_DEVINFO_DATA DeviceInfoData, ref DEVPROPKEY PropertyKey, out int PropertyType, out Guid PropertyBuffer, int PropertyBufferSize, out int RequiredSize, int Flags);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    public static extern unsafe bool SetupDiGetClassDescription(ref Guid ClassGuid, IntPtr ClassDescription, int ClassDescriptionSize, out int RequiredSize);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    public static extern unsafe bool SetupDiGetClassProperty(Guid ClassGuid, ref DEVPROPKEY PropertyKey, out int PropertyType, IntPtr PropertyBuffer, int PropertyBufferSize, out int RequiredSize, int Flags);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("setupapi.dll", SetLastError = true)]
+    public static extern unsafe bool SetupDiLoadDeviceIcon(IntPtr DeviceInfoSet, ref SP_DEVINFO_DATA DeviceInfoData, int cxIcon, int cyIcon, int Flags, out IntPtr hIcon);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("setupapi.dll", SetLastError = true)]
+    public static extern unsafe bool SetupDiDestroyDeviceInfoList(IntPtr DeviceInfoSet);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("cfgmgr32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    public static extern unsafe int CM_Locate_DevNode(out IntPtr pdnDevInst, string pDeviceID, ulong ulFlags);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("cfgmgr32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    public static extern unsafe int CM_Enable_DevNode(IntPtr dnDevInst, uint ulFlags);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("cfgmgr32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    public static extern unsafe int CM_Disable_DevNode(IntPtr dnDevInst, uint ulFlags);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("cfgmgr32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    public static extern unsafe int CM_Uninstall_DevNode(IntPtr dnDevInst, uint ulFlags);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("cfgmgr32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    public static extern unsafe uint CM_Open_DevNode_Key(IntPtr dnDevNode, uint samDesired, uint ulHardwareProfile, int Disposition, out IntPtr phkDevice, uint ulFlags);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("ntdll.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    public static extern unsafe uint NtQueryKey(IntPtr KeyHandle, uint KeyInformationClass, IntPtr KeyInformation, uint Length, out uint ResultLength);
 
 }
