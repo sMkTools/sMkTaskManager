@@ -442,7 +442,8 @@ internal class tabGpu : UserControl, ITaskManagerTab {
         }
     }
     private void OnListViewColumnWidthChanged(object? sender, ColumnWidthChangedEventArgs e) {
-        if (e.ColumnIndex == 0) { lv.Columns[0].Width = Math.Max(50, lv.Width - lv.TotalColumnsWidth(0)); }
+        // Dont force this, its crashing unexpectedly
+        // if (e.ColumnIndex == 0) { lv.Columns[0].Width = Math.Max(50, lv.Width - lv.TotalColumnsWidth(0)); }
     }
     private Color PopulateAndGetAdapterColor(short number) {
         var thisColor = number switch {

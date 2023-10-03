@@ -4,12 +4,10 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using static sMkTaskManager.Classes.API;
-
 namespace sMkTaskManager.Classes;
 
 [SupportedOSPlatform("windows")]
 internal class TaskManagerGPU : IDisposable, IEquatable<TaskManagerGPU>, INotifyPropertyChanged {
-
     private Color _BackColor = Color.Empty;
     private int _ImageIndex = 0, _StateImageIndex = 0;
     private string _ImageKey = "", _Name = "", _ChipType = "";
@@ -86,7 +84,7 @@ internal class TaskManagerGPU : IDisposable, IEquatable<TaskManagerGPU>, INotify
     public string SharedMemoryUsed => string.Format("{0:#,0}", _SharedMemoryUsedValue / 1024 / 1024) + " Mb.";
     public ulong SharedMemoryFreeValue { get => _SharedMemoryFreeValue; set { SetField(ref _SharedMemoryFreeValue, value); } }
     public string SharedMemoryFree => string.Format("{0:#,0}", _SharedMemoryFreeValue / 1024 / 1024) + " Mb.";
-    public int SharedMemoryUsage => (int)(100 * SharedMemoryUsedValue / SharedMemoryTotalValue);
+    public int SharedMemoryUsage => (SharedMemoryTotalValue > 0) ? (int)(100 * SharedMemoryUsedValue / SharedMemoryTotalValue) : 0;
     /* Dedicated Memory */
     private ulong _DedicatedMemoryTotalValue, _DedicatedMemoryUsedValue, _DedicatedMemoryFreeValue;
     public ulong DedicatedMemoryTotalValue { get => _DedicatedMemoryTotalValue; set { SetField(ref _DedicatedMemoryTotalValue, value); } }
@@ -95,7 +93,7 @@ internal class TaskManagerGPU : IDisposable, IEquatable<TaskManagerGPU>, INotify
     public string DedicatedMemoryUsed => string.Format("{0:#,0}", _DedicatedMemoryUsedValue / 1024 / 1024) + " Mb.";
     public ulong DedicatedMemoryFreeValue { get => _DedicatedMemoryFreeValue; set { SetField(ref _DedicatedMemoryFreeValue, value); } }
     public string DedicatedMemoryFree => string.Format("{0:#,0}", _DedicatedMemoryFreeValue / 1024 / 1024) + " Mb.";
-    public int DedicatedMemoryUsage => (int)(100 * DedicatedMemoryUsedValue / DedicatedMemoryTotalValue);
+    public int DedicatedMemoryUsage => (DedicatedMemoryTotalValue > 0) ? (int)(100 * DedicatedMemoryUsedValue / DedicatedMemoryTotalValue) : 0;
 
     /* Public Methods */
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -106,13 +104,13 @@ internal class TaskManagerGPU : IDisposable, IEquatable<TaskManagerGPU>, INotify
         CloseAdapter();
         // GC.SuppressFinalize(this);
     }
-    public static List<TaskManagerGPU> GetAdaptersList(bool includeSoftwareDevice = false) {
+    public static List<TaskManagerGPU> GetAdaptersList() {
         var result = new List<TaskManagerGPU>();
         var adapters = new D3DKMT_ENUMADAPTERS();
         if (D3DKMTEnumAdapters(ref adapters) == NTSTATUS.Success) {
             for (int i = 0; i < adapters.NumAdapters; i++) {
                 var newAdapter = new TaskManagerGPU(adapters.Adapters[i]);
-                if (!newAdapter.Type.SoftwareDevice || includeSoftwareDevice) {
+                if (!newAdapter.Type.SoftwareDevice && newAdapter.Type.RenderSupported) {
                     result.Add(newAdapter);
                 } else {
                     newAdapter.Dispose();
@@ -127,7 +125,14 @@ internal class TaskManagerGPU : IDisposable, IEquatable<TaskManagerGPU>, INotify
         getSegmentSize();
         getAdapterInformation();
         ChipType = RegistryInfo.ChipType;
-        Name = RegistryInfo.AdapterString.Replace("Intel(R)", "Intel").Replace("NVIDIA", "nVidia").Replace("Laptop GPU", "");
+        if (!string.IsNullOrEmpty(RegistryInfo.AdapterString)) {
+            Name = RegistryInfo.AdapterString;
+        } else if (!string.IsNullOrEmpty(RegistryInfo.BiosString)) {
+            Name = RegistryInfo.BiosString;
+        } else {
+            Name = "Unsuported Adapter";
+        }
+        Name = Name.Replace("Intel(R)", "Intel").Replace("NVIDIA", "nVidia").Replace("Laptop GPU", "");
         DedicatedMemoryTotalValue = SegmentSize.DedicatedVideoMemorySize;
         SharedMemoryTotalValue = SegmentSize.SharedSystemMemorySize;
         Nodes = new NodeInfo[NodeCount];
@@ -144,11 +149,9 @@ internal class TaskManagerGPU : IDisposable, IEquatable<TaskManagerGPU>, INotify
         getPerformanceData();
         RefreshNodes();
         RefreshSegments();
-
         PowerUsage = (float)(_PerformanceData.Power / 10.0);
         Temperature = (float)(_PerformanceData.Temperature / 10.0);
         FanSpeed = _PerformanceData.FanRPM;
-
     }
     public void RefreshNodes() {
         long newRunningTime = 0;
@@ -345,7 +348,6 @@ internal class TaskManagerGPU : IDisposable, IEquatable<TaskManagerGPU>, INotify
         D3DKMTQueryStatistics(ref queryStatistics);
         return queryStatistics.QueryResult.SegmentInformation;
     }
-
 }
 
 [SupportedOSPlatform("windows")]
@@ -374,8 +376,4 @@ internal class TaskManagerGPUCollection : BindingList<TaskManagerGPU> {
         }
         return null;
     }
-}
-
-public static class Extensions {
-
 }
