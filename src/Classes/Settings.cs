@@ -390,6 +390,7 @@ internal static class Settings {
             case TaskManagerColumnTypes.Users: strName = "colsUsers"; break;
             case TaskManagerColumnTypes.Applications: strName = "colsApps"; break;
             case TaskManagerColumnTypes.Nics: strName = "colsNics"; break;
+            case TaskManagerColumnTypes.GPUs: strName = "colsGPUs"; break;
             default: return false;
         }
         try {

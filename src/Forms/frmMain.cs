@@ -26,9 +26,11 @@ public partial class frmMain : Form {
         Tabs.Tab.Add("Procs", new tabProcesses());
         Tabs.Tab.Add("Servs", new tabServices());
         Tabs.Tab.Add("Perfs", new tabPerformance());
+        Tabs.Tab.Add("GPUs", new tabGpu());
         Tabs.Tab.Add("Net", new tabNetworking());
         Tabs.Tab.Add("Conns", new tabConnections());
         Tabs.Tab.Add("Ports", new tabPorts());
+        Tabs.Tab.Add("Devices", new tabDevices());
         Tabs.Tab.Add("Users", new tabUsers());
         // Flicker Free Controls by DoubleBuffer
         Extensions.CascadingDoubleBuffer(this);
@@ -408,6 +410,7 @@ public partial class frmMain : Form {
         timmingStrip.Items.Clear();
         int i = 0;
         foreach (ITaskManagerTab? t in Tabs.Tab.Values) {
+            if (string.IsNullOrEmpty(t.TimmingKey)) continue;
             if (i >= Shared.TimmingsColors.Count) { i = 0; }
             ToolStripStatusLabel lbl = new() {
                 BackColor = Shared.TimmingsColors[i],
@@ -462,6 +465,20 @@ public partial class frmMain : Form {
             tc.SelectTab((TabPage)tabProcs.Parent!);
         } else {
             SetStatusText($"Sorry, PID {PID} not in Process List");
+        }
+    }
+    public void GoToService(string serviceName) {
+        tabServices? tabServs = (tabServices?)Tabs.GetTab("Servs");
+        if (tabServs == null) { return; }
+        tabServs.Refresher(true);
+        if (tabServs.lv.Items.ContainsKey(serviceName)) {
+            tabServs.lv.SelectedItems.Clear();
+            tabServs.lv.Items[serviceName].Selected = true;
+            tabServs.lv.Items[serviceName].Focused = true;
+            tabServs.lv.Items[serviceName].EnsureVisible();
+            tc.SelectTab((TabPage)tabServs.Parent!);
+        } else {
+            SetStatusText($"Sorry, Service {serviceName} not in Service List");
         }
     }
 

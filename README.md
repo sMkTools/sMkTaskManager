@@ -27,10 +27,12 @@ Most likely you will see pieces of code that are UGLY for experienced programmer
 
 + Detailed overview of all running processes activity with highlighting.
 + System performance metrics, CPU, Memory, I/O, Disk, Network.
++ GPU performance metrics, Engines, Memory, Power, Temperatures.
 + Network usage statistics, global and per network interface.
 + List of active connections by process, and traffic.
-+ List of active listening ports, and which processes is holding it.
++ List of listening ports, and which processes is holding it.
 + List and control services pretty much as services.msc.
++ Device Manager, pretty much as devmgr.msc.
 + List of user and windows terminal services sessions.
 + Intuitive to legacy users (not millennials) as a default Task Manager.
 + Customizable graphs, column details and layouts.
@@ -74,16 +76,16 @@ Not planning to write much documentation on usage, but encourage everyone to pla
 These features were originally implemented on older versions, but I removed the code because it was buggy
 
 + Processes CommandLine is not implemented.
-+ List & Release Locked files.
++ List & Release locked files.
 + New Task (Run As).
 
 ## Future Features
 
 + DarkMode (someday, when WinForms properly supports it).
-+ GPU Monitoring - For nVidia users.
-+ WSL Instances lists and monitoring.
++ Better Graphs customization and profiles.
++ WSL Instances lists and control.
++ Hyper-V Machine lists and control.
 + More detailed Disk Performance and Usage monitor.
-+ Device Manager.
 
 ## Special Thanks
 
