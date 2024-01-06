@@ -64,7 +64,6 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-    <None Include="..\TODO.md" Link="TODO.md" />
     <None Update="sMkTaskManager.ico">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
