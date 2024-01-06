@@ -9,13 +9,13 @@ namespace sMkTaskManager.Forms;
 [DesignerCategory("Component"), SupportedOSPlatform("windows")]
 internal class tabProcesses : UserControl, ITaskManagerTab {
     private readonly Stopwatch _stopWatch = new();
-    internal HashSet<string> ColsProcesses = new();
-    internal HashSet<int> HashProcesses = new();
-    internal TaskManagerProcessCollection Processes = new();
+    private HashSet<string> ColsProcesses = new();
+    private readonly HashSet<int> HashProcesses = new();
+    private readonly TaskManagerProcessCollection Processes = new();
 
-    internal sMkListView lv;
-    internal CheckBox btnAllUsers;
-    internal Button btnForceRefresh;
+    private sMkListView lv;
+    private CheckBox btnAllUsers;
+    private Button btnForceRefresh;
     private Button btnDetails;
     private Button btnProperties;
     private Button btnKill;
@@ -192,6 +192,7 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         cms.Items.AddMenuItem("&More Details").Name = "Details";
         cms.Items.AddMenuItem("File Prope&rties").Name = "Properties";
         cms.Items.AddMenuItem("&Open Location").Name = "Location";
+        cms.Items.AddMenuItem("F&ind Parent Process").Name = "Parent";
         cms.Items.AddSeparator();
         cms.Items.AddMenuItem("&Kill Process").Name = "Kill";
         cms.Items.AddMenuItem("Free&ze Process").Name = "Pause";
@@ -213,7 +214,7 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         ((ToolStripMenuItem)cms.Items["Priority"]).DropDownItems.AddMenuItem("Low").Name = "Priority6";
         ((ToolStripMenuItem)cms.Items["Priority"]).DropDownOpening += OnContextPriorityOpening;
         ((ToolStripMenuItem)cms.Items["Priority"]).DropDownItemClicked += OnContextItemClicked;
-        ((ToolStripMenuItem)cms.Items["Properties"]).SwitchToBold();
+        ((ToolStripMenuItem)cms.Items["Details"]).SwitchToBold();
         cms.Opening += OnContextOpening;
         cms.ItemClicked += OnContextItemClicked;
     }
@@ -256,6 +257,7 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         cms.Items["Details"].Enabled = lv.SelectedItems.Count == 1;
         cms.Items["Properties"].Enabled = lv.SelectedItems.Count == 1;
         cms.Items["Location"].Enabled = lv.SelectedItems.Count == 1;
+        cms.Items["Parent"].Enabled = lv.SelectedItems.Count == 1;
         cms.Items["Debug"].Enabled = lv.SelectedItems.Count == 1;
         cms.Items["Dump"].Enabled = lv.SelectedItems.Count == 1;
         cms.Items["Files"].Enabled = lv.SelectedItems.Count == 1;
@@ -288,6 +290,7 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
             case "Details": BeginInvoke(Feature_OpenDetails); break;
             case "Properties": BeginInvoke(Feature_OpenFileProperties); break;
             case "Location": BeginInvoke(Feature_OpenFileLocation); break;
+            case "Parent": BeginInvoke(Feature_ProcessFindParent); break;
             case "Kill": BeginInvoke(Feature_ProcessKill); break;
             case "Pause": BeginInvoke(Feature_ProcessPause); break;
             case "Resume": BeginInvoke(Feature_ProcessResume); break;
@@ -311,8 +314,7 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         if (sender == btnProperties) { Feature_OpenFileProperties(); return; }
         if (sender == btnKill) { Feature_ProcessKill(); return; }
         if (sender == btnForceRefresh) { Feature_ForceRefresh(); return; }
-        if (sender == btnAllUsers) { Settings.ShowAllProcess = btnAllUsers.Checked; return; }
-
+        if (sender == btnAllUsers) { Settings.ShowAllProcess = btnAllUsers.Checked; Feature_ForceRefresh(); return; }
     }
     private void OnListViewKeyDown(object? sender, KeyEventArgs e) {
         if (e.Control && e.KeyCode == Keys.A) {
@@ -335,7 +337,14 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         }
     }
     private void OnListViewMouseDoubleClick(object? sender, MouseEventArgs e) {
-        if (lv.SelectedItems.Count > 0 && e.Button == MouseButtons.Left) { Feature_OpenDetails(); }
+        if (e.Button == MouseButtons.Left) {
+            ListViewHitTestInfo ht = lv.HitTest(e.X, e.Y);
+            if (ht.Item != null && ht.SubItem != null && ht.SubItem.Name.Equals("ParentPID")) {
+                Feature_ProcessFindParent(); return;
+            } else if (lv.SelectedItems.Count > 0) {
+                Feature_OpenDetails(); return;
+            }
+        }
     }
     private void OnListViewSelectedIndexChanged(object? sender, EventArgs e) {
         btnDetails.Enabled = lv.SelectedItems.Count == 1;
@@ -502,8 +511,14 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         }
     }
     public void Feature_ProcessAffinity() {
+        if (lv.SelectedItems.Count < 1) return;
         using frmProcess_Affinity pa = new();
-        pa.BitMask = Convert.ToInt64(Process.GetProcessById(int.Parse(lv.SelectedItems[0].Name)).ProcessorAffinity);
+        try {
+            pa.BitMask = Convert.ToInt64(Process.GetProcessById(int.Parse(lv.SelectedItems[0].Name)).ProcessorAffinity);
+        } catch (Exception ex) {
+            Shared.SetStatusText($"Cant get current affinity for this process: {ex.Message}");
+            pa.Dispose(); return;
+        }
         pa.StartPosition = FormStartPosition.CenterParent;
         pa.ShowDialog(this);
         if (pa.DialogResult == DialogResult.OK) {
@@ -538,6 +553,20 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
             }
         }
         if (total > 0) Shared.SetStatusText($"Process{(total > 1 ? "es" : "")} priority set to: {newPriority} ...");
+    }
+    public void Feature_ProcessFindParent() {
+        if (lv.SelectedItems.Count < 1) return;
+        if (string.IsNullOrEmpty(lv.SelectedItems[0].Name)) return;
+        if (int.Parse(lv.SelectedItems[0].Name) < Shared.bpi) return;
+
+        string? PID = Processes.GetProcess(int.Parse(lv.SelectedItems[0].Name))?.ParentPID.ToString();
+        if (string.IsNullOrEmpty(PID)) return;
+        if (!lv.Items.ContainsKey(PID)) { Shared.SetStatusText($"Sorry, PID {PID} not in Process List"); return; }
+
+        lv.SelectedItems.Clear();
+        lv.Items[PID].Selected = true;
+        lv.Items[PID].Focused = true;
+        lv.Items[PID].EnsureVisible();
     }
 
     public sMkListView ListView => lv;
@@ -630,6 +659,7 @@ internal class tabProcesses : UserControl, ITaskManagerTab {
         }
         // Set LV First Column Width, only if firstTime
         if (firstTime) lv.Columns[0].Width = -1;
+        if (firstTime) RefreshInfoText();
         RefreshComplete?.Invoke(this, EventArgs.Empty);
     }
     public void Refresher(bool firstTime = false) {

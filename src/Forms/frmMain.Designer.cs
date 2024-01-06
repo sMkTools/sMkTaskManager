@@ -1,4 +1,6 @@
-﻿namespace sMkTaskManager;
+﻿using sMkTaskManager.Controls;
+
+namespace sMkTaskManager;
 
 partial class frmMain {
     private System.ComponentModel.IContainer components = null;
@@ -20,11 +22,12 @@ partial class frmMain {
         ssCpuLoad = new ToolStripStatusLabel();
         ssBtnState = new ToolStripSplitButton();
         ssBusyTime = new ToolStripStatusLabel();
-        tc = new TabControl();
+        tc = new sMkTabControl();
         tpGeneric = new TabPage();
         timmingStrip = new StatusStrip();
         niTray = new NotifyIcon(components);
         cmsTray = new ContextMenuStrip(components);
+        ilMain = new ImageList(components);
         mnu.SuspendLayout();
         ss.SuspendLayout();
         tc.SuspendLayout();
@@ -141,7 +144,7 @@ partial class frmMain {
         tc.Location = new Point(3, 27);
         tc.Margin = new Padding(0, 3, 0, 3);
         tc.Name = "tc";
-        tc.Padding = new Point(6, 4);
+        tc.Padding = new Point(5, 3);
         tc.SelectedIndex = 0;
         tc.Size = new Size(577, 508);
         tc.TabIndex = 1;
@@ -183,6 +186,12 @@ partial class frmMain {
         cmsTray.Name = "cmsTray";
         cmsTray.Size = new Size(61, 4);
         // 
+        // ilMain
+        // 
+        ilMain.ColorDepth = ColorDepth.Depth32Bit;
+        ilMain.ImageSize = new Size(16, 16);
+        ilMain.TransparentColor = Color.Transparent;
+        // 
         // frmMain
         // 
         ClientSize = new Size(584, 561);
@@ -223,9 +232,10 @@ partial class frmMain {
     private ToolStripStatusLabel ssCpuLoad;
     private ToolStripSplitButton ssBtnState;
     private ToolStripStatusLabel ssBusyTime;
-    private TabControl tc;
+    private sMkTabControl tc;
     private TabPage tpGeneric;
     private StatusStrip timmingStrip;
     private NotifyIcon niTray;
     private ContextMenuStrip cmsTray;
+    private ImageList ilMain;
 }

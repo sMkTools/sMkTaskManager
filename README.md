@@ -1,9 +1,9 @@
 <div align="center">
-  <img alt="GitHub Latest Release" src="https://img.shields.io/github/v/release/sMkTools/sMkTaskManager?label=Latest%20Release" />
-  <img alt="GitHub License" src="https://img.shields.io/github/license/sMkTools/sMkTaskManager?label=License" />
-  <img alt="GitHub Downloads" src="https://img.shields.io/github/downloads/sMkTools/sMkTaskManager/total?label=Downloads" />
-  <img alt="WinForms Badge" src="https://img.shields.io/badge/Win-Forms-purple" />
-  <img alt="Admin Badge" src="https://img.shields.io/badge/Admin-Only-red" />
+  <a href="#"><img alt="GitHub Latest Release" src="https://img.shields.io/github/v/release/sMkTools/sMkTaskManager?label=Latest%20Release" /></a>
+  <a href="#"><img alt="GitHub License" src="https://img.shields.io/github/license/sMkTools/sMkTaskManager?label=License" /></a>
+  <a href="#"><img alt="GitHub Downloads" src="https://img.shields.io/github/downloads/sMkTools/sMkTaskManager/total?label=Downloads" /></a>
+  <a href="#"><img alt="WinForms Badge" src="https://img.shields.io/badge/Win-Forms-purple" /></a>
+  <a href="#"><img alt="Admin Badge" src="https://img.shields.io/badge/Admin-Only-red" /></a>
 </div>
 
 # sMk Task Manager
@@ -25,16 +25,17 @@ Most likely you will see pieces of code that are UGLY for experienced programmer
 
 ## Main Features
 
++ A very nostalgic but extremly cool System Properties pages.
 + Detailed overview of all running processes activity with highlighting.
 + System performance metrics, CPU, Memory, I/O, Disk, Network.
 + GPU performance metrics, Engines, Memory, Power, Temperatures.
 + Network usage statistics, global and per network interface.
-+ List of active connections by process, and traffic.
++ List of active connections by process and their traffic usage.
 + List of listening ports, and which processes is holding it.
 + List and control services pretty much as services.msc.
-+ Device Manager, pretty much as devmgr.msc.
++ Hardware Device Manager, pretty much as devmgr.msc.
 + List of user and windows terminal services sessions.
-+ Intuitive to legacy users (not millennials) as a default Task Manager.
++ Intuitive to legacy users (not millennials) as a legacy Task Manager.
 + Customizable graphs, column details and layouts.
 + Small, portable, fast-ish, and 100% Free to use and modify.
 
@@ -55,7 +56,8 @@ Most likely you will see pieces of code that are UGLY for experienced programmer
 ## System requirements
 
 It seems odd to talk about requirements nowadays but let’s keep it simple and basic.  
-**Windows 10 or higher - 64 Bits.** - I have ditched and no longer test it on 32 Bits.  
+**[Windows 10 or higher - 64 Bits](https://www.microsoft.com/software-download/windows11)** - I have ditched and no longer test it on 32 Bits.  
+**[.NET Desktop Runtime 7.0](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)** - Currently targeting .NET Desktop 7.0.*  
 On the other hand, if you really like this application and need to run on older legacy systems, I can provide you with the old version which stills runs on Windows XP onwards.
 
 ## Administrative Privileges
@@ -82,7 +84,7 @@ These features were originally implemented on older versions, but I removed the 
 ## Future Features
 
 + DarkMode (someday, when WinForms properly supports it).
-+ Better Graphs customization and profiles.
++ Better graphs customization and profiles.
 + WSL Instances lists and control.
 + Hyper-V Machine lists and control.
 + More detailed Disk Performance and Usage monitor.

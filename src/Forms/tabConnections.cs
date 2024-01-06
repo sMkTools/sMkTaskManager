@@ -9,13 +9,13 @@ namespace sMkTaskManager.Forms;
 [DesignerCategory("Component"), SupportedOSPlatform("windows")]
 internal class tabConnections : UserControl, ITaskManagerTab {
     private readonly Stopwatch _stopWatch = new();
-    internal HashSet<string> ColsConnections = new();
-    internal HashSet<string> HashConnections = new();
-    internal TaskManagerConnectionCollection Connections = new();
+    private HashSet<string> ColsConnections = new();
+    private readonly HashSet<string> HashConnections = new();
+    private readonly TaskManagerConnectionCollection Connections = new();
 
-    internal sMkListView lv;
+    private sMkListView lv;
     private ContextMenuStrip cms;
-    internal Button btnForceRefresh;
+    private Button btnForceRefresh;
     private Button btnNaturalSort;
     private CheckBox btnIncludeUDP;
     private CheckBox btnIncludeIPv6;

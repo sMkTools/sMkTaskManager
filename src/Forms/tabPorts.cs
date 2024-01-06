@@ -8,12 +8,12 @@ namespace sMkTaskManager.Forms;
 [DesignerCategory("Component"), SupportedOSPlatform("windows")]
 internal class tabPorts : UserControl, ITaskManagerTab {
     private readonly Stopwatch _stopWatch = new();
-    internal HashSet<string> ColsPorts = new();
-    internal HashSet<string> HashPorts = new();
-    internal TaskManagerConnectionCollection Ports = new();
+    private HashSet<string> ColsPorts = new();
+    private readonly HashSet<string> HashPorts = new();
+    private readonly TaskManagerConnectionCollection Ports = new();
 
-    internal sMkListView lv;
-    internal Button btnForceRefresh;
+    private sMkListView lv;
+    private Button btnForceRefresh;
     private ContextMenuStrip cms;
     private CheckBox btnIncludeIPv6;
     private ToolStripMenuItem cmsKillProcess;

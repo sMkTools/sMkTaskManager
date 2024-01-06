@@ -63,19 +63,9 @@ namespace sMkTaskManager.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap AnimIcon_Cyan {
+        internal static System.Drawing.Bitmap AppIcon_Cyan {
             get {
-                object obj = ResourceManager.GetObject("AnimIcon_Cyan", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap AnimIcon_Red {
-            get {
-                object obj = ResourceManager.GetObject("AnimIcon_Red", resourceCulture);
+                object obj = ResourceManager.GetObject("AppIcon_Cyan", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -366,6 +356,86 @@ namespace sMkTaskManager.Resources {
         internal static System.Drawing.Bitmap User_Down {
             get {
                 object obj = ResourceManager.GetObject("User_Down", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap winpc_logo1 {
+            get {
+                object obj = ResourceManager.GetObject("winpc_logo1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap winpc_logo2 {
+            get {
+                object obj = ResourceManager.GetObject("winpc_logo2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap winpc_logo3 {
+            get {
+                object obj = ResourceManager.GetObject("winpc_logo3", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap winpc_logo4 {
+            get {
+                object obj = ResourceManager.GetObject("winpc_logo4", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap winpc_logo5 {
+            get {
+                object obj = ResourceManager.GetObject("winpc_logo5", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap winpc_logo6 {
+            get {
+                object obj = ResourceManager.GetObject("winpc_logo6", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap winpc_logo7 {
+            get {
+                object obj = ResourceManager.GetObject("winpc_logo7", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap winpc_logo8 {
+            get {
+                object obj = ResourceManager.GetObject("winpc_logo8", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

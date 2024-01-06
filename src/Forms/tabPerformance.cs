@@ -1438,13 +1438,10 @@ internal partial class tabPerformance : UserControl, ITaskManagerTab {
         Net = 5
     }
 
-    public sMkListView? ListView => null;
     public string Title { get; set; } = "Performance";
     public string Description { get; set; } = "System Performance";
     public string TimmingKey => "Perfs";
     public long TimmingValue => _stopWatch.ElapsedMilliseconds;
-    public bool CanSelectColumns => false;
-    public TaskManagerColumnTypes ColumnType => TaskManagerColumnTypes.None;
     public void ForceRefresh() => ForceRefreshClicked?.Invoke(this, EventArgs.Empty);
 
     private void RefresherDoWork() {

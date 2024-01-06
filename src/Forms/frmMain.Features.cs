@@ -84,6 +84,10 @@ partial class frmMain {
             case "FORCE SHUTDOWN": API.ExitWindowsEx(API.ExitWindows.ShutDown | API.ExitWindows.Force, 0); break;
         }
     }
+    internal void Feature_SystemProperties() {
+        using frmSystem d = new();
+        d.ShowDialog(this);
+    }
     internal static void Feature_DefaultTaskManager(bool set = true) {
         Microsoft.Win32.RegistryKey ParentKey = Microsoft.Win32.Registry.LocalMachine;
         string SubKey = @"Software\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\taskmgr.exe";

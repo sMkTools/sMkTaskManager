@@ -8,13 +8,12 @@ namespace sMkTaskManager.Classes;
 
 [SupportedOSPlatform("windows")]
 internal class TaskManagerService : IEquatable<TaskManagerService>, INotifyPropertyChanged {
-
     private ServiceController _BaseService;
     private ServiceControllerStatus _StatusCode;
     private ServiceStartMode _StartupCode;
     private readonly string _Ident;
     private string _PID = "", _Name = "", _Description = "", _Logon = "", _ImagePath = "", _CommandLine = "";
-    private Color _BackColor = Color.Empty;
+    private Color _ForeColor = Color.Empty, _BackColor = Color.Empty;
     private int _ImageIndex = 0;
 
     public TaskManagerService(string serviceIdent) {
@@ -50,6 +49,7 @@ internal class TaskManagerService : IEquatable<TaskManagerService>, INotifyPrope
     public ServiceControllerStatus StatusCode { get => _StatusCode; set { SetField(ref _StatusCode, value, nameof(Status)); } }
     public string Startup => _StartupCode.ToString();
     public ServiceStartMode StartupCode { get => _StartupCode; set { SetField(ref _StartupCode, value, nameof(Startup)); } }
+    public Color ForeColor { get => _ForeColor; set { SetField(ref _ForeColor, value); } }
     public Color BackColor { get => _BackColor; set { SetField(ref _BackColor, value); } }
     public int ImageIndex { get => _ImageIndex; set { SetField(ref _ImageIndex, value); } }
     public ServiceController[] DependentServices => (_BaseService == null) ? Array.Empty<ServiceController>() : _BaseService.DependentServices;
@@ -89,6 +89,7 @@ internal class TaskManagerService : IEquatable<TaskManagerService>, INotifyPrope
             ImageIndex = (si.StartType == ServiceStartMode.Disabled) ? 2 : ((_BaseService.Status == ServiceControllerStatus.Running) ? 0 : 1);
             if (si.Description != "") { Description = si.Description!; }
             PID = (si.ProcessID == 0) ? "" : si.ProcessID.ToString();
+            ForeColor = StartupCode == ServiceStartMode.Disabled ? SystemColors.GrayText : Color.Empty;
 
             if (NotifyChanges && LastUpdated <= LastChanged) {
                 BackColor = Settings.Highlights.ChangingItems ? Settings.Highlights.ChangingColor : Color.Empty;
@@ -201,6 +202,9 @@ internal class TaskManagerService : IEquatable<TaskManagerService>, INotifyPrope
     private void MyPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (!NotifyChanges) return;
         if (e.PropertyName == null) return;
+        if (e.PropertyName.Equals("LastChanged")) return;
+        if (e.PropertyName.Equals("LastUpdated")) return;
+        if (e.PropertyName.Equals("PreviousUpdate")) return;
         LastChanged = LastUpdated;
     }
     private void OnPropertyChanged(PropertyChangedEventArgs e) { if (NotifyChanges) PropertyChanged?.Invoke(this, e); }
@@ -364,5 +368,6 @@ internal class TaskManagerServicesCollection : BindingList<TaskManagerService> {
         }
         return null;
     }
+    public TaskManagerService? this[string serviceIdent] => Items.Where(_ => _.Ident == serviceIdent).FirstOrDefault();
 
 }

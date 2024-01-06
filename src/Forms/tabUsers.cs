@@ -8,12 +8,12 @@ namespace sMkTaskManager.Forms;
 [DesignerCategory("Component"), SupportedOSPlatform("windows")]
 internal class tabUsers : UserControl, ITaskManagerTab {
     private readonly Stopwatch _stopWatch = new();
-    internal HashSet<string> ColsUsers = new();
-    internal HashSet<string> HashUsers = new();
-    internal TaskManagerUserCollection Users = new();
+    private HashSet<string> ColsUsers = new();
+    private readonly HashSet<string> HashUsers = new();
+    private readonly TaskManagerUserCollection Users = new();
 
-    internal sMkListView lv;
-    internal Button btnForceRefresh;
+    private sMkListView lv;
+    private Button btnForceRefresh;
     private ContextMenuStrip cms;
     private Button btnDisconnect;
     private Button btnLogoff;

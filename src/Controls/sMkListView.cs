@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using static sMkTaskManager.Controls.sMkListViewHelpers;
@@ -20,24 +19,11 @@ public class sMkListView : ListView {
     private long _lastKeyPress = DateTime.Now.Ticks;
     private string _lastKeyString = "";
 
-    protected override void WndProc(ref Message m) {
-        // We use this to prevent the context menu being displayed when right click on column headers.
-        switch (m.Msg) {
-            case 0x210: // WM_PARENTNOTIFY
-                _contextMenuSet = 1; break;
-            case 0x21: // WM_MOUSEACTIVATE
-                _contextMenuSet += 1; break;
-            case 0x7B: // WM_CONTEXTMENU
-                // Cancel default context menu on the columnheader
-                if (_contextMenuSet == 2) m.Msg = 0; break;
-        }
-        base.WndProc(ref m);
-    }
-
     public sMkListView() : base() {
         Sortable = true;
         FullRowSelect = true;
         View = View.Details;
+        KeyDown += OnKeyDown;
         DrawItem += OnDrawItem;
         DrawSubItem += OnDrawSubItem;
         DrawColumnHeader += OnDrawColumnHeader;
@@ -46,7 +32,6 @@ public class sMkListView : ListView {
         _descriptors = _dataSource.GetItemProperties(null);
         ListViewItemSorter = _sorter;
     }
-
     public event EventHandler? ViewChanged;
 
     public bool SpaceFirstValue = false;
@@ -142,56 +127,102 @@ public class sMkListView : ListView {
         previouslySortedColumn = newSortColumn;
     }
     public void KeyJumper(string colTag, ref KeyPressEventArgs e) {
-        if (Items.Count < 1) return;
-        if (!Items[0].SubItems.ContainsKey(colTag)) return;
+        if (ModifierKeys is Keys.Control or Keys.Alt) return;
+        if (e.Handled) return;
+        if (Items.Count < 1 || !Items[0].SubItems.ContainsKey(colTag)) return;
 
-        if (DateTime.Now.Ticks - _lastKeyPress > 4000000) { // Allow 0.4secs
-            _lastKeyString = e.KeyChar.ToString();
-        } else {
-            if (!(_lastKeyString == e.KeyChar.ToString())) { _lastKeyString += e.KeyChar.ToString(); }
-        }
-        _lastKeyPress = DateTime.Now.Ticks;
         e.Handled = true;
+        long elapsedTicks = DateTime.Now.Ticks - _lastKeyPress;
+        bool isTimeoutElapsed = elapsedTicks > 4000000; // Allow 0.4secs
+        _lastKeyString = isTimeoutElapsed ? e.KeyChar.ToString() : _lastKeyString + e.KeyChar.ToString();
+        _lastKeyPress = DateTime.Now.Ticks;
 
-        sMkListViewItem? itmFound = null;
-        foreach (sMkListViewItem itmKey in Items) {
-            try {
-                if (itmKey.SubItems[colTag]!.Text.ToString().ToLower().StartsWith(_lastKeyString.ToLower())) {
-                    if (!itmKey.Selected) {
-                        itmFound ??= itmKey;
-                        if (SelectedItems.Count > 0) {
-                            if (SelectedItems[0].Index < itmKey.Index) {
-                                SelectedItems.Clear();
-                                itmKey.Selected = true;
-                                FocusedItem = itmKey;
-                                itmKey.EnsureVisible();
-                                return;
-                            } else if (!SelectedItems[0].SubItems[colTag]!.Text.ToString().ToLower().StartsWith(_lastKeyString.ToLower())) {
-                                SelectedItems.Clear();
-                                itmKey.Selected = true;
-                                itmKey.EnsureVisible();
-                                FocusedItem = itmKey;
-                                return;
-                            }
-                        }
-                    }
+        try {
+            sMkListViewItem? itmFound = Items.OfType<sMkListViewItem>().FirstOrDefault(itmKey =>
+                itmKey.SubItems[colTag]?.Text.StartsWith(_lastKeyString, StringComparison.CurrentCultureIgnoreCase) ?? false);
+
+            if (itmFound != null && !itmFound.Selected && SelectedItems.Count > 0) {
+                bool shouldClear = SelectedItems[0].Index < itmFound.Index || !(SelectedItems[0].SubItems[colTag]?.Text?.StartsWith(_lastKeyString, StringComparison.InvariantCultureIgnoreCase) ?? false);
+                if (shouldClear) {
+                    SelectedItems.Clear();
+                    itmFound.Selected = true;
+                    FocusedItem = itmFound;
+                    itmFound.EnsureVisible();
                 }
-            } catch (Exception ex) { Shared.DebugTrap(ex, 011); }
-        }
-        if (itmFound != null) {
-            SelectedItems.Clear();
-            itmFound.Selected = true;
-            FocusedItem = itmFound;
-            itmFound.EnsureVisible();
-        }
-    }
+            }
+        } catch (Exception ex) { Shared.DebugTrap(ex, 011); }
 
+    }
     public void RemoveItemByKey(string Key) {
         try {
             Items.RemoveByKey(Key);
         } catch { }
     }
+    public void CopyToClipboard() {
+        if (SelectedItems.Count < 1) return;
+        try {
+            var headerRow = SelectedItems.Count > 1 ? string.Join('\t', Columns.OfType<ColumnHeader>().Select(c => c.Text)) + Environment.NewLine : string.Empty;
+            var dataRows = string.Join(Environment.NewLine, SelectedItems.OfType<ListViewItem>().Select(i => string.Join('\t', i.SubItems.OfType<ListViewItem.ListViewSubItem>().Select(s => s.Text.Trim()))));
+            Clipboard.SetText(headerRow + dataRows);
+            Shared.SetStatusText("Selected item(s) copied to clipboard...");
+        } catch {
+            Shared.SetStatusText("Failed to copy item(s) to clipboard...");
+        }
+    }
+    public void SetColumns(in ListViewItemCollection colItems) {
+        if (colItems == null) return;
+        BeginUpdate();
+        int curPosition = 0;
+        foreach (ListViewItem c in colItems) {
+            if (!c.Checked && Columns.ContainsKey(c.Name)) {
+                Columns.RemoveByKey(c.Name);
+            } else if (c.Checked && !Columns.ContainsKey(c.Name)) {
+                ColumnHeader newCol = new() {
+                    Name = c.Name,
+                    Text = c.ToolTipText,
+                    Tag = c.Tag,
+                    TextAlign = (HorizontalAlignment)c.IndentCount,
+                    Width = c.ImageIndex
+                };
+                if (curPosition <= Columns.Count) {
+                    Columns.Insert(curPosition, newCol);
+                } else {
+                    Columns.Add(newCol);
+                }
+                curPosition += 1;
+            } else if (c.Checked && Columns.ContainsKey(c.Name)) {
+                curPosition += 1;
+            }
+        }
+        // As a safety measure we should also remove any other column that is on the list.
+        foreach (ColumnHeader c in Columns) {
+            if (!colItems.ContainsKey(c.Tag?.ToString())) Columns.Remove(c);
+        }
+        EndUpdate();
+    }
+    public int TotalColumnsWidth(int exceptColumn) {
+        int res = 0;
+        for (int i = 0; i < Columns.Count; i++) {
+            if (i != exceptColumn) res += Columns[i].Width;
+        }
+        return res;
+    }
 
+    protected override void WndProc(ref Message m) {
+        // We use this to prevent the context menu being displayed when right click on column headers.
+        switch (m.Msg) {
+            case 0x210: /* WM_PARENTNOTIFY  */ _contextMenuSet = 1; break;
+            case 0x21:  /* WM_MOUSEACTIVATE */ _contextMenuSet += 1; break;
+            case 0x7B:  /* WM_CONTEXTMENU   */ if (_contextMenuSet == 2) m.Msg = 0; break;
+        }
+        base.WndProc(ref m);
+    }
+    protected void OnKeyDown(object? sender, KeyEventArgs e) {
+        if (e.Handled) return;
+        if (e.Control && e.KeyCode is Keys.C) {
+            e.Handled = true; CopyToClipboard();
+        }
+    }
     protected void OnDrawItem(object? sender, DrawListViewItemEventArgs e) {
         if (AlternateRowColors) {
             if (!(e.ItemIndex % 2 == 0)) {
@@ -241,31 +272,34 @@ public class sMkListView : ListView {
     private void OnDataSource_RowAdded(ListChangedEventArgs e) {
         var row = _dataSource[e.NewIndex];
         // If its a string, treat as such and return.
-        if (row is string @string) { Items.Add(@string); return; }
+        if (row is string str) { Items.Add(str); return; }
         // Otherwise create a sMkListViewItem and populate
         var itm = new sMkListViewItem();
         // Internal properties that the item could have to format the ListViewItem.
         foreach (PropertyDescriptor d in _descriptors) {
-            if (d.Name == "ID") { _keyDescriptor = d; itm.Name = (string)d.GetValue(row)!; }
-            if (d.Name == "BackColor") { itm.BackColor = (Color)d.GetValue(row)!; }
-            if ((d.Name == "ImageKey") && ((string?)d.GetValue(row) != "")) { itm.ImageKey = (string)d.GetValue(row)!; }
-            if ((d.Name == "ImageIndex") && ((int?)d.GetValue(row) > -1)) { itm.ImageIndex = (int)d.GetValue(row)!; }
-            if ((d.Name == "StateImageIndex") && ((int?)d.GetValue(row) > -1)) { itm.StateImageIndex = (int)d.GetValue(row)!; }
+            var value = d.GetValue(row);
+            if (d.Name == "ID") { _keyDescriptor = d; itm.Name = (string)value!; }
+            if (d.Name == "Font") { itm.Font = (Font)value!; }
+            if (d.Name == "FontStyle") { itm.Font = new Font(itm.Font, (FontStyle)value!)!; }
+            if (d.Name == "ForeColor") { itm.ForeColor = (Color)value!; }
+            if (d.Name == "BackColor") { itm.BackColor = (Color)value!; }
+            if ((d.Name == "ImageKey") && ((string?)value != "")) { itm.ImageKey = (string)value!; }
+            if ((d.Name == "ImageIndex") && ((int?)value > -1)) { itm.ImageIndex = (int)value; }
+            if ((d.Name == "StateImageIndex") && ((int?)value > -1)) { itm.StateImageIndex = (int)value; }
         }
         // Populate each value of the item if the column exists.
         foreach (ColumnHeader c in Columns) {
             var value = "";
             c.Tag ??= "";
-            if (c.Tag.ToString()!.Trim() != "") {
+            if (!string.IsNullOrWhiteSpace(c.Tag.ToString())) {
                 foreach (PropertyDescriptor d in _descriptors) {
-                    if (d.Name.ToLower() == c.Tag.ToString()?.ToLower()) {
-                        try {
-                            value = d.GetValue(row)?.ToString();
-                        } catch (Exception ex) {
-                            Trace.TraceWarning($"sMkListView - Cannot Read Value {d.Name} From Row Type {row.GetType}, Error: {ex.Message}");
-                        }
-                        break;
+                    if (!d.Name.Equals(c.Tag.ToString(), StringComparison.InvariantCultureIgnoreCase)) continue;
+                    try {
+                        value = d.GetValue(row)?.ToString();
+                    } catch (Exception ex) {
+                        Debug.WriteLine($"sMkListView - Cannot Read Value {d.Name} From Row Type {row.GetType}, Error: {ex.Message}");
                     }
+                    break;
                 }
             }
             if (c.Index == 0) {
@@ -283,40 +317,25 @@ public class sMkListView : ListView {
         if (Items.Count < 1) return;
         if (e.PropertyDescriptor == null || _keyDescriptor == null || row == null) return;
         try {
-            switch (e.PropertyDescriptor?.Name) {
-                case "BackColor": // Set The Back Color
-                    if (Items.ContainsKey(_keyDescriptor.GetValue(row)!.ToString())) {
-                        Items[_keyDescriptor.GetValue(row)!.ToString()].BackColor = (Color)e.PropertyDescriptor.GetValue(row)!;
-                    }
-                    return;
-                case "ImageKey": // Set The Image Key
-                    if (Items.ContainsKey(_keyDescriptor.GetValue(row)!.ToString())) {
-                        Items[_keyDescriptor.GetValue(row)!.ToString()].ImageKey = (string)e.PropertyDescriptor.GetValue(row)!;
-                    }
-                    return;
-                case "ImageIndex": // Set The Image Index
-                    if (Items.ContainsKey(_keyDescriptor.GetValue(row)!.ToString())) {
-                        Items[_keyDescriptor.GetValue(row)!.ToString()].ImageIndex = (int)e.PropertyDescriptor.GetValue(row)!;
-                    }
-                    return;
-                case "StateImageIndex": // Set The Image Index
-                    if (Items.ContainsKey(_keyDescriptor.GetValue(row)!.ToString())) {
-                        Items[_keyDescriptor.GetValue(row)!.ToString()].StateImageIndex = (int)e.PropertyDescriptor.GetValue(row)!;
-                    }
-                    return;
-
-                default: // Set Values...
-                    foreach (ColumnHeader c in Columns) {
-                        if (e.PropertyDescriptor?.Name.ToLower() == c.Tag?.ToString()?.ToLower()) {
-                            if (!Items.ContainsKey(_keyDescriptor.GetValue(row)!.ToString())) break;
-                            // Used to catch an error in the ForceRefresh
-                            // Items[_keyDescriptor.GetValue(row)!.ToString()].SubItems[c.Index].Text = e.PropertyDescriptor!.GetValue(row)!.ToString();
-                            Items[_keyDescriptor.GetValue(row)!.ToString()].SubItems[c.Index].Text = ((c.DisplayIndex == 0 && SpaceFirstValue) ? " " : "") + e.PropertyDescriptor!.GetValue(row)?.ToString();
-                            _needReSort = _needReSort || c.Index == SortColumn;
-                            break;
-                        }
-                    }
-                    break;
+            var itm = Items[_keyDescriptor.GetValue(row)!.ToString()];
+            var value = e.PropertyDescriptor.GetValue(row);
+            if (itm == null) return;
+            switch (e.PropertyDescriptor.Name) {
+                case "Font": itm.Font = (Font?)value; return;
+                case "FontStyle": itm.Font = new Font(itm.Font, (FontStyle)value!); return;
+                case "ForeColor": itm.ForeColor = (Color)value!; return;
+                case "BackColor": itm.BackColor = (Color)value!; return;
+                case "ImageKey": itm.ImageKey = (string)value!; return;
+                case "ImageIndex": itm.ImageIndex = (int)value!; return;
+                case "StateImageIndex": itm.StateImageIndex = (int)value!; return;
+            }
+            foreach (ColumnHeader c in Columns) {
+                if (!e.PropertyDescriptor.Name.Equals(c.Tag?.ToString(), StringComparison.InvariantCultureIgnoreCase)) continue;
+                // Used to catch an error in the ForceRefresh
+                // itm.SubItems[c.Index].Text = e.PropertyDescriptor!.GetValue(row)!.ToString();
+                itm.SubItems[c.Index].Text = ((c.DisplayIndex == 0 && SpaceFirstValue) ? " " : "") + value?.ToString();
+                _needReSort = _needReSort || c.Index == SortColumn;
+                break;
             }
         } catch (Exception ex) {
             Debug.WriteLine("Method: {0}, Error: {1}", MethodBase.GetCurrentMethod()?.Name, ex.ToString());
@@ -324,45 +343,6 @@ public class sMkListView : ListView {
         if (_needReSort && Sortable) { _needReSort = false; Sort(); }
     }
     // private void OnDataSource_RowDeleted(ListChangedEventArgs e) { }
-
-    public void SetColumns(in ListViewItemCollection colItems) {
-        if (colItems == null) return;
-        BeginUpdate();
-        int curPosition = 0;
-        foreach (ListViewItem c in colItems) {
-            if (!c.Checked && Columns.ContainsKey(c.Name)) {
-                Columns.RemoveByKey(c.Name);
-            } else if (c.Checked && !Columns.ContainsKey(c.Name)) {
-                ColumnHeader newCol = new() {
-                    Name = c.Name,
-                    Text = c.ToolTipText,
-                    Tag = c.Tag,
-                    TextAlign = (HorizontalAlignment)c.IndentCount,
-                    Width = c.ImageIndex
-                };
-                if (curPosition <= Columns.Count) {
-                    Columns.Insert(curPosition, newCol);
-                } else {
-                    Columns.Add(newCol);
-                }
-                curPosition += 1;
-            } else if (c.Checked && Columns.ContainsKey(c.Name)) {
-                curPosition += 1;
-            }
-        }
-        // As a safety measure we should also remove any other column that is on the list.
-        foreach (ColumnHeader c in Columns) {
-            if (!colItems.ContainsKey(c.Tag?.ToString())) Columns.Remove(c);
-        }
-        EndUpdate();
-    }
-    public int TotalColumnsWidth(int exceptColumn) {
-        int res = 0;
-        for (int i = 0; i < Columns.Count; i++) {
-            if (i != exceptColumn) res += Columns[i].Width;
-        }
-        return res;
-    }
 }
 
 public static class sMkListViewHelpers {
@@ -393,7 +373,6 @@ public static class sMkListViewHelpers {
     [System.Security.SuppressUnmanagedCodeSecurity()]
     [DllImport("USER32.DLL", EntryPoint = "SendMessage")]
     public static unsafe extern IntPtr SendMessageItem(IntPtr Handle, int msg, IntPtr wParam, ref HDITEM lParam);
-
 }
 
 public class sMkListViewSorter {
@@ -476,7 +455,6 @@ public class sMkListViewSorter {
         SendMessageItem(hHeader, HDM_SETITEM, newColumn, ref HDITEM);
         previouslySortedColumn = newSortColumn;
     }
-
 }
 
 public class sMkColumnSorter : IComparer {
@@ -514,7 +492,7 @@ public class sMkColumnSorter : IComparer {
             Debug.WriteLine("Error at Compare Function");
             Debug.Indent();
             Debug.WriteLine("ValueX was: {0} and ValueY was: {1}", valX, valY);
-            Debug.WriteLine("Error was: {0}", ex.ToString(), null);
+            Debug.WriteLine("Error was: {0}", ex.ToString());
             Debug.Unindent();
             return 0;
         }
@@ -541,28 +519,20 @@ public class sMkColumnSorter : IComparer {
     }
     private string CompareFixValues(string Value) {
         if (IsNumeric(Value)) return Value;
-        //var retValue = Value.ToUpper().Replace(",", "");
-        //if (retValue.EndsWith(".")) retValue = retValue[..^1];
-        //if (retValue.EndsWith("+")) retValue = retValue[1..].Trim();
         var retValue = Value.ToUpper().Replace(",", "").TrimStart('+', '=').TrimEnd('.').Trim();
         if (retValue.EndsWith("BPS")) { retValue = retValue[..^3]; }
         if (IsNumeric(retValue)) return retValue;
 
-        if (retValue.EndsWith("B") && IsNumeric(retValue.Replace("B", "").Trim())) {
-            retValue = retValue.Replace("B", "").Trim();
-        } else if ((retValue.EndsWith("K") && IsNumeric(retValue.Replace("K", "").Trim())) | (retValue.EndsWith("KB") && IsNumeric(retValue.Replace("KB", "").Trim())) | (retValue.EndsWith("KB/S") && IsNumeric(retValue.Replace("KB/S", "").Trim()))) {
-            retValue = retValue.Replace("KB/S", "").Replace("KB", "").Replace("K", "").Trim();
-            retValue = (double.Parse(retValue) * 1024).ToString();
-        } else if ((retValue.EndsWith("M") && IsNumeric(retValue.Replace("M", "").Trim())) | (retValue.EndsWith("MB") && IsNumeric(retValue.Replace("MB", "").Trim())) | (retValue.EndsWith("MB/S") && IsNumeric(retValue.Replace("MB/S", "").Trim()))) {
-            retValue = retValue.Replace("MB/S", "").Replace("MB", "").Replace("M", "").Trim();
-            retValue = (double.Parse(retValue) * 1024 * 1024).ToString();
-        } else if ((retValue.EndsWith("G") && IsNumeric(retValue.Replace("G", "").Trim())) | (retValue.EndsWith("GB") && IsNumeric(retValue.Replace("GB", "").Trim())) | (retValue.EndsWith("GB/S") && IsNumeric(retValue.Replace("GB/S", "").Trim()))) {
-            retValue = retValue.Replace("GB/S", "").Replace("GB", "").Replace("G", "").Trim();
-            retValue = (double.Parse(retValue) * 1024 * 1024 * 1024).ToString();
+        string numericValue = retValue.TrimEnd('B', 'K', 'M', 'G', '/', 'S');
+        if (double.TryParse(numericValue, out double value)) {
+            retValue = retValue.EndsWith("B") ? value.ToString() :
+                       (retValue.EndsWith("K") || retValue.EndsWith("KB") || retValue.EndsWith("KB/S")) ? (value * 1024).ToString() :
+                       (retValue.EndsWith("M") || retValue.EndsWith("MB") || retValue.EndsWith("MB/S")) ? (value * 1024 * 1024).ToString() :
+                       (retValue.EndsWith("G") || retValue.EndsWith("GB") || retValue.EndsWith("GB/S")) ? (value * 1024 * 1024 * 1024).ToString() :
+                       Value;
         } else {
             retValue = Value;
         }
         return retValue;
     }
-
 }
