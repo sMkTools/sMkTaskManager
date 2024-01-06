@@ -9,33 +9,34 @@ namespace sMkTaskManager.Forms;
 [DesignerCategory("Component"), SupportedOSPlatform("windows")]
 internal class tabServices : UserControl, ITaskManagerTab {
     private readonly Stopwatch _stopWatch = new();
-    internal HashSet<string> ColsServices = new();
-    internal HashSet<string> HashServices = new();
-    internal TaskManagerServicesCollection Services = new();
+    private HashSet<string> ColsServices = new();
+    private readonly HashSet<string> HashServices = new();
+    private readonly TaskManagerServicesCollection Services = new();
 
-    internal sMkListView lv;
-    internal Button btnForceRefresh;
+    private sMkListView lv;
+    private Button btnForceRefresh;
     private ImageList il;
     private ContextMenuStrip cms;
     private ToolStripMenuItem cmsProperties;
+    private ToolStripMenuItem cmsFileProperties;
     private ToolStripMenuItem cmsOpenLocation;
     private ToolStripSeparator cmsSeparator1;
     private ToolStripMenuItem cmsStart;
     private ToolStripMenuItem cmsStop;
     private ToolStripMenuItem cmsPause;
     private ToolStripMenuItem cmsResume;
+    private ToolStripMenuItem cmsRestart;
     private ToolStripSeparator cmsSeparator2;
     private ToolStripMenuItem cmsGoToProcess;
     private ToolStripMenuItem cmsOnline;
-    private ToolStripMenuItem cmsFileProperties;
     private Button btnStart;
     private Button btnStop;
-    private CheckBox btnDescriptions;
     private Button btnRestart;
     private Button btnServices;
+    private CheckBox btnDescriptions;
     private ColumnHeader lvName;
-    private ToolStripMenuItem cmsRestart;
     private TextBox txtDescriptions;
+    private Label lblText;
 
     public event EventHandler? ForceRefreshClicked;
     public event EventHandler? RefreshStarts;
@@ -49,6 +50,7 @@ internal class tabServices : UserControl, ITaskManagerTab {
 
     public tabServices() {
         InitializeComponent();
+        InitializeHandlers();
         InitializeExtras();
         Extensions.CascadingDoubleBuffer(this);
     }
@@ -72,11 +74,12 @@ internal class tabServices : UserControl, ITaskManagerTab {
         cmsStop = new ToolStripMenuItem();
         cmsPause = new ToolStripMenuItem();
         cmsResume = new ToolStripMenuItem();
+        cmsRestart = new ToolStripMenuItem();
         cmsSeparator2 = new ToolStripSeparator();
         cmsGoToProcess = new ToolStripMenuItem();
         cmsOnline = new ToolStripMenuItem();
         txtDescriptions = new TextBox();
-        cmsRestart = new ToolStripMenuItem();
+        lblText = new Label();
         cms.SuspendLayout();
         SuspendLayout();
         // 
@@ -129,10 +132,10 @@ internal class tabServices : UserControl, ITaskManagerTab {
         // btnServices
         // 
         btnServices.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-        btnServices.Location = new Point(405, 571);
+        btnServices.Location = new Point(410, 571);
         btnServices.Margin = new Padding(3, 3, 0, 3);
         btnServices.Name = "btnServices";
-        btnServices.Size = new Size(97, 23);
+        btnServices.Size = new Size(92, 23);
         btnServices.TabIndex = 5;
         btnServices.Text = "Services MMC";
         // 
@@ -234,6 +237,12 @@ internal class tabServices : UserControl, ITaskManagerTab {
         cmsResume.Size = new Size(156, 22);
         cmsResume.Text = "Resu&me Service";
         // 
+        // cmsRestart
+        // 
+        cmsRestart.Name = "cmsRestart";
+        cmsRestart.Size = new Size(156, 22);
+        cmsRestart.Text = "R&estart Service";
+        // 
         // cmsSeparator2
         // 
         cmsSeparator2.Name = "cmsSeparator2";
@@ -266,14 +275,19 @@ internal class tabServices : UserControl, ITaskManagerTab {
         txtDescriptions.TabStop = false;
         txtDescriptions.Visible = false;
         // 
-        // cmsRestart
+        // lblText
         // 
-        cmsRestart.Name = "cmsRestart";
-        cmsRestart.Size = new Size(156, 22);
-        cmsRestart.Text = "R&estart Service";
+        lblText.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+        lblText.AutoEllipsis = true;
+        lblText.ForeColor = SystemColors.HotTrack;
+        lblText.Location = new Point(277, 575);
+        lblText.Name = "lblText";
+        lblText.Size = new Size(131, 16);
+        lblText.TabIndex = 8;
         // 
         // tabServices
         // 
+        Controls.Add(lblText);
         Controls.Add(txtDescriptions);
         Controls.Add(lv);
         Controls.Add(btnForceRefresh);
@@ -288,15 +302,7 @@ internal class tabServices : UserControl, ITaskManagerTab {
         ResumeLayout(false);
         PerformLayout();
     }
-    private void InitializeExtras() {
-        il.Images.Clear();
-        il.Images.Add(Resources.Resources.Service_Running);
-        il.Images.Add(Resources.Resources.Service_Stoped);
-        il.Images.Add(Resources.Resources.Service_Disabled);
-        lv.ContentType = typeof(TaskManagerService);
-        lv.DataSource = Services.DataExporter;
-        cmsProperties.SwitchToBold();
-        // Add event handlers
+    private void InitializeHandlers() {
         cms.Opening += OnContextOpening;
         cms.ItemClicked += OnContextItemClicked;
         lv.ColumnReordered += OnListViewColumnReordered;
@@ -312,6 +318,15 @@ internal class tabServices : UserControl, ITaskManagerTab {
         btnDescriptions.CheckedChanged += OnButtonClicked;
         KeyPress += OnKeyPress;
         VisibleChanged += OnVisibleChanged;
+    }
+    private void InitializeExtras() {
+        il.Images.Clear();
+        il.Images.Add(Resources.Resources.Service_Running);
+        il.Images.Add(Resources.Resources.Service_Stoped);
+        il.Images.Add(Resources.Resources.Service_Disabled);
+        lv.ContentType = typeof(TaskManagerService);
+        lv.DataSource = Services.DataExporter;
+        cmsProperties.SwitchToBold();
     }
 
     private void OnKeyPress(object? sender, KeyPressEventArgs e) {
@@ -355,10 +370,6 @@ internal class tabServices : UserControl, ITaskManagerTab {
         if (sender == btnDescriptions) { ShowServiceDescriptions = btnDescriptions.Checked; return; }
     }
     private void OnListViewKeyDown(object? sender, KeyEventArgs e) {
-        if (e.Control && e.KeyCode == Keys.A) {
-            e.Handled = true;
-            foreach (sMkListViewItem itm in lv.Items) { itm.Selected = true; }
-        }
         if (e.KeyCode == Keys.Enter && !e.Handled) {
             e.Handled = true;
             cmsProperties.PerformClick();
@@ -395,12 +406,10 @@ internal class tabServices : UserControl, ITaskManagerTab {
         cmsStart.Enabled = btnStart.Enabled;
         cmsStop.Enabled = btnStop.Enabled;
         cmsRestart.Enabled = btnRestart.Enabled;
-
         if (lv.SelectedItems.Count < 1) return;
         if (Shared.InitComplete && Visible && ShowServiceDescriptions) {
             PopulateServiceDescription(Services.GetService(lv.SelectedItems[0].Name));
         }
-
     }
     private bool ShowServiceDescriptions {
         get { return txtDescriptions.Visible; }
@@ -538,7 +547,11 @@ internal class tabServices : UserControl, ITaskManagerTab {
     }
     public void Feature_ServicesMMC() {
         using Process x = new();
-        x.StartInfo = new ProcessStartInfo(Environment.GetFolderPath(Environment.SpecialFolder.System) + "\\services.msc");
+        x.StartInfo = new ProcessStartInfo(Environment.GetFolderPath(Environment.SpecialFolder.System) + @"\services.msc") {
+            WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.System),
+            WindowStyle = ProcessWindowStyle.Normal,
+            UseShellExecute = true
+        };
         x.Start();
     }
     public void Feature_FileProperties() {
@@ -607,6 +620,7 @@ internal class tabServices : UserControl, ITaskManagerTab {
         LastRun.UnionWith(HashServices);
         HashServices.Clear();
         // Iterate through all the services
+        int _servicesRunning = 0;
         foreach (ServiceController s in ServiceController.GetServices()) {
             if (Shared.skipServices.Contains(s.DisplayName) || Shared.skipServices.Contains(s.ServiceName)) continue;
             TaskManagerService thisService = new(s.ServiceName);
@@ -625,6 +639,7 @@ internal class tabServices : UserControl, ITaskManagerTab {
                 if (Settings.Highlights.NewItems && !firstTime) thisService.BackColor = Settings.Highlights.NewColor;
                 Services.Add(thisService);
             }
+            if (thisService.StatusCode == ServiceControllerStatus.Running) _servicesRunning++;
         }
         // Clean out old Items
         LastRun.ExceptWith(HashServices);
@@ -639,6 +654,7 @@ internal class tabServices : UserControl, ITaskManagerTab {
                 HashServices.Add(thisService.Ident);
             }
         }
+        lblText.Text = string.Format("Total: {0}, Running: {1}", lv.Items.Count, _servicesRunning);
         RefreshComplete?.Invoke(this, EventArgs.Empty);
     }
     public void Refresher(bool firstTime = false) {

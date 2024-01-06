@@ -12,9 +12,9 @@ internal class tabNetworking : UserControl, ITaskManagerTab {
     private readonly Dictionary<string, string> _TCPstatsValues = new();
     private readonly Dictionary<string, string> _UDPstatsValues = new();
     private readonly Dictionary<string, string> _ICMPstatsValues = new();
-    internal HashSet<string> ColsNics = new();
-    internal HashSet<string> HashNics = new();
-    internal TaskManagerNicsCollection Nics = new();
+    private HashSet<string> ColsNics = new();
+    private readonly HashSet<string> HashNics = new();
+    private readonly TaskManagerNicsCollection Nics = new();
 
     private TabControl tc;
     private TabPage tpUsage;

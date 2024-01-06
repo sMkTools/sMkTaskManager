@@ -1,11 +1,10 @@
 ﻿using sMkTaskManager.Classes;
-
 namespace sMkTaskManager;
 
 partial class frmMain {
     private ToolStripMenuItem mnuMonitor, mnuComputer;
     private ToolStripMenuItem mnuMonitor_ScreenSaver, mnuMonitor_PowerOff;
-    private ToolStripMenuItem mnuFile_NewTask, mnuFile_NewTaskAsUser, mnuFile_Exit;
+    private ToolStripMenuItem mnuFile_NewTask, mnuFile_NewTaskAsUser, mnuFile_SystemProperties, mnuFile_Exit;
     private ToolStripMenuItem mnuComputer_Lock, mnuComputer_Logoff, mnuComputer_Sleep, mnuComputer_Hibernate;
     private ToolStripMenuItem mnuComputer_Restart, mnuComputer_Shutdown, mnuComputer_ForceShutdown;
     private ToolStripMenuItem mnuOptions_Preferences, mnuOptions_OnTop, mnuOptions_Highlight;
@@ -13,7 +12,6 @@ partial class frmMain {
     private ToolStripMenuItem mnuOptions_SelectColumns, mnuOptions_SelectSummary;
     private ToolStripMenuItem mnuView_Refresh, mnuView_SpeedHigh, mnuView_SpeedNormal, mnuView_SpeedLow, mnuView_Pause;
     private ToolStripMenuItem mnuHelp_About, mnuHelp_Timmings;
-
     private ToolStripMenuItem mnuTray_Open, mnuTray_NewTask, mnuTray_NewTaskAsUser, mnuTray_Monitor, mnuTray_Computer, mnuTray_Exit;
 
     private void InitializeMainMenu() {
@@ -67,10 +65,12 @@ partial class frmMain {
         // mnuFile
         mnuFile_NewTask = new("&New Task (Run...)") { Name = "mnuFile_NewTask" };
         mnuFile_NewTaskAsUser = new("New Task (Run As...)") { Name = "mnuFile_NewTaskAsUser" };
+        mnuFile_SystemProperties = new("System P&roperties") { Name = "mnuFile_SystemProperties", ShowShortcutKeys = false, ShortcutKeys = Keys.F12 };
         mnuFile_Exit = new("E&xit") { Name = "mnuFile_Exit" };
         mnuFile.DropDownItems.AddRange(new[] { mnuFile_NewTask, mnuFile_NewTaskAsUser });
         mnuFile.DropDownItems.AddSeparator();
         mnuFile.DropDownItems.AddRange(new[] { mnuMonitor, mnuComputer });
+        mnuFile.DropDownItems.Add(mnuFile_SystemProperties);
         mnuFile.DropDownItems.AddSeparator();
         mnuFile.DropDownItems.Add(mnuFile_Exit);
     }
@@ -158,6 +158,7 @@ partial class frmMain {
             case nameof(mnuTray_Open): BeginInvoke(Feature_ActivateMainWindow); return;
             case nameof(mnuFile_NewTask) or nameof(mnuTray_NewTask): BeginInvoke(Feature_NewTask); return;
             case nameof(mnuFile_NewTaskAsUser) or nameof(mnuTray_NewTaskAsUser): BeginInvoke(Feature_NewTaskAsUser); return;
+            case nameof(mnuFile_SystemProperties): BeginInvoke(Feature_SystemProperties); return;
             case nameof(mnuFile_Exit) or nameof(mnuTray_Exit): BeginInvoke(Feature_RealExit); return;
             case nameof(mnuMonitor_ScreenSaver): BeginInvoke(Feature_MonitorScreenSaver); return;
             case nameof(mnuMonitor_PowerOff): BeginInvoke(Feature_MonitorPowerOff); return;

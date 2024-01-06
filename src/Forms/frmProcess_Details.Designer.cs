@@ -1744,7 +1744,7 @@ partial class frmProcess_Details {
         i_GroupBox3.Size = new Size(149, 90);
         i_GroupBox3.TabIndex = 2;
         i_GroupBox3.TabStop = false;
-        i_GroupBox3.Text = "Read Operations";
+        i_GroupBox3.Text = "Other Operations";
         // 
         // i_lblOtherBytesDelta
         // 
@@ -1846,7 +1846,7 @@ partial class frmProcess_Details {
         i_GroupBox2.Size = new Size(147, 90);
         i_GroupBox2.TabIndex = 1;
         i_GroupBox2.TabStop = false;
-        i_GroupBox2.Text = "Read Operations";
+        i_GroupBox2.Text = "Write Operations";
         // 
         // i_lblWriteBytesDelta
         // 

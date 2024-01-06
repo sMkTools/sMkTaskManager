@@ -1,6 +1,6 @@
 ﻿namespace sMkTaskManager.Forms;
-partial class frmAbout {
 
+partial class frmAbout {
     private System.ComponentModel.IContainer components = null;
     protected override void Dispose(bool disposing) {
         if (disposing && (components != null)) { components.Dispose(); }
@@ -8,169 +8,175 @@ partial class frmAbout {
     }
 
     private void InitializeComponent() {
-        components = new System.ComponentModel.Container();
-        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmAbout));
-        gb = new GroupBox();
+        pbBanner = new PictureBox();
         lblBuild = new Label();
-        lblWarning = new Label();
         lblCopyright = new Label();
-        lblLine = new Label();
-        lblVersion = new Label();
-        lblTitle = new Label();
-        pbIcon = new PictureBox();
-        lblInfo = new Label();
-        tmrIcon = new System.Windows.Forms.Timer(components);
-        ilAnimation = new ImageList(components);
-        gb.SuspendLayout();
-        ((System.ComponentModel.ISupportInitialize)pbIcon).BeginInit();
+        btnOk = new Button();
+        lblLicense = new Label();
+        lblProduct = new Label();
+        lblDivider = new Label();
+        lnkGithub = new LinkLabel();
+        lnkLicense = new LinkLabel();
+        lnkDonate = new LinkLabel();
+        lnkFeedback = new LinkLabel();
+        ((System.ComponentModel.ISupportInitialize)pbBanner).BeginInit();
         SuspendLayout();
         // 
-        // gb
+        // pbBanner
         // 
-        gb.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-        gb.Controls.Add(lblBuild);
-        gb.Controls.Add(lblWarning);
-        gb.Controls.Add(lblCopyright);
-        gb.Controls.Add(lblLine);
-        gb.Controls.Add(lblVersion);
-        gb.Controls.Add(lblTitle);
-        gb.Controls.Add(pbIcon);
-        gb.Controls.Add(lblInfo);
-        gb.Location = new Point(6, -2);
-        gb.Name = "gb";
-        gb.Size = new Size(398, 126);
-        gb.TabIndex = 0;
-        gb.TabStop = false;
+        pbBanner.BackColor = SystemColors.ControlDarkDark;
+        pbBanner.Dock = DockStyle.Top;
+        pbBanner.Location = new Point(0, 0);
+        pbBanner.Name = "pbBanner";
+        pbBanner.Size = new Size(434, 75);
+        pbBanner.SizeMode = PictureBoxSizeMode.AutoSize;
+        pbBanner.TabIndex = 0;
+        pbBanner.TabStop = false;
         // 
         // lblBuild
         // 
-        lblBuild.AutoSize = true;
         lblBuild.BackColor = Color.Transparent;
-        lblBuild.Location = new Point(80, 39);
+        lblBuild.Location = new Point(12, 102);
         lblBuild.Name = "lblBuild";
-        lblBuild.Size = new Size(158, 15);
-        lblBuild.TabIndex = 2;
+        lblBuild.Size = new Size(300, 15);
+        lblBuild.TabIndex = 1;
         lblBuild.Text = "Revision: xxxx1 - Date: xxxx2";
-        // 
-        // lblWarning
-        // 
-        lblWarning.BackColor = Color.Transparent;
-        lblWarning.Font = new Font("Segoe UI", 7F, FontStyle.Regular, GraphicsUnit.Point);
-        lblWarning.ForeColor = SystemColors.ControlDarkDark;
-        lblWarning.Location = new Point(6, 83);
-        lblWarning.Name = "lblWarning";
-        lblWarning.Size = new Size(390, 40);
-        lblWarning.TabIndex = 5;
-        lblWarning.Text = "Warning: This computer program is protected by copyright law and international treaties. Unauthorized reproduction or distribution of this program, or any portion of it, may result in severe civil and criminal penalties, and will be prosecuted under the law.";
+        lblBuild.TextAlign = ContentAlignment.MiddleLeft;
         // 
         // lblCopyright
         // 
-        lblCopyright.AutoSize = true;
         lblCopyright.BackColor = Color.Transparent;
-        lblCopyright.Font = new Font("Segoe UI", 9F, FontStyle.Italic, GraphicsUnit.Point);
-        lblCopyright.Location = new Point(80, 60);
+        lblCopyright.Location = new Point(12, 119);
         lblCopyright.Name = "lblCopyright";
-        lblCopyright.Size = new Size(282, 15);
-        lblCopyright.TabIndex = 4;
-        lblCopyright.Text = "Copyright (c) 2023 sMk Designs - All Rights Reserved";
+        lblCopyright.Size = new Size(300, 15);
+        lblCopyright.TabIndex = 2;
+        lblCopyright.Text = "Copyright © 2003-2024 Smoke";
+        lblCopyright.TextAlign = ContentAlignment.MiddleLeft;
         // 
-        // lblLine
+        // btnOk
         // 
-        lblLine.BackColor = SystemColors.ControlText;
-        lblLine.Location = new Point(80, 55);
-        lblLine.Name = "lblLine";
-        lblLine.Size = new Size(285, 2);
-        lblLine.TabIndex = 3;
+        btnOk.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+        btnOk.Location = new Point(349, 208);
+        btnOk.Name = "btnOk";
+        btnOk.Size = new Size(75, 23);
+        btnOk.TabIndex = 9;
+        btnOk.Text = "OK";
+        btnOk.UseVisualStyleBackColor = true;
         // 
-        // lblVersion
+        // lblLicense
         // 
-        lblVersion.AutoSize = true;
-        lblVersion.BackColor = Color.Transparent;
-        lblVersion.Font = new Font("Segoe UI", 16F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point);
-        lblVersion.ForeColor = SystemColors.ActiveCaption;
-        lblVersion.Location = new Point(264, 11);
-        lblVersion.Name = "lblVersion";
-        lblVersion.Size = new Size(70, 30);
-        lblVersion.TabIndex = 1;
-        lblVersion.Text = "v1.00";
+        lblLicense.Anchor = AnchorStyles.Top;
+        lblLicense.Location = new Point(12, 147);
+        lblLicense.Name = "lblLicense";
+        lblLicense.Size = new Size(410, 50);
+        lblLicense.TabIndex = 4;
+        lblLicense.Text = "This program comes with absolutely no warranty.\r\nDistributed under the GNU General Public License v3 or later.";
+        lblLicense.TextAlign = ContentAlignment.MiddleCenter;
         // 
-        // lblTitle
+        // lblProduct
         // 
-        lblTitle.AutoSize = true;
-        lblTitle.BackColor = Color.Transparent;
-        lblTitle.Font = new Font("Segoe UI", 15F, FontStyle.Bold, GraphicsUnit.Point);
-        lblTitle.ForeColor = SystemColors.ControlDarkDark;
-        lblTitle.Location = new Point(79, 11);
-        lblTitle.Margin = new Padding(3, 0, 3, 5);
-        lblTitle.Name = "lblTitle";
-        lblTitle.Size = new Size(188, 28);
-        lblTitle.TabIndex = 0;
-        lblTitle.Text = "sMk Task Manager";
+        lblProduct.BackColor = Color.Transparent;
+        lblProduct.Location = new Point(12, 85);
+        lblProduct.Name = "lblProduct";
+        lblProduct.Size = new Size(300, 15);
+        lblProduct.TabIndex = 0;
+        lblProduct.Text = "sMk TaskManager";
+        lblProduct.TextAlign = ContentAlignment.MiddleLeft;
         // 
-        // pbIcon
+        // lblDivider
         // 
-        pbIcon.BackColor = Color.Transparent;
-        pbIcon.Location = new Point(4, 12);
-        pbIcon.Margin = new Padding(3, 3, 10, 3);
-        pbIcon.Name = "pbIcon";
-        pbIcon.Size = new Size(64, 64);
-        pbIcon.SizeMode = PictureBoxSizeMode.AutoSize;
-        pbIcon.TabIndex = 0;
-        pbIcon.TabStop = false;
-        pbIcon.Paint += pbIcon_Paint;
+        lblDivider.BorderStyle = BorderStyle.Fixed3D;
+        lblDivider.Location = new Point(12, 144);
+        lblDivider.Name = "lblDivider";
+        lblDivider.Size = new Size(410, 2);
+        lblDivider.TabIndex = 3;
+        lblDivider.TextAlign = ContentAlignment.MiddleCenter;
         // 
-        // lblInfo
+        // lnkGithub
         // 
-        lblInfo.BackColor = Color.Transparent;
-        lblInfo.ForeColor = Color.DarkRed;
-        lblInfo.Location = new Point(298, 10);
-        lblInfo.Name = "lblInfo";
-        lblInfo.Size = new Size(100, 43);
-        lblInfo.TabIndex = 6;
-        lblInfo.Text = "Debug";
-        lblInfo.TextAlign = ContentAlignment.TopRight;
+        lnkGithub.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+        lnkGithub.LinkBehavior = LinkBehavior.HoverUnderline;
+        lnkGithub.Location = new Point(8, 212);
+        lnkGithub.Name = "lnkGithub";
+        lnkGithub.Size = new Size(50, 18);
+        lnkGithub.TabIndex = 5;
+        lnkGithub.TabStop = true;
+        lnkGithub.Text = "Github";
+        lnkGithub.TextAlign = ContentAlignment.MiddleCenter;
         // 
-        // tmrIcon
+        // lnkLicense
         // 
-        tmrIcon.Interval = 50;
-        tmrIcon.Tick += tmrIcon_Tick;
+        lnkLicense.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+        lnkLicense.LinkBehavior = LinkBehavior.HoverUnderline;
+        lnkLicense.Location = new Point(118, 212);
+        lnkLicense.Name = "lnkLicense";
+        lnkLicense.Size = new Size(50, 18);
+        lnkLicense.TabIndex = 7;
+        lnkLicense.TabStop = true;
+        lnkLicense.Text = "License";
+        lnkLicense.TextAlign = ContentAlignment.MiddleCenter;
         // 
-        // ilAnimation
+        // lnkDonate
         // 
-        ilAnimation.ColorDepth = ColorDepth.Depth32Bit;
-        ilAnimation.ImageSize = new Size(64, 64);
-        ilAnimation.TransparentColor = Color.Transparent;
+        lnkDonate.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+        lnkDonate.LinkBehavior = LinkBehavior.HoverUnderline;
+        lnkDonate.Location = new Point(168, 212);
+        lnkDonate.Name = "lnkDonate";
+        lnkDonate.Size = new Size(50, 18);
+        lnkDonate.TabIndex = 8;
+        lnkDonate.TabStop = true;
+        lnkDonate.Text = "Donate";
+        lnkDonate.TextAlign = ContentAlignment.MiddleCenter;
+        // 
+        // lnkFeedback
+        // 
+        lnkFeedback.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+        lnkFeedback.LinkBehavior = LinkBehavior.HoverUnderline;
+        lnkFeedback.Location = new Point(58, 212);
+        lnkFeedback.Name = "lnkFeedback";
+        lnkFeedback.Size = new Size(60, 18);
+        lnkFeedback.TabIndex = 6;
+        lnkFeedback.TabStop = true;
+        lnkFeedback.Text = "Feedback";
+        lnkFeedback.TextAlign = ContentAlignment.MiddleCenter;
         // 
         // frmAbout
         // 
-        ClientSize = new Size(410, 129);
-        Controls.Add(gb);
-        FormBorderStyle = FormBorderStyle.FixedToolWindow;
+        Controls.Add(lnkLicense);
+        Controls.Add(lnkFeedback);
+        Controls.Add(lnkDonate);
+        Controls.Add(lnkGithub);
+        Controls.Add(lblDivider);
+        Controls.Add(lblProduct);
+        Controls.Add(lblLicense);
+        Controls.Add(btnOk);
+        Controls.Add(lblBuild);
+        Controls.Add(lblCopyright);
+        Controls.Add(pbBanner);
+        FormBorderStyle = FormBorderStyle.FixedSingle;
+        KeyPreview = true;
         MaximizeBox = false;
         MinimizeBox = false;
         Name = "frmAbout";
-        ShowInTaskbar = false;
+        ShowIcon = false;
         SizeGripStyle = SizeGripStyle.Hide;
         StartPosition = FormStartPosition.CenterParent;
+        Size = new Size(450, 280);
         Text = "About";
-        FormClosing += frmAbout_FormClosing;
-        Load += frmAbout_Load;
-        KeyDown += frmAbout_KeyDown;
-        gb.ResumeLayout(false);
-        gb.PerformLayout();
-        ((System.ComponentModel.ISupportInitialize)pbIcon).EndInit();
+        ((System.ComponentModel.ISupportInitialize)pbBanner).EndInit();
         ResumeLayout(false);
+        PerformLayout();
     }
 
-    private GroupBox gb;
-    private System.Windows.Forms.Timer tmrIcon;
-    private ImageList ilAnimation;
-    private PictureBox pbIcon;
-    private Label lblCopyright;
-    private Label lblLine;
+    private PictureBox pbBanner;
     private Label lblBuild;
-    private Label lblVersion;
-    private Label lblTitle;
-    private Label lblInfo;
-    private Label lblWarning;
+    private Label lblCopyright;
+    private Button btnOk;
+    private Label lblLicense;
+    private Label lblProduct;
+    private Label lblDivider;
+    private LinkLabel lnkGithub;
+    private LinkLabel lnkLicense;
+    private LinkLabel lnkDonate;
+    private LinkLabel lnkFeedback;
 }

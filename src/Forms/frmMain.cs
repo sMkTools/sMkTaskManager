@@ -22,6 +22,7 @@ public partial class frmMain : Form {
         InitializeComponent();
         InitializeMainMenu();
         // Initialize all tabControls. Maybe this should be delayed.
+        Tabs.Tab.Add("Sys", new tabSystem());
         Tabs.Tab.Add("Apps", new tabApplications());
         Tabs.Tab.Add("Procs", new tabProcesses());
         Tabs.Tab.Add("Servs", new tabServices());
@@ -105,6 +106,11 @@ public partial class frmMain : Form {
             ((Control)t).Dock = DockStyle.Fill;
             ((Control)t).Location = new Point(0, 0);
             ((Control)t).TabIndex = 0;
+            if (t.Icon != null) {
+                tc.ImageList = ilMain;
+                ilMain.Images.Add("tp" + t.Name, t.Icon);
+                tp.ImageKey = "tp" + t.Name;
+            }
             tp.Controls.Add((Control?)t);
             tc.TabPages.Add(tp);
         }
@@ -213,6 +219,10 @@ public partial class frmMain : Form {
     }
 
     private void evStatusBarStateOpening(object? sender, EventArgs e) {
+        mnuView_SpeedHigh.Checked = MonitorSpeed == mnuView_SpeedHigh.ImageIndex;
+        mnuView_SpeedNormal.Checked = MonitorSpeed == mnuView_SpeedNormal.ImageIndex;
+        mnuView_SpeedLow.Checked = MonitorSpeed == mnuView_SpeedLow.ImageIndex;
+        mnuView_Pause.Checked = !MonitorRunning;
         while (mnuView.DropDownItems.Count > 0) ssBtnState.DropDownItems.Add(mnuView.DropDownItems[0]);
     }
     private void evStatusBarStateClosed(object? sender, EventArgs e) {
@@ -457,11 +467,11 @@ public partial class frmMain : Form {
         tabProcesses? tabProcs = (tabProcesses?)Tabs.GetTab("Procs");
         if (tabProcs == null) { return; }
         tabProcs.Refresher(true);
-        if (tabProcs.lv.Items.ContainsKey(PID)) {
-            tabProcs.lv.SelectedItems.Clear();
-            tabProcs.lv.Items[PID].Selected = true;
-            tabProcs.lv.Items[PID].Focused = true;
-            tabProcs.lv.Items[PID].EnsureVisible();
+        if (tabProcs.ListView.Items.ContainsKey(PID)) {
+            tabProcs.ListView.SelectedItems.Clear();
+            tabProcs.ListView.Items[PID].Selected = true;
+            tabProcs.ListView.Items[PID].Focused = true;
+            tabProcs.ListView.Items[PID].EnsureVisible();
             tc.SelectTab((TabPage)tabProcs.Parent!);
         } else {
             SetStatusText($"Sorry, PID {PID} not in Process List");
@@ -471,11 +481,11 @@ public partial class frmMain : Form {
         tabServices? tabServs = (tabServices?)Tabs.GetTab("Servs");
         if (tabServs == null) { return; }
         tabServs.Refresher(true);
-        if (tabServs.lv.Items.ContainsKey(serviceName)) {
-            tabServs.lv.SelectedItems.Clear();
-            tabServs.lv.Items[serviceName].Selected = true;
-            tabServs.lv.Items[serviceName].Focused = true;
-            tabServs.lv.Items[serviceName].EnsureVisible();
+        if (tabServs.ListView.Items.ContainsKey(serviceName)) {
+            tabServs.ListView.SelectedItems.Clear();
+            tabServs.ListView.Items[serviceName].Selected = true;
+            tabServs.ListView.Items[serviceName].Focused = true;
+            tabServs.ListView.Items[serviceName].EnsureVisible();
             tc.SelectTab((TabPage)tabServs.Parent!);
         } else {
             SetStatusText($"Sorry, Service {serviceName} not in Service List");

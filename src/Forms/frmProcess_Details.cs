@@ -15,6 +15,7 @@ public partial class frmProcess_Details : Form {
     private Int128 _PageFaultsDelta = 0;
     private readonly HashSet<int> _HashThreads = new();
     private readonly HashSet<string> _HashLocked = new();
+    private readonly string _numberFormat = "#,0";
 
     public frmProcess_Details() {
         InitializeComponent();
@@ -27,6 +28,21 @@ public partial class frmProcess_Details : Form {
         p_lblCpuUsage.SwitchToBold();
         p_lblGDI.SwitchToBold();
         p_lblVirtualMemory.SwitchToBold();
+    }
+    public int PID {
+        get => (p1 == null) ? 0 : p1.Id;
+        set {
+            if (value != PID && value > Shared.bpi) {
+                try {
+                    p1 = Process.GetProcessById(value);
+                    p2 = new TaskManagerProcess(value) { IgnoreBackColor = true };
+                    p2.Load(new(), VisibleValues, true);
+                    p2.PropertyChanged += OnProcessPropertyChanged;
+                } catch { }
+                LoadProcessDetails();
+            }
+            Tag = value;
+        }
     }
 
     private void InitializeVisibleValues() {
@@ -74,8 +90,6 @@ public partial class frmProcess_Details : Form {
         VisibleValues.Add("NetRcvdRate");
     }
     private void OnLoad(object sender, EventArgs e) {
-        //PID = 40156;
-        //Settings.LoadPerformance();
         UpdateTimer.Elapsed += OnUpdateTimerElapsed;
         Settings.LoadProcDetails();
         try {
@@ -126,29 +140,29 @@ public partial class frmProcess_Details : Form {
             case "WorkingSetShareable": g_lblMemWSshare.Text = p2.WorkingSetShareable; break;
             case "PagedMemory": g_lblPagedMemory.Text = p2.PagedMemory; break;
             case "VirtualMemory": g_lblVirtualMemory.Text = p2.VirtualMemory; break;
-            case "GDIObjects": g_lblResGDI.Text = p2.GDIObjects.ToString(); break;
-            case "UserObjects": g_lblResUser.Text = p2.UserObjects.ToString(); break;
+            case "GDIObjects": g_lblResGDI.Text = p2.GDIObjects.ToString(_numberFormat); break;
+            case "UserObjects": g_lblResUser.Text = p2.UserObjects.ToString(_numberFormat); break;
             case "PageFaults":
                 g_lblPageFaultsDelta.Tag ??= p2.PageFaults;
-                g_lblPageFaults.Text = p2.PageFaults.ToString();
+                g_lblPageFaults.Text = p2.PageFaults.ToString(_numberFormat);
                 unchecked { _PageFaultsDelta = p2.PageFaults - Convert.ToUInt64(g_lblPageFaultsDelta.Tag); };
-                g_lblPageFaultsDelta.Text = Convert.ToString(_PageFaultsDelta);
+                g_lblPageFaultsDelta.Text = _PageFaultsDelta.ToString(_numberFormat);
                 g_lblPageFaultsDelta.Tag = p2.PageFaults;
                 break;
             case "Handles":
-                g_lblResHandles.Text = p2.Handles.ToString();
+                g_lblResHandles.Text = p2.Handles.ToString(_numberFormat);
                 g_lblResHandlesPeak.Tag ??= 0;
                 if (p2.Handles > Convert.ToInt32(g_lblResHandlesPeak.Tag)) {
                     g_lblResHandlesPeak.Tag = p2.Handles;
-                    g_lblResHandlesPeak.Text = p2.Handles.ToString();
+                    g_lblResHandlesPeak.Text = p2.Handles.ToString(_numberFormat);
                 }
                 break;
             case "Threads":
-                g_lblResThreads.Text = p2.Threads.ToString();
+                g_lblResThreads.Text = p2.Threads.ToString(_numberFormat);
                 g_lblResThreadsPeak.Tag ??= 0;
                 if (p2.Threads > Convert.ToInt32(g_lblResThreadsPeak.Tag)) {
                     g_lblResThreadsPeak.Tag = p2.Threads;
-                    g_lblResThreadsPeak.Text = p2.Threads.ToString();
+                    g_lblResThreadsPeak.Text = p2.Threads.ToString(_numberFormat);
                 }
                 break;
             case "ReadOperations": i_lblReadCount.Text = p2.ReadOperations; break;
@@ -275,11 +289,13 @@ public partial class frmProcess_Details : Form {
         if (p_ChartUser.ValueSpacing > 2) p_ChartPF.ValueSpacing = 2;
     }
     private void LoadProcessDetails() {
-        if (p1 == null) return;
+        if (p1 == null || p2 == null) return;
         // Set Title
         try {
-            Text = "Process Details: " + Path.GetFileName(p1.Modules[0].FileName) + ":" + p1.Id;
-        } catch { Text = "Process Details: n/a."; }
+            Text = $"Process Details: {Path.GetFileName(p1.Modules[0].FileName)}:{p1.Id}";
+        } catch {
+            Text = $"Process Details: {p2.Name}:{p2.ID}";
+        }
         // Set Top Fixed Values
         g_txtPID.Text = p2.ID;
         g_txtName.Text = p2.Name;
@@ -354,7 +370,7 @@ public partial class frmProcess_Details : Form {
         if (p2 == null) return;
         // Perf Counters
         p_ChartCPU.AddValue(Convert.ToDouble(p2.CpuUsage));
-        p_lblCpuUsage.Text = p2.CpuUsage+"%";
+        p_lblCpuUsage.Text = p2.CpuUsage + "%";
         p_ChartWS.MaxValue = Math.Round(Convert.ToDouble(p2.WorkingSetPeakValue) / 1024, 0);
         p_ChartWS.AddValue(Convert.ToDouble(p2.WorkingSetValue / 1024));
         p_lblWorkingSet.Text = p2.WorkingSet;
@@ -524,22 +540,6 @@ public partial class frmProcess_Details : Form {
             API.BINARY_TYPE.SCS_OS216_BINARY => (shortFormat) ? "16-bit OS/2 Application" : "16-bit OS/2 Based Application.",
             _ => "Unknown",
         };
-    }
-
-    public int PID {
-        get => (p1 == null) ? 0 : p1.Id;
-        set {
-            if (value != PID && value > Shared.bpi) {
-                try {
-                    p1 = Process.GetProcessById(value);
-                    p2 = new TaskManagerProcess(value) { IgnoreBackColor = true };
-                    p2.Load(new(), VisibleValues, true);
-                    p2.PropertyChanged += OnProcessPropertyChanged;
-                } catch { }
-                LoadProcessDetails();
-            }
-            Tag = value;
-        }
     }
 
 }

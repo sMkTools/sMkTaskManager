@@ -1350,6 +1350,8 @@ internal unsafe static partial class API {
     internal static extern unsafe NTSTATUS NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInformationClass, ref SYSTEM_PERFORMANCE_INFORMATION SystemInformation, int SystemInformationLength, out int returnLength);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("ntdll.dll", SetLastError = true)]
     internal static extern unsafe NTSTATUS NtQuerySystemInformation(SYSTEM_INFORMATION_CLASS SystemInformationClass, IntPtr SystemInformation, int SystemInformationLength, out int returnLength);
+    [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("kernel32.dll", SetLastError = true)]
+    internal static extern bool GetPhysicallyInstalledSystemMemory(out long TotalMemoryInKilobytes);
     [System.Security.SuppressUnmanagedCodeSecurity()] [DllImport("psapi.dll", CharSet = CharSet.Auto, SetLastError = true)] 
     internal static extern unsafe bool EnumPageFiles(EnumPageFilesProc proc, IntPtr lpContext);
     internal delegate bool EnumPageFilesProc(IntPtr lpContext, ref PAGE_FILE_INFORMATION Info, string Name);

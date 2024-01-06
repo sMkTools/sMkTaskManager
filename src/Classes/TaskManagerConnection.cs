@@ -52,7 +52,7 @@ internal class TaskManagerConnection : IEquatable<TaskManagerConnection>, INotif
     public IPEndPoint Local { get => _Local; set { SetField(ref _Local, value, nameof(Local), new[] { nameof(LocalAddr), nameof(LocalPort) }); } }
     public IPEndPoint Remote { get => _Remote; set { SetField(ref _Remote, value, nameof(Remote), new[] { nameof(RemoteAddr), nameof(RemotePort) }); } }
     public string LocalAddr { get => isIPv6 ? "[" + _Local.Address.ToString() + "]" : _Local.Address.ToString(); }
-    public string LocalPort { get => _Remote.Port.ToString(); }
+    public string LocalPort { get => _Local.Port.ToString(); }
     public string RemoteAddr { get => isIPv6 ? "[" + _Remote.Address.ToString() + "]" : _Remote.Address.ToString(); }
     public string RemotePort { get => _Remote.Port.ToString(); }
     public ConnectionState State { get => _State; set { SetField(ref _State, value, nameof(State), new[] { nameof(StateString) }); } }

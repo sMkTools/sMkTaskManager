@@ -11,6 +11,7 @@ namespace sMkTaskManager.Forms;
 internal class tabDevices : UserControl, ITaskManagerTab {
     private ImageList il;
     private TreeView tv;
+    private Label lblText;
     private Button btnForceRefresh;
     private Button btnProperties;
     private CheckBox chkHidden;
@@ -42,125 +43,143 @@ internal class tabDevices : UserControl, ITaskManagerTab {
 
     public tabDevices() {
         InitializeComponent();
+        InitializeHandlers();
         InitializeExtras();
     }
     private void InitializeComponent() {
         components = new Container();
         tv = new TreeView();
-        il = new ImageList(components);
         cms = new ContextMenuStrip(components);
         cmsRefresh = new ToolStripMenuItem();
+        cmsSeparator1 = new ToolStripSeparator();
         cmsEnable = new ToolStripMenuItem();
         cmsDisable = new ToolStripMenuItem();
         cmsUninstall = new ToolStripMenuItem();
+        cmsSeparator2 = new ToolStripSeparator();
         cmsOpenKey = new ToolStripMenuItem();
-        cmsOpenKey_User = new ToolStripMenuItem();
-        cmsOpenKey_Config = new ToolStripMenuItem();
         cmsOpenKey_Hardware = new ToolStripMenuItem();
         cmsOpenKey_Software = new ToolStripMenuItem();
+        cmsOpenKey_User = new ToolStripMenuItem();
+        cmsOpenKey_Config = new ToolStripMenuItem();
         cmsGoToService = new ToolStripMenuItem();
-        cmsProperties = new ToolStripMenuItem();
-        cmsSeparator1 = new ToolStripSeparator();
-        cmsSeparator2 = new ToolStripSeparator();
         cmsSeparator3 = new ToolStripSeparator();
+        cmsProperties = new ToolStripMenuItem();
+        il = new ImageList(components);
         btnForceRefresh = new Button();
         btnProperties = new Button();
         chkHidden = new CheckBox();
+        lblText = new Label();
         cms.SuspendLayout();
         SuspendLayout();
-        // 
-        // il
-        // 
-        il.ColorDepth = ColorDepth.Depth32Bit;
-        il.ImageSize = new Size(16, 16);
-        il.TransparentColor = Color.Transparent;
-        // 
-        // cms
-        //
-        cms.Items.AddRange(new ToolStripItem[] { cmsRefresh, cmsSeparator1, cmsEnable, cmsDisable, cmsUninstall, cmsSeparator2, cmsOpenKey, cmsGoToService, cmsSeparator3, cmsProperties });
-        cms.Name = "cms";
-        cms.Size = new Size(61, 4);
-        // 
-        // cmsRefresh
-        // 
-        cmsRefresh.Name = "cmsRefresh";
-        cmsRefresh.Text = "&Refresh";
-        // 
-        // cmsEnable
-        // 
-        cmsEnable.Name = "cmsEnable";
-        cmsEnable.Text = "&Enable device";
-        // 
-        // cmsDisable
-        // 
-        cmsDisable.Name = "cmsDisable";
-        cmsDisable.Text = "&Disable device";
-        // 
-        // cmsUninstall
-        // 
-        cmsUninstall.Name = "cmsUninstall";
-        cmsUninstall.Text = "&Uninstall device";
-        // 
-        // cmsOpenKey
-        // 
-        cmsOpenKey.DropDownItems.AddRange(new ToolStripItem[] { cmsOpenKey_Hardware, cmsOpenKey_Software, cmsOpenKey_User, cmsOpenKey_Config });
-        cmsOpenKey.Name = "cmsOpenKey";
-        cmsOpenKey.Text = "Open &Key";
-        // 
-        // cmsOpenKey_Hardware
-        // 
-        cmsOpenKey_Hardware.Name = "cmsOpenKey_Hardware";
-        cmsOpenKey_Hardware.Text = "&Hardware";
-        // 
-        // cmsOpenKey_Software
-        // 
-        cmsOpenKey_Software.Name = "cmsOpenKey_Software";
-        cmsOpenKey_Software.Text = "&Software";
-        // 
-        // cmsOpenKey_User
-        // 
-        cmsOpenKey_User.Name = "cmsOpenKey_User";
-        cmsOpenKey_User.Text = "&User";
-        // 
-        // cmsOpenKey_Config
-        // 
-        cmsOpenKey_Config.Name = "cmsOpenKey_Config";
-        cmsOpenKey_Config.Text = "&Config";
-        // 
-        // cmsGoToService
-        // 
-        cmsGoToService.Name = "cmsGoToService";
-        cmsGoToService.Text = "&Go To Service...";
-        // 
-        // cmsProperties
-        // 
-        cmsProperties.Name = "cmsProperties";
-        cmsProperties.Text = "&Properties";
-        // 
-        // cmsSeparator1
-        // 
-        cmsSeparator1.Name = "cmsSeparator1";
-        // 
-        // cmsSeparator2
-        // 
-        cmsSeparator2.Name = "cmsSeparator2";
-        // 
-        // cmsSeparator3
-        // 
-        cmsSeparator3.Name = "cmsSeparator3";
         // 
         // tv
         // 
         tv.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         tv.BorderStyle = BorderStyle.FixedSingle;
         tv.ContextMenuStrip = cms;
+        tv.ImageIndex = 0;
         tv.ImageList = il;
-        tv.ShowLines = false;
         tv.Location = new Point(6, 6);
         tv.Margin = new Padding(6, 6, 6, 0);
         tv.Name = "tv";
+        tv.SelectedImageIndex = 0;
+        tv.ShowLines = false;
         tv.Size = new Size(588, 559);
         tv.TabIndex = 0;
+        // 
+        // cms
+        // 
+        cms.Items.AddRange(new ToolStripItem[] { cmsRefresh, cmsSeparator1, cmsEnable, cmsDisable, cmsUninstall, cmsSeparator2, cmsOpenKey, cmsGoToService, cmsSeparator3, cmsProperties });
+        cms.Name = "cms";
+        cms.Size = new Size(158, 176);
+        // 
+        // cmsRefresh
+        // 
+        cmsRefresh.Name = "cmsRefresh";
+        cmsRefresh.Size = new Size(157, 22);
+        cmsRefresh.Text = "&Refresh";
+        // 
+        // cmsSeparator1
+        // 
+        cmsSeparator1.Name = "cmsSeparator1";
+        cmsSeparator1.Size = new Size(154, 6);
+        // 
+        // cmsEnable
+        // 
+        cmsEnable.Name = "cmsEnable";
+        cmsEnable.Size = new Size(157, 22);
+        cmsEnable.Text = "&Enable device";
+        // 
+        // cmsDisable
+        // 
+        cmsDisable.Name = "cmsDisable";
+        cmsDisable.Size = new Size(157, 22);
+        cmsDisable.Text = "&Disable device";
+        // 
+        // cmsUninstall
+        // 
+        cmsUninstall.Name = "cmsUninstall";
+        cmsUninstall.Size = new Size(157, 22);
+        cmsUninstall.Text = "&Uninstall device";
+        // 
+        // cmsSeparator2
+        // 
+        cmsSeparator2.Name = "cmsSeparator2";
+        cmsSeparator2.Size = new Size(154, 6);
+        // 
+        // cmsOpenKey
+        // 
+        cmsOpenKey.DropDownItems.AddRange(new ToolStripItem[] { cmsOpenKey_Hardware, cmsOpenKey_Software, cmsOpenKey_User, cmsOpenKey_Config });
+        cmsOpenKey.Name = "cmsOpenKey";
+        cmsOpenKey.Size = new Size(157, 22);
+        cmsOpenKey.Text = "Open &Key";
+        // 
+        // cmsOpenKey_Hardware
+        // 
+        cmsOpenKey_Hardware.Name = "cmsOpenKey_Hardware";
+        cmsOpenKey_Hardware.Size = new Size(125, 22);
+        cmsOpenKey_Hardware.Text = "&Hardware";
+        // 
+        // cmsOpenKey_Software
+        // 
+        cmsOpenKey_Software.Name = "cmsOpenKey_Software";
+        cmsOpenKey_Software.Size = new Size(125, 22);
+        cmsOpenKey_Software.Text = "&Software";
+        // 
+        // cmsOpenKey_User
+        // 
+        cmsOpenKey_User.Name = "cmsOpenKey_User";
+        cmsOpenKey_User.Size = new Size(125, 22);
+        cmsOpenKey_User.Text = "&User";
+        // 
+        // cmsOpenKey_Config
+        // 
+        cmsOpenKey_Config.Name = "cmsOpenKey_Config";
+        cmsOpenKey_Config.Size = new Size(125, 22);
+        cmsOpenKey_Config.Text = "&Config";
+        // 
+        // cmsGoToService
+        // 
+        cmsGoToService.Name = "cmsGoToService";
+        cmsGoToService.Size = new Size(157, 22);
+        cmsGoToService.Text = "&Go To Service...";
+        // 
+        // cmsSeparator3
+        // 
+        cmsSeparator3.Name = "cmsSeparator3";
+        cmsSeparator3.Size = new Size(154, 6);
+        // 
+        // cmsProperties
+        // 
+        cmsProperties.Name = "cmsProperties";
+        cmsProperties.Size = new Size(157, 22);
+        cmsProperties.Text = "&Properties";
+        // 
+        // il
+        // 
+        il.ColorDepth = ColorDepth.Depth32Bit;
+        il.ImageSize = new Size(16, 16);
+        il.TransparentColor = Color.Transparent;
         // 
         // btnForceRefresh
         // 
@@ -189,13 +208,25 @@ internal class tabDevices : UserControl, ITaskManagerTab {
         chkHidden.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
         chkHidden.Location = new Point(6, 571);
         chkHidden.Name = "chkHidden";
-        chkHidden.Size = new Size(150, 23);
+        chkHidden.Size = new Size(140, 23);
         chkHidden.TabIndex = 1;
         chkHidden.Text = "Show hidden devices";
         chkHidden.UseVisualStyleBackColor = true;
         // 
+        // lblText
+        // 
+        lblText.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+        lblText.AutoEllipsis = true;
+        lblText.ForeColor = SystemColors.HotTrack;
+        lblText.Location = new Point(144, 575);
+        lblText.Name = "lblText";
+        lblText.Size = new Size(262, 16);
+        lblText.TabIndex = 1;
+        lblText.TextAlign = ContentAlignment.TopCenter;
+        // 
         // tabDevices
         // 
+        Controls.Add(lblText);
         Controls.Add(chkHidden);
         Controls.Add(btnProperties);
         Controls.Add(btnForceRefresh);
@@ -205,12 +236,7 @@ internal class tabDevices : UserControl, ITaskManagerTab {
         cms.ResumeLayout(false);
         ResumeLayout(false);
     }
-    private void InitializeExtras() {
-        il.Images.Clear();
-        il.Images.Add("", new Bitmap(16, 16));
-        cmsProperties.SwitchToBold();
-        btnProperties.Enabled = false;
-        // Add event handlers
+    private void InitializeHandlers() {
         VisibleChanged += OnVisibleChanged;
         tv.AfterSelect += OnTreeViewAfterSelect;
         tv.NodeMouseClick += OnTreeViewNodeMouseClick;
@@ -222,6 +248,12 @@ internal class tabDevices : UserControl, ITaskManagerTab {
         btnProperties.Click += OnButtonClicked;
         btnForceRefresh.Click += OnButtonClicked;
         chkHidden.Click += OnButtonClicked;
+    }
+    private void InitializeExtras() {
+        il.Images.Clear();
+        il.Images.Add("", new Bitmap(16, 16));
+        cmsProperties.SwitchToBold();
+        btnProperties.Enabled = false;
     }
 
     private void OnVisibleChanged(object? sender, EventArgs e) {
@@ -312,10 +344,10 @@ internal class tabDevices : UserControl, ITaskManagerTab {
         var cmStatus = API.CM_Locate_DevNode(out IntPtr pHKey, device.InstanceID, 0); // CM_LOCATE_DEVNODE_NORMAL==0
         if (cmStatus != 0) { Shared.SetStatusText($"Failed to get device handle to change state: {cmStatus}."); return; }
         var result = enable ? API.CM_Enable_DevNode(pHKey, 0) : API.CM_Disable_DevNode(pHKey, 0);
-        if (result == 0x00000033) { Debug.WriteLine($"Access denied to change device state: {result}."); return;         }
+        if (result == 0x00000033) { Debug.WriteLine($"Access denied to change device state: {result}."); return; }
         if (result != 0) { Shared.SetStatusText($"Failed to change device state: {result}."); return; }
         PopulateDevices(device);
-        Shared.SetStatusText($"Device {device.Name} {(enable ? "Enabled":"Disabled")}...");
+        Shared.SetStatusText($"Device {device.Name} {(enable ? "Enabled" : "Disabled")}...");
     }
     public void Feature_Uninstall() {
         if (!ValidateSelectedNode(out TaskManagerDevice? device) || device == null) { return; }
@@ -323,7 +355,7 @@ internal class tabDevices : UserControl, ITaskManagerTab {
         if (msg != DialogResult.OK) return;
 
         var cmStatus = API.CM_Locate_DevNode(out IntPtr pHKey, device.InstanceID, 0); // CM_LOCATE_DEVNODE_NORMAL==0
-        if (cmStatus != 0) { Shared.SetStatusText($"Failed to get device handle to uninstall: {cmStatus}."); return;  }
+        if (cmStatus != 0) { Shared.SetStatusText($"Failed to get device handle to uninstall: {cmStatus}."); return; }
         var result = API.CM_Uninstall_DevNode(pHKey, 0);
         if (result != 0) { Shared.SetStatusText($"Failed to uninstall device: {result}."); return; }
         PopulateDevices(device);
@@ -343,7 +375,7 @@ internal class tabDevices : UserControl, ITaskManagerTab {
         var cmStatus = API.CM_Locate_DevNode(out IntPtr pHKey, device.InstanceID, 0); // CM_LOCATE_DEVNODE_NORMAL==0
         if (cmStatus != CR_SUCCESS) { Shared.SetStatusText($"Failed to get device handle to open registry:  {cmStatus}."); return; }
         var result = API.CM_Open_DevNode_Key(pHKey, KEY_READ, 0, RegDisposition_OpenExisting, out IntPtr phHandle, keyIndex);
-        if (result == CR_NO_SUCH_REGISTRY_KEY) { Shared.SetStatusText("No registry key found for device.."); return; } 
+        if (result == CR_NO_SUCH_REGISTRY_KEY) { Shared.SetStatusText("No registry key found for device.."); return; }
         if (result != CR_SUCCESS) { Shared.SetStatusText($"Failed to open device key: {result}."); return; }
 
         var regLocation = GetKeyNameFromHandle(phHandle);
@@ -381,18 +413,26 @@ internal class tabDevices : UserControl, ITaskManagerTab {
         tv.BeginUpdate();
         tv.Nodes.Clear();
         var classes = chkHidden.Checked ? TaskManagerDeviceClass.Load(TaskManagerDeviceFilter.AllClasses, ref il) : TaskManagerDeviceClass.Load(TaskManagerDeviceFilter.AllClasses | TaskManagerDeviceFilter.Present, ref il);
-
+        int _totalDevices = 0;
+        int _totalDisabled = 0;
+        int _totalDisconnected = 0;
         foreach (var cls in classes) {
             var classNode = tv.Nodes.Add(cls.Description);
             var imgKey = cls.ClassId.ToString();
             if (!il.Images.ContainsKey(imgKey)) { PopulateIconToImageList(ref il, imgKey, cls.IconPath); }
             if (il.Images.ContainsKey(imgKey)) { classNode.ImageKey = imgKey; classNode.SelectedImageKey = imgKey; }
             foreach (var device in cls.Devices) {
+                _totalDevices++;
                 var deviceNode = classNode.Nodes.Add(device.Name);
                 deviceNode.Tag = device;
                 if (!device.Present) {
                     deviceNode.NodeFont = new Font(tv.Font, FontStyle.Italic);
                     deviceNode.ForeColor = SystemColors.GrayText;
+                    _totalDisconnected++;
+                }
+                if (device.Disabled) {
+                    deviceNode.NodeFont = new Font(tv.Font, FontStyle.Bold);
+                    _totalDisabled++;
                 }
                 if (il.Images.ContainsKey(device.ImageKey)) {
                     deviceNode.ImageKey = device.ImageKey;
@@ -411,6 +451,7 @@ internal class tabDevices : UserControl, ITaskManagerTab {
             tv.Refresh();
         }
         tv.EndUpdate();
+        lblText.Text = string.Format("Total: {0}, Disabled: {1}" + (chkHidden.Checked ? ", Disconnected: {2}" : ""), _totalDevices, _totalDisabled, _totalDisconnected);
     }
     private static void PopulateIconToImageList(ref ImageList il, string imgKey, string iconPath) {
         il ??= new ImageList();

@@ -451,16 +451,16 @@ internal class TaskManagerProcess : IEquatable<TaskManagerProcess>, INotifyPrope
             case FormatValueTypes.Literal: return value.ToString();
             case FormatValueTypes.Number: return string.Format("{0:#,0}", value);
             case FormatValueTypes.Bytes: return string.Format("{0:#,0}", value) + " B";
-            case FormatValueTypes.KBytes: return string.Format("{0:#,0}", value / 1024) + " K";
-            case FormatValueTypes.MBytes: return string.Format("{0:#,0}", value / 1024 / 1024) + " M";
-            case FormatValueTypes.Kbps: return string.Format("{0:#,0.0}", value / 1024) + " Kb/s";
+            case FormatValueTypes.KBytes: return string.Format("{0:#,0}", value / 1024d) + " K";
+            case FormatValueTypes.MBytes: return string.Format("{0:#,0}", value / 1024d / 1024d) + " M";
+            case FormatValueTypes.Kbps: return string.Format("{0:#,0.0}", value / 1024d) + " Kb/s";
             case FormatValueTypes.AutoBytes:
                 if (value < 10240) {
                     return string.Format("{0:#,0}", value) + " B";
                 } else if (value < 1024000) {
-                    return string.Format("{0:#,0}", value / 1024) + " K";
+                    return string.Format("{0:#,0.0}", value / 1024d) + " K";
                 } else {
-                    return string.Format("{0:#,0}", value / 1024 / 1024) + " M";
+                    return string.Format("{0:#,0.0}", (value / 1024d / 1024d)) + " M";
                 }
             default: return value.ToString();
         }

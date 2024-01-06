@@ -10,7 +10,7 @@ internal class tabApplications : UserControl, ITaskManagerTab {
     private readonly Stopwatch _stopWatch = new();
     private readonly Dictionary<int, winInformation> HashApps = new();
 
-    internal sMkListView lv;
+    private sMkListView lv;
     private ColumnHeader colPID;
     private ColumnHeader colTask;
     private ColumnHeader colHandle;
